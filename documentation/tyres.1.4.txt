@@ -1,0 +1,1641 @@
+swagger: '2.0'
+info:
+  version: '1.4'
+  title: Tyre24.com REST API Version 1.4 Tyres
+  description: |
+    TYRE 24 REST API Version V1.4 Tyres
+
+    All API commands need a BASIC AUTHENTICATION or a TOKEN.
+host: tyre24.alzura.com
+basePath: /de/de/rest/V14/tyres
+schemes:
+  - https
+produces:
+  - application/json
+consumes:
+  - application/json
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: |
+      HTTP Basic Authentication. Works over `HTTPS`
+
+      **User Name and Password**
+        * User Name: `USER`
+        * Password: `ENCODED_PASSWORD`
+
+      `ENCODED_PASSWORD` is generated using base64 function on md5 of `PASSWORD`
+
+      Example:<br>
+        `PASSWORD` = test<br>
+        `md5(test)` = 098f6bcd4621d373cade4e832627b4f6<br>
+        `base64(md5(test))` = MDk4ZjZiY2Q0NjIxZDM3M2NhZGU0ZTgzMjYyN2I0ZjY=
+    # Token Authentication
+  tokenAuth:
+    type: apiKey
+    in: header
+    name: X-AUTH-TOKEN
+    description: |
+      To enable you to log in to ALZURA.com via an interface using third-party systems
+      such as your ERP, ERP, DMS or other systems, you generate a unique token [here](https://tyre24.alzura.com/de/de/tokenmanagement),
+      which you store in the respective system in order to log in automatically.
+      You only need this one token and can use it in several systems.
+
+      **Managing Access with Your ALZURA Account**
+        1. **Linked Platforms, Websites, and Apps**  
+           - You use your ALZURA account to log in to various services, platforms, and applications.  
+
+        2. **Access Permissions**  
+           - When you log in using your ALZURA account, you grant these services access to certain data.  
+           - This data may include confidential information.  
+
+        3. **Where to Find Your Tokens**  
+           - Follow these steps to locate and manage your tokens:  
+             1. Log in to your ALZURA account.  
+             2. Navigate to the [Token Management Page](https://tyre24.alzura.com/de/de/tokenmanagement).  
+
+        4. **Token Validity and Expiration**  
+           - A token determines how long you remain logged in to an external service.  
+           - Once the token expires, you will need to log in again to refresh it.  
+
+        5. **Re-establishing Access**  
+           - If you remove access, you can log in again to the service at any time using your ALZURA account.  
+           - Re-login will grant access to the service once more.  
+
+      Once you have obtained your API-Token, use it in the X-AUTH-TOKEN header of your requests.
+         Example:
+        ```
+          GET /api/v1/tyres HTTP/1.1
+          X-AUTH-TOKEN:<your-api-token>
+        ```
+paths:
+  /filter:
+    get:
+      summary: /filter
+      description: >-
+        The Tyre24 search offers various filters to narrow down a search result.
+        For this purpose several filters can be requested before sending a
+        search query which can then be used to influence the search results. The
+        search contains all available filters and shows how many results would
+        be affected by these filters.
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: >-
+            Returns all filters which can be used initially to modify the tyre
+            search results.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Filter'
+
+  /sorter:
+    get:
+      summary: /sorter
+      description: >-
+        By adding one of the following sorting filters, the order of search
+        results can be changed. In case of sending an unknown or no sorting
+        filter, the standard sorting (currently by price) will be used.
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: Returns a list of all available sorting options.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Sorter'
+
+  /autocomplete:
+    get:
+      summary: /autocomplete
+      description: The interface allows you to request tyre matchcodes with autocomplete.
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      parameters:
+        - in: query
+          name: matchcode
+          description: The matchcode to be completed
+          required: true
+          type: string
+        - in: query
+          name: limit
+          description: Limit the response, default 10
+          required: false
+          type: integer
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: A maximum of five results will always be returned.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AutoComplete'
+
+  /mostwanted:
+    get:
+      summary: /mostwanted
+      produces:
+        - application/json
+      description: This method can be used to get a list of most sold tyres.
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      parameters:
+        - in: query
+          name: limit
+          type: integer
+          required: false
+          description: The number of results
+        - in: query
+          name: offset
+          type: integer
+          required: false
+          description: The result offset to enable pagination
+        - in: query
+          name: type
+          type: integer
+          required: false
+          description: >-
+            type id of tyre eg. summer. Id mapping:
+             1: summer
+             2: winter
+             3: all weather
+             4: offroad
+             5: grooved (Rille)
+             6: light truck (LLKW)
+             7: truck (LKW)
+             8: big
+             9: motorcycle
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: A list of the most sold tyres
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MostWanted'
+
+  /search:
+    get:
+      summary: /search
+      produces:
+        - application/json
+      description: With this function you can request tyre lists for a specific size.
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      parameters:
+        - in: query
+          name: search
+          description: >-
+            Text to be searched (e.g. S1956515, ID408916, HSN0353426000 or
+            EAN4019238560848)
+          required: true
+          type: string
+        - in: query
+          name: limit
+          required: false
+          description: >-
+            Influences the amount of returned tyre search results (default 10)
+          type: integer
+        - in: query
+          name: filter
+          required: false
+          type: array
+          items: {}
+          description: >-
+            A form array containing filters to be used. You need to pass a
+            multidimensional form array. filter[6][name] = 'express_delivery'
+            filter[6][valueList][] = 'tomorrow' filter[6][valueList][] = 'today'
+            filter[6][multipleChoice] = 1
+        - in: query
+          name: sorter
+          required: false
+          type: string
+          description: 'Contains the sorter id which can be retrieved by [GET] sorter'
+        - in: query
+          name: offset
+          required: false
+          type: integer
+          description: >-
+            When narrowing down the results list with limit, more results can be
+            retrieved starting from a certain page (offset). Example A: (limit =
+            15, offset = 30) returns 15 tyre results, starting from position 30
+            (2\*15). This corresponds to page 3. Example B:(limit = 20, offset =
+            20) returns 20 tyre results starting from position 20 (1\*20)
+        - in: query
+          name: minStock
+          required: false
+          type: integer
+          description: >-
+            This value lets you pre filter the results to a minimum stock
+            quantity.
+        - in: query
+          name: postcode
+          required: false
+          type: string
+          description: >-
+            Entering a postcode is needed for filtering by express results of
+            external stock.
+        - in: query
+          name: cheapestExpressPrice
+          required: false
+          type: boolean
+          description: >-
+            Show price entry for cheapest express wholesaler with calculated express price
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: The cheapest offer that has been found by this request
+          schema:
+            $ref: '#/definitions/searchResponse'
+
+  /details:
+    get:
+      summary: /details
+      produces:
+        - application/json
+      description: Returns details of a requested tyre.
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      parameters:
+        - in: query
+          name: idSolr
+          type: string
+          description: "Unique Solr-ID of the tyre"
+          required: true
+        - in: query
+          name: postcode
+          type: string
+          description: "Entering a postcode is needed for filtering by express results of external stock."
+          required: false
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        200:
+          description: "The details of the requested tyre"
+          schema:
+            $ref: "#/definitions/tyreListEntry"
+
+  /distributorList:
+    get:
+      summary: /distributorList
+      produces:
+        - application/json
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      description: >-
+        The interface offers the possibility to provide a list for a specific
+        product ID, which contains all sellers of this product, incl. their
+        price and additional options (e.g. available payment and shipping
+        options). Furthermore you can request a profile with additional
+        information (general T&Cs, address, images) about the distributor.
+      parameters:
+        - in: query
+          name: itemID
+          type: string
+          required: true
+          description: >-
+            The product ID incl. prefix (T for tyres, A for alloy wheels) e.g.
+            T240018. If no prefix is given, an effort is made to use a tyre with
+            this ID
+        - in: query
+          name: postcode
+          type: string
+          required: false
+          description: Is used to determine potential express shipping
+        - in: query
+          name: minStock
+          type: integer
+          required: false
+          description: Returns the prices calculated to the minimum stock number, the default value of 4 is used
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: Returns a list of distributors
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/distributor'
+
+  /distributorProfile:
+    get:
+      summary: /distributorProfile
+      parameters:
+        - in: query
+          name: distributorId
+          type: integer
+          required: true
+          description: "id of the distributor"
+        - in: query
+          name: distributorType
+          required: true
+          type: integer
+          description: "1 for retailer, 2 for wholesaler, 3 for anonymous wholesaler"
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        200:
+          description: "The profile of a distributor"
+          schema:
+            $ref: "#/definitions/distributorProfile"
+
+  /order:
+    get:
+      summary: /order
+      produces:
+        - application/json
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      parameters:
+        - in: query
+          name: itemId
+          type: string
+          required: true
+          description: >-
+            The Tyre24 product number. It's prefixed by the product type.
+            A=alloy rim; S=steel rim; T=tyre
+        - in: query
+          name: quantity
+          type: integer
+          required: true
+          description: Amount to be ordered. This is limited to 20 pieces.
+        - in: query
+          name: shippingMethodIds
+          type: integer
+          required: false
+          description: >-
+            Comma separated list of shipping method Id’s, you also can
+            give only one Id. If the field is left blank, standard shipping is
+            used.; 1  standard shipping;2 pickup;3  express - tomorrow
+            (truck);4  express - today (truck); 5  express - tomorrow (package);
+            6 express - today (package)
+        - in: query
+          name: useAlternateShippingAddress
+          required: false
+          default: 1
+          description: >-
+            Whether or not to use the alternate shipping address saved in backoffice (default 1)
+          type: integer
+        - in: query
+          name: shippingName
+          required: false
+          description: 'Different shipping address: name'
+          type: string
+        - in: query
+          name: shippingAdditional
+          required: false
+          description: 'additional name or address'
+          type: string
+        - in: query
+          name: shippingPhone
+          required: false
+          description: 'phone number of buyer for requests from seller'
+          type: string
+        - in: query
+          name: shippingAddress
+          required: false
+          description: 'Different shipping address: street and house number'
+          type: string
+        - in: query
+          name: shippingPostcode
+          required: false
+          description: >-
+            Different shipping address: zip code, if set this zip code is used
+            for fast search
+          type: string
+        - in: query
+          name: shippingCity
+          required: false
+          description: 'Different shipping address: city'
+          type: string
+        - in: query
+          name: shippingNeutral
+          required: false
+          description: 'Different shipping address: neutral shipping; 0 no;1  yes'
+          type: string
+        - in: query
+          name: shippingLatitude
+          required: false
+          description: >-
+            If set, the parameter is used for the self-pickup search. (e.g.
+            49.4630089)
+          type: number
+          format: float
+        - in: query
+          name: shippingLongitude
+          required: false
+          description: >-
+            If set, the parameter is used for the self-pickup search. (e.g.
+            7.6939128)
+          type: number
+          format: float
+        - in: query
+          name: wholesalerList
+          required: false
+          description: >-
+            Comma separated list of wholesalers-Id's, you only get offers from
+            these wholesalers.
+          type: string
+        - in: query
+          name: paymentMethodIds
+          required: false
+          description: >-
+            Comma separated list of payment methods-Id's, you also can give only
+            one id . If the field is left blank, all payment method are
+            considered. 1  SEPA direct debit; 2  advance payment; 3  cash on
+            delivery; 5 open payment; 7 invoice (payable within 8 days); 8  open
+            payment (SEPA) - used for marketplace orders
+          type: integer
+        - in: query
+          name: orderComment
+          required: false
+          description: 'Comment field, is forwarded to the wholesaler in the order.'
+          type: string
+        - in: query
+          name: referenceNumber
+          required: false
+          description: >-
+            Reference number (maximum 25 characters), is forwarded to the
+            wholesaler in the order.
+          type: string
+        - in: query
+          name: onlyCooperation
+          required: false
+          description: >-
+            Defines if only cooperation partner should be shown. Important: If
+            this parameter is set to ‘1’ in the offer request, you have to set
+            it to ‘1’ in the corresponding order request. Otherwise the order
+            will fail. 0  If the cooperation allows displaying wholesalers which
+            do not belong to the same cooperation, you will also get offers of
+            them.; 1  Show only wholesalers belonging to the same cooperation.
+          type: integer
+        - in: query
+          name: productSpecificParams
+          required: false
+          description: >-
+            Under the item keyValuePair additional information must be specified
+            for certain products. In an alloy rim order or an offer request of
+            an alloy rim, as shown in the example above, the data for the offset
+            'et' and the vehicle-id 'fid' must be entered. Additionally you can
+            set the vehicle information type (inspectionTextVehicleBrand) and
+            design / kW (inspectionTextVehicleTyp) optionally, when the client
+            is sure that the product fits on the car. Otherwise, when the Seller
+            has to check you have to add vehicle key number
+            inspectionTextVehicleKey1 (4 chars) and inspectionTextVehicleKey2
+            (6-8 chars).
+          type: string
+        - in: query
+          name: useAnonymousPrice
+          type: boolean
+          required: false
+          description: >-
+            flag to get anonymous price for wholesaler
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: >-
+            Trigger an order based on the given article (normally after performing an GET order request).
+            If the order was successful the number of the order will be returned, otherwise 0.
+            <br /><br/>
+            Following error codes are available and may be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+             <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_ALTERNATIVE_OFFER_FOUND_wholesalerList</p></td>
+                <td style="padding-left: 5px;"><p>alternative offer is found when filter wholesalerList is deactivated</p></td>
+              </tr>
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_NAME</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the name</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_STREET</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the street</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_ZIP</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the zip</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_CITY</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the city</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INVALID_SHIPPING_NEUTRAL</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the neutral</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MANDATE_NOT_ACCEPTED</p></td>
+                <td style="padding-left: 5px;"><p>the wholesaler mandate has an invalid state in the database (accepted = 0)</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_SEPA_NOT_ACCEPTED</p></td>
+                <td style="padding-left: 5px;"><p>can only occur in poland when direct debit is chosen as payment method and there's no mandate existing between the distributor and retailer</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_PAYMENT_NOT_SUPPORTED</p></td>
+                <td style="padding-left: 5px;"><p>you passed a payment mehtod which is not supported by the distributor</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_NO_MATCHING_PAYMENT</p></td>
+                <td style="padding-left: 5px;"><p>retailer and distributor have no matching payments</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_USER_ORDER_FORBIDDEN</p></td>
+                <td style="padding-left: 5px;"><p>retailer has no permission to perform an order, which can be caused by using the wrong platform</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_USER_NO_PRIVILEDGE</p></td>
+                <td style="padding-left: 5px;"><p>retailer has no permission to perform an order because of his status</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INVALID_QUANTITY</p></td>
+                <td style="padding-left: 5px;"><p>you passed an invalid quantity value</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_QUANTITY_MAX_20</p></td>
+                <td style="padding-left: 5px;"><p>you're only allowed to order 20 tyres at once</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_ITEM_NOT_FOUND</p></td>
+                <td style="padding-left: 5px;"><p>the item could not be found</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_SWIFT_BIC</p></td>
+                <td style="padding-left: 5px;"><p>the retailer has no swift/bic</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_NO_USTID</p></td>
+                <td style="padding-left: 5px;"><p>the retailer has no "Umsatzsteuer-Id"</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_REFERENCENUMBER</p></td>
+                <td style="padding-left: 5px;"><p>you forgot to pass a reference number which may be required by some cooperations, e.g. KAGUMA</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INVALID_SHIPPING_METHOD</p></td>
+                <td style="padding-left: 5px;"><p>you passed an invalid shipping method</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_ITEM_ID</p></td>
+                <td style="padding-left: 5px;"><p>the item id is missing either in the request or in the database result</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_MIN_QUANTITY</p></td>
+                <td style="padding-left: 5px;"><p>quantity is missing</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_DISTRIBUTOR_ID</p></td>
+                <td style="padding-left: 5px;"><p>distriutor id is missing</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_MANDATORY_PARAMETER</p></td>
+                <td style="padding-left: 5px;"><p>a mandatory param is missing</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INTERNAL_SERVER_ERROR</p></td>
+                <td style="padding-left: 5px;"><p>an internal server error occured, you may provide this information to the tyre24 team with the exact request you made including the body</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_ORDER_NOT_VALID</p></td>
+                <td style="padding-left: 5px;"><p>the order could not be performed, see the meta key for more information</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_NO_OFFER_FOUND</p></td>
+                <td style="padding-left: 5px;"><p>offer could not be retrieved from the database, this may be because the distributor is no longer offering this item or does not have the required amount</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_OFFER_PRICE_MISMATCH</p></td>
+                <td style="padding-left: 5px;"><p>the price changed</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_WHOLESALER_MISMATCH</p></td>
+                <td style="padding-left: 5px;"><p>the given wholesaler id does not match the wholesaler id in the database result</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_ORDER_LIMIT_REACHED</p></td>
+                <td style="padding-left: 5px;"><p>The order limit for your user has been reached. The order can not be executed.</p></td>
+              </tr>
+            </table>
+            <br /><br />
+            There are some examples below, but keep in mind there are many more cases, which is too much work to list them all.
+          schema:
+            $ref: '#/definitions/offerType'
+    post:
+      summary: /order
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - basicAuth: []
+        - tokenAuth: []
+      parameters:
+        - in: query
+          name: itemId
+          type: string
+          required: true
+          description: >-
+            The Tyre24 product number. It's prefixed by the product type. A
+            alloy rim; S  steel rim; T  tyre
+        - in: query
+          name: quantity
+          type: integer
+          required: true
+          description: Amount to be ordered. This is limited to 20 pieces.
+        - in: body
+          name: offerType
+          schema:
+            $ref: '#/definitions/offerType'
+          required: true
+          description: >-
+            You have to insert the response data of [GET] order, append quantity
+            and send it in the body of your POST request (you have to use JSON)
+        - in: query
+          name: shippingMethodIds
+          type: integer
+          required: false
+          description: >-
+            Comma separated list of shipping method Id’s, you also can
+            give only one Id. If the field is left blank, standard shipping is
+            used.; 1  standard shipping;2 pickup;3  express - tomorrow
+            (truck);4  express - today (truck); 5  express - tomorrow (package);
+            6 express - today (package)
+        - in: query
+          name: shippingName
+          required: false
+          description: 'Different shipping address: name'
+          type: string
+        - in: query
+          name: shippingAdditional
+          required: false
+          description: 'additional name or address'
+          type: string
+        - in: query
+          name: shippingPhone
+          required: false
+          description: 'phone number of buyer for requests from seller'
+          type: string
+        - in: query
+          name: shippingAddress
+          required: false
+          description: 'Different shipping address: street and house number'
+          type: string
+        - in: query
+          name: shippingPostcode
+          required: false
+          description: >-
+            Different shipping address: zip code, if set this zip code is used
+            for fast search
+          type: string
+        - in: query
+          name: shippingCity
+          required: false
+          description: 'Different shipping address: city'
+          type: string
+        - in: query
+          name: shippingNeutral
+          required: false
+          description: 'Different shipping address: neutral shipping; 0 no;1  yes'
+          type: string
+        - in: query
+          name: shippingLatitude
+          required: false
+          description: >-
+            If set, the parameter is used for the self-pickup search. (e.g.
+            49.4630089)
+          type: number
+          format: float
+        - in: query
+          name: shippingLongitude
+          required: false
+          description: >-
+            If set, the parameter is used for the self-pickup search. (e.g.
+            7.6939128)
+          type: number
+          format: float
+        - in: query
+          name: wholesalerList
+          required: false
+          description: >-
+            Comma separated list of wholesalers-Id's, you only get offers from
+            these wholesalers.
+          type: string
+        - in: query
+          name: paymentMethodIds
+          required: false
+          description: >-
+            Comma separated list of payment methods-Id's, you also can give only
+            one id . If the field is left blank, all payment method are
+            considered. 1  SEPA direct debit; 2  advance payment; 3  cash on
+            delivery; 5 open payment; 7 invoice (payable within 8 days); 8  open
+            payment (SEPA) - used for marketplace orders
+          type: integer
+        - in: query
+          name: orderComment
+          required: false
+          description: 'Comment field, is forwarded to the wholesaler in the order.'
+          type: string
+        - in: query
+          name: referenceNumber
+          required: false
+          description: >-
+            Reference number (maximum 25 characters), is forwarded to the
+            wholesaler in the order.
+          type: string
+        - in: query
+          name: onlyCooperation
+          required: false
+          description: >-
+            Defines if only cooperation partner should be shown. Important: If
+            this parameter is set to ‘1’ in the offer request, you have to set
+            it to ‘1’ in the corresponding order request. Otherwise the order
+            will fail. 0  If the cooperation allows displaying wholesalers which
+            do not belong to the same cooperation, you will also get offers of
+            them.; 1  Show only wholesalers belonging to the same cooperation.
+          type: integer
+        - in: query
+          name: productSpecificParams
+          required: false
+          description: >-
+            Under the item keyValuePair additional information must be specified
+            for certain products. In an alloy rim order or an offer request of
+            an alloy rim, as shown in the example above, the data for the offset
+            'et' and the vehicle-id 'fid' must be entered. Additionally you can
+            set the vehicle information type (inspectionTextVehicleBrand) and
+            design / kW (inspectionTextVehicleTyp) optionally, when the client
+            is sure that the product fits on the car. Otherwise, when the Seller
+            has to check you have to add vehicle key number
+            inspectionTextVehicleKey1 (4 chars) and inspectionTextVehicleKey2
+            (6-8 chars).
+          type: string
+        - in: query
+          name: useAlternateShippingAddress
+          required: false
+          default: 1
+          description: >-
+            Whether or not to use the alternate shipping address saved in backoffice (default 1)
+          type: integer
+        - in: query
+          name: useAnonymousPrice
+          type: boolean
+          required: false
+          description: >-
+            flag to make order for anonymous order
+        - in: query
+          name: couponCode
+          required: false
+          description: >-
+            optional coupon code with format XXX-XXX-XXX-XXX
+          type: string
+      responses:
+        '403':
+          description: >-
+            The access to this endpoint is restricted for your user
+            <br /><br/>
+            The following error code will be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_RESTRICTED_ACCESS</p></td>
+                <td style="padding-left: 5px;"><p>The access to this endpoint is not allowed for your user</p></td>
+              </tr>
+            </table>
+        '200':
+          description: >-
+            Trigger an order based on the given article (normally after performing an GET order request).
+            If the order was successful the number of the order will be returned, otherwise 0.
+            <br /><br/>
+            Following error codes are available and may be returned:
+
+            <table style="width: 100%; margin: 10px;" border="1" bordercolor="gray">
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_NAME</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the name</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_STREET</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the street</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_ZIP</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the zip</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_SHIPPING_ADDRESS_CITY</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the city</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INVALID_SHIPPING_NEUTRAL</p></td>
+                <td style="padding-left: 5px;"><p>you're trying to pass a different shipping address and forgot to add the neutral</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MANDATE_NOT_ACCEPTED</p></td>
+                <td style="padding-left: 5px;"><p>the wholesaler mandate has an invalid state in the database (accepted = 0)</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_SEPA_NOT_ACCEPTED</p></td>
+                <td style="padding-left: 5px;"><p>can only occur in poland when direct debit is chosen as payment method and there's no mandate existing between the distributor and retailer</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_PAYMENT_NOT_SUPPORTED</p></td>
+                <td style="padding-left: 5px;"><p>you passed a payment mehtod which is not supported by the distributor</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_NO_MATCHING_PAYMENT</p></td>
+                <td style="padding-left: 5px;"><p>retailer and distributor have no matching payments</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_USER_ORDER_FORBIDDEN</p></td>
+                <td style="padding-left: 5px;"><p>retailer has no permission to perform an order, which can be caused by using the wrong platform</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_USER_NO_PRIVILEDGE</p></td>
+                <td style="padding-left: 5px;"><p>retailer has no permission to perform an order because of his status</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INVALID_QUANTITY</p></td>
+                <td style="padding-left: 5px;"><p>you passed an invalid quantity value</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_QUANTITY_MAX_20</p></td>
+                <td style="padding-left: 5px;"><p>you're only allowed to order 20 tyres at once</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_ITEM_NOT_FOUND</p></td>
+                <td style="padding-left: 5px;"><p>the item could not be found</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_SWIFT_BIC</p></td>
+                <td style="padding-left: 5px;"><p>the retailer has no swift/bic</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_NO_USTID</p></td>
+                <td style="padding-left: 5px;"><p>the retailer has no "Umsatzsteuer-Id"</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_REFERENCENUMBER</p></td>
+                <td style="padding-left: 5px;"><p>you forgot to pass a reference number which may be required by some cooperations, e.g. KAGUMA</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INVALID_SHIPPING_METHOD</p></td>
+                <td style="padding-left: 5px;"><p>you passed an invalid shipping method</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_ITEM_ID</p></td>
+                <td style="padding-left: 5px;"><p>the item id is missing either in the request or in the database result</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_MIN_QUANTITY</p></td>
+                <td style="padding-left: 5px;"><p>quantity is missing</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_DISTRIBUTOR_ID</p></td>
+                <td style="padding-left: 5px;"><p>distriutor id is missing</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_MISSING_MANDATORY_PARAMETER</p></td>
+                <td style="padding-left: 5px;"><p>a mandatory param is missing</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_INTERNAL_SERVER_ERROR</p></td>
+                <td style="padding-left: 5px;"><p>an internal server error occured, you may provide this information to the tyre24 team with the exact request you made including the body</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_ORDER_NOT_VALID</p></td>
+                <td style="padding-left: 5px;"><p>the order could not be performed, see the meta key for more information</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_NO_OFFER_FOUND</p></td>
+                <td style="padding-left: 5px;"><p>offer could not be retrieved from the database, this may be because the distributor is no longer offering this item or does not have the required amount</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_OFFER_PRICE_MISMATCH</p></td>
+                <td style="padding-left: 5px;"><p>the price changed</p></td>
+              </tr>
+
+              <tr>
+                <td style="padding-left: 5px; font-style: normal;"><p>ERR_WHOLESALER_MISMATCH</p></td>
+                <td style="padding-left: 5px;"><p>the given wholesaler id does not match the wholesaler id in the database result</p></td>
+              </tr>
+            </table>
+            <br /><br />
+            There are some examples below, but keep in mind there are many more cases, which is too much work to list them all.
+
+          examples:
+            Success:
+              orderId: "123456789"
+              status: true
+              type: "T"
+              estimatedDelivery: "2018-10-18"
+            With Coupon:
+              orderId: "123456789"
+              status: true
+              type: "T"
+              coupon:
+                - success: true
+                  errorMessages: []
+            With Coupon Failure:
+              orderId: "123456789"
+              status: true
+              type: "T"
+              coupon:
+                - success: false
+                  errorMessages:
+                    - NO_VALID_COUPON_AVAILABLE
+            Possible failure 1:
+              message: ""
+              errorCode: "ERR_ORDER_NOT_VALID"
+              meta:
+                - itemId: T240256
+                  errorCode: "ERR_OFFER_PRICE_MISMATCH"
+              status: false
+            Possible failer 2:
+              message: ""
+              errorCode: "ERR_MANDATE_NOT_ACCEPTED"
+              status: false
+
+          schema:
+            $ref: '#/definitions/orderStatus'
+
+definitions:
+  distributorProfile:
+    type: object
+    required:
+      - country
+      - countryCode
+      - name
+      - images
+      - description
+      - street
+      - city
+      - orderTerms
+      - deliveryTerms
+    properties:
+      country:
+        type: string
+        description: "country of the distributor"
+      countryCode:
+        type: string
+        description: "2-letter ISO code of the distributors country"
+      name:
+        type: string
+        description: "The name of the distributor"
+      images:
+        type: array
+        items:
+          type: object
+          properties:
+            URL:
+              type: string
+      description:
+        type: string
+        description: "A description of the distributor"
+      street:
+        type: string
+        description: "street of the distributor"
+      city:
+        type: string
+        description: "city of the distributor"
+      orderTerms:
+        type: string
+        description: "order terms of the distributor"
+      deliveryTerms:
+        type: string
+        description: "delivery terms of the distributor"
+  expressData:
+    type: object
+    description: "The express data to this tyre"
+    properties:
+      id:
+        type: string
+      deliveryDelay:
+        type: integer
+      deliveryType:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+      expressOffer:
+        type: object
+        properties:
+          idSolr:
+            type: string
+          priceExpressList:
+            type: object
+            properties:
+              price:
+                type: array
+                items:
+                  $ref: "#/definitions/priceListValue"
+  reviewShort:
+    type: object
+    properties:
+      sourceName:
+        type: string
+        description: "the name of the source of the review e.g. Auto Bild"
+      date:
+        type: string
+        description: "The date of the review was taken"
+      text:
+        type: string
+        description: "A text to the short review"
+  tyreLabel:
+    type: object
+    description: "The label of a tyre"
+    properties:
+      energyIndex:
+        type: string
+      wetgripIndex:
+        type: string
+      rollingNoiseValue:
+        type: string
+      rollingNoiseLevel:
+        type: string
+      verhicleClass:
+        type: string
+      imageURL:
+        type: string
+      pricatUrl:
+        type: string
+      eprelUrl:
+        type: string
+      euDirectiveNumber:
+        type: string
+      iceGrip:
+        type: integer
+      newTyreLabel:
+        type: integer
+  defaultResponse:
+    type: object
+    properties:
+      status:
+        type: boolean
+      message:
+        type: string
+  searchResponse:
+    type: object
+    required:
+      - tyreList
+    properties:
+      tyreList:
+        $ref: '#/definitions/tyreList'
+      tyreListMaxResult:
+        type: integer
+      filterList:
+        $ref: '#/definitions/Filter'
+  tyreList:
+    type: array
+    items:
+      $ref: '#/definitions/tyreListEntry'
+  tyreListEntry:
+    type: object
+    properties:
+      idSolr:
+        type: string
+        description: "The Solr id of the tyre"
+      idT24:
+        type: integer
+        description: "The T24 id of the tyre"
+      manufacturerArticleNumber:
+        type: string
+        description: "The article number of the manufacturer"
+      ean:
+        type: string
+        description: "EAN number"
+      description:
+        type: string
+        description: "A description text of the tyre"
+      additionalDescription:
+        type: string
+        description: "An additional description text of the tyre"
+      quantity:
+        type: integer
+        description: "The quantity of the tyre"
+      priceList:
+        type: array
+        items:
+          $ref: "#/definitions/priceListValue"
+        description: "The existing price lists for this tyre"
+      type:
+        type: string
+        description: "The type of the tyre"
+      speedIndex:
+        type: string
+        description: "The speed index of the tyre"
+      manufacturerName:
+        type: string
+        description: "The manufacturer name of the tyre"
+      manufacturerImage:
+        type: string
+        description: "The manufacturer image"
+      matchcode:
+        type: string
+        description: "The matchcode of the tyre"
+      profileName:
+        type: string
+        description: "The profile name of the tyre"
+      profileDescription:
+        type: string
+        description: "The profie description of the tyre"
+      size:
+        type: string
+        description: "tyre size"
+      imageURL:
+        type: string
+        description: "AN URL to an image of the tyre"
+      tyreLabel:
+        $ref: '#/definitions/tyreLabel'
+      reviewShort:
+        $ref: '#/definitions/reviewShort'
+      reviewList:
+        type: array
+        description: "A List of review for the tyyre"
+        items:
+          $ref: '#/definitions/reviewShort'
+      idDataSource:
+        description: "The data source id"
+        type: integer
+      expressData:
+        $ref: '#/definitions/expressData'
+      wholesalerArticleNo:
+        type: string
+        description: "The article number of the wholesaler"
+      isDot:
+        type: integer
+        description: "1 if DOT tyre, otherwise 0"
+      isDemo:
+        type: integer
+        description: "1 if DEMO tyre, otherwise 0"
+      isDiscontinued:
+        type: integer
+        description: "1 if discontinued, otherwise 0"
+      supportedCooperations:
+        type: string
+        description: "A string of supported cooperations e.g. [7][8][10][14][17]"
+      isPalletDelivery:
+        type: boolean
+        description: "true if product delivered with pallet"
+      is3PMSF:
+        type: integer
+      amazonAsin:
+        type: string
+      amazonProductcategory:
+        type: string
+      specialCorporationNo:
+        type: string
+  orderStatus:
+    type: object
+    required:
+      - orderId
+      - orderStatus
+      - type
+    properties:
+      orderId:
+        type: string
+      orderStatus:
+        type: boolean
+      type:
+        type: string
+      estimatedDelivery:
+        type: string
+        example: '2018-10-18'
+  offerType:
+    type: object
+    properties:
+      offerType:
+        $ref: '#/definitions/offer'
+  offer:
+    type: object
+    required:
+      - itemId
+      - price
+      - wholesalerId
+      - shippingMethodId
+      - paymentMethodId
+    properties:
+      itemId:
+        type: string
+        description: The id of the offered item
+      price:
+        type: number
+        format: float
+        description: The price of the offer as float value
+      wholesalerId:
+        type: integer
+        description: The id of the wholesaler
+      shippingMethodId:
+        type: integer
+        description: >-
+          The shipping method id. 1 standard shipping; 2  pickup; 3 express -
+          tomorrow (truck); 4 express - today (truck); 5  express - tomorrow
+          (package); 6 express - today (package)
+      paymentMethodId:
+        type: integer
+        description: >-
+          Comma separated list of payment methods-Id's, you also can give only
+          one id . If the field is left blank, all payment method are
+          considered. 1  SEPA direct debit; 2  advance payment; 3  cash on
+          delivery; 5 open payment; 7 invoice (payable within 8 days); 8  open
+          payment (SEPA) - used for marketplace orders
+      estimatedDelivery:
+        type: string
+        example: '2018-10-22'
+  distributor:
+    type: object
+    required:
+      - distributorId
+      - distributorType
+      - hasProfile
+      - dataList
+      - country
+      - countryCode
+      - name
+      - priceList
+      - orderTerms
+      - neutralShippingCosts
+      - positiveRating
+    properties:
+      distributorId:
+        type: integer
+        description: The internal id of the distributor
+      distributorType:
+        type: integer
+      hasProfile:
+        type: boolean
+      dataList:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            supported:
+              type: boolean
+            matching:
+              type: boolean
+      country:
+        type: string
+        description: The name of the country e.g. Deutschland
+      countryCode:
+        type: string
+        description: The 2-letter country iso-code e.g. de
+      name:
+        type: string
+        description: The name of the distributor
+      stock:
+        type: integer
+        description: The stock of the distributor
+      priceList:
+        type: array
+        items:
+          $ref: '#/definitions/priceListValue'
+      orderTerms:
+        type: string
+      deliveryTerms:
+        type: string
+      neutralShippingCosts:
+        type: number
+        format: float
+        description: "delivery costs for different shipping address or neutral shipping"
+      shippingCosts:
+        type: array
+        items:
+          $ref: '#/definitions/shippingCosts'
+      in_range:
+          type: string
+      pickup_date:
+          type: string
+      pickup_possible:
+          type: integer
+      pickup_preparation_time:
+          type: string
+      is_premium_supplier:
+          type: string
+      positiveRating:
+          type: integer
+  priceListValue:
+    type: object
+    required:
+      - id
+      - value
+      - country_code
+      - currency
+      - type
+      - min_order
+    properties:
+      id:
+        type: string
+        description: "A sequential number of the list entries"
+        example: "2"
+        format: string
+      value:
+        type: number
+        description: "The calculated price of the given type"
+        format: float
+        example: 5.23
+      country_code:
+        type: string
+        description: 2-letter iso-code e.g. de
+        example: "de"
+      currency:
+        type: string
+        description: 3-letter iso currency code e.g. EUR
+        example: "EUR"
+      type:
+        type: string
+        description: |
+          type of price that was calculated:
+          <table>
+          <tr><td>assembly</td><td>assembly price</td></tr>
+          <tr><td>kb</td><td>calculation baseprice</td></tr>
+          <tr><td>evp</td><td>endcustomer price for pricelist 3</td></tr>
+          <tr><td>ek</td><td>purchase price</td></tr>
+          <tr><td>evp_list_1</td><td>endcustomer price for pricelist 1</td></tr>
+          <tr><td>evp_list_2</td><td>endcustomer price for pricelist 2</td></tr>
+          <tr><td>evp_list_3</td><td>endcustomer price for pricelist 3</td></tr>
+          <tr><td>evp_list_4</td><td>endcustomer price for pricelist 4</td></tr>
+          <tr><td>evp_list_5</td><td>endcustomer price for pricelist 5</td></tr>
+          <tr><td>evp_list_99</td><td>alzura shop price</td></tr>
+          <tr><td>evp_one</td><td>endcustomer price one for pricelist 3</td></tr>
+          <tr><td>ek_one</td><td>purchase price one</td></tr>
+          <tr><td>evp_one_list_1</td><td>endcustomer price one for pricelist 1</td></tr>
+          <tr><td>evp_one_list_2</td><td>endcustomer price one for pricelist 2</td></tr>
+          <tr><td>evp_one_list_3</td><td>endcustomer price one for pricelist 3</td></tr>
+          <tr><td>evp_one_list_4</td><td>endcustomer price one for pricelist 4</td></tr>
+          <tr><td>evp_one_list_5</td><td>endcustomer price one for pricelist 5</td></tr>
+          <tr><td>evp_one_list_99</td><td>alzura shop price one</td></tr>
+          </table>
+        example: "ek"
+      min_order:
+        type: integer
+        description: "Minimum amount that needs to be orderd to get the price mentioned in value"
+        example: 2
+  shippingCosts:
+    type: object
+    description: "available shipping types"
+    properties:
+      shipping_standard:
+        $ref: '#/definitions/ShippingCostsItem'
+      pickup:
+        $ref: '#/definitions/ShippingCostsItem'
+      shipping_truck:
+        $ref: '#/definitions/ShippingCostsItem'
+      shipping_truck_fast:
+        $ref: '#/definitions/ShippingCostsItem'
+      shipping_spedition:
+        $ref: '#/definitions/ShippingCostsItem'
+      shipping_spedition_fast:
+        $ref: '#/definitions/ShippingCostsItem'
+  ShippingCostsItem:
+    type: object
+    required:
+      - price
+      - estimatedDelivery
+    properties:
+      price:
+        type: number
+        format: float
+        example: 2.21
+      estimatedDelivery:
+        type: string
+        example: '2018-10-22'
+  MostWanted:
+    type: object
+    required:
+      - matchcode
+      - readableSize
+    properties:
+      matchcode:
+        type: string
+      readableSize:
+        type: string
+  AutoComplete:
+    type: object
+    required:
+      - matchcodeSearch
+      - matchcodeDisplay
+    properties:
+      matchcodeSearch:
+        type: string
+        description: 'The matchcode to search for (e.g.: S1956015)'
+      matchcodeDisplay:
+        type: string
+        description: 'The matchcode to display in a frontend (e.g.: Sommer 195/60 R15)'
+  Sorter:
+    type: object
+    required:
+      - sorterId
+      - sorterName
+    properties:
+      sorterId:
+        type: string
+        description: 'The id of the sorter (e.g.: ts | pa | pd | kb | mf | tl1 | tl2)'
+      sorterName:
+        type: string
+        description: >-
+          The translated text of the sorter to view in a frontend (e.g.
+          Topseller | Preis: niedrigste Preise zuerst | Preis: höchste Preise
+          zuerst | ... )
+  Filter:
+    type: object
+    required:
+      - filterId
+      - filterName
+      - filterValueList
+      - multipleChoice
+    properties:
+      filterId:
+        type: string
+        description: 'The id of the Filter (e.g.: 6)'
+      filterName:
+        type: string
+        description: 'The internal name of the Filter (e.g.: express_delivery)'
+      filterValueList:
+        type: array
+        items:
+          $ref: '#/definitions/FilterValue'
+      multipleChoice:
+        type: boolean
+  FilterValue:
+    type: object
+    required:
+      - valueId
+      - amount
+    properties:
+      description:
+        type: string
+        description: >-
+          The translated description of the value to show in a Frontend (e.g.:
+          Alle | Express Heute | Express Morgen)
+      valueId:
+        type: string
+        description: The value of the vilter (e.g. all | today | tomorrow)
+      amount:
+        type: integer
+        description: The amount how many results match this filter

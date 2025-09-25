@@ -1,0 +1,88 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded mb-4" id="toolbar-menu">
+    <a class="navbar-brand font-weight-bold text-primary" href="#">
+        <i class="material-icons align-middle">build</i> Gestione Pneumatici
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mpApiToolbar" aria-controls="mpApiToolbar" aria-expanded="false" aria-label="Menu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mpApiToolbar">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="javascript:void(0);" data-page="dashboard"><i class="material-icons align-middle">dashboard</i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0);" data-page="importAPI"><i class="material-icons align-middle">cloud_download</i> Importa API</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0);" data-page="importCSV"><i class="material-icons align-middle">download</i> Importa CSV</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0);" data-page="table"><i class="material-icons align-middle">table_view</i> Visualizza Tabella Pneumatici</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0);" data-page="settings"><i class="material-icons align-middle">settings</i> Impostazioni</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0);" data-page="help"><i class="material-icons align-middle">help_outline</i> Aiuto</a>
+            </li>
+        </ul>
+        <span class="navbar-text">
+            <button class="btn btn-outline-primary btn-sm"><i class="material-icons align-middle">refresh</i> Aggiorna</button>
+        </span>
+    </div>
+</nav>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.querySelector(".title-row").closest(".container-fluid");
+        const toolbarMenu = document.getElementById("toolbar-menu");
+        const toolbarMenuToggler = toolbarMenu.querySelector(".navbar-toggler");
+        const toolbarMenuCollapse = toolbarMenu.querySelector(".collapse");
+
+        toolbarMenuToggler.addEventListener("click", () => {
+            toolbarMenuCollapse.classList.toggle("show");
+        });
+
+        container.appendChild(toolbarMenu);
+
+        const mpApiToolbar = document.getElementById("mpApiToolbar");
+        mpApiToolbar.querySelectorAll(".nav-link").forEach((link) => {
+            link.addEventListener("click", async (event) => {
+                event.preventDefault();
+                const type = event.currentTarget.getAttribute("data-page");
+                console.log(`click on button ${type}`);
+                mpApiToolbar.querySelectorAll(".nav-link").forEach((activeLink) => {
+                    activeLink.classList.remove("active");
+                });
+                event.currentTarget.classList.add("active");
+                switch (type) {
+                    case "dashboard":
+                        await loadPage(type);
+                        break;
+                    case "importAPI":
+                        await loadPage(type);
+                        await bindPageImportAPI();
+                        break;
+                    case "importCSV":
+                        await loadPage(type);
+                        await bindPageImportCSV();
+                        break;
+                    case "table":
+                        await loadPage(type);
+                        await bindPageViewTable();
+                        break;
+                    case "settings":
+                        await loadPage(type);
+                        await bindPageSettings();
+                        break;
+                    case "help":
+                        await loadPage(type);
+                        await bindPageHelp();
+                        break;
+                    default:
+                        console.error(`Page ${type} not found`);
+                }
+            });
+        });
+    });
+</script>

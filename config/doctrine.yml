@@ -1,0 +1,9 @@
+doctrine:
+  orm:
+    mappings:
+      MpStockAdv:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/modules/mpstockadv/src/Entity"
+        prefix: 'MpSoft\\MpStockAdv\\Entity'
+        alias: MpStockAdv

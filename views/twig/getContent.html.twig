@@ -1,0 +1,179 @@
+<script src="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/select2/select2.min.js') }}"></script>
+<script src="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/sweetalert/sweetalert2.min.js') }}"></script>
+
+<div class="d-flex justify-content-start align-items-top gap-4">
+    <div class="wrap-form" id="wrap-form">
+        <div class="wrap-form-header">
+            <span class="material-icons">settings</span>
+            <span class="title">Impostazioni</span>
+        </div>
+
+        <div class="wrap-form-body">
+			<h3 class="mb-2 pb-2">
+				<img src="{{ baseUrl }}{{ asset('modules/mpapityres/views/assets/img/api_128.png') }}" alt="api" class="img-thumbnail mr-2" style="width: 48px;">
+				<span class="title">CRON</span>
+			</h3>
+			<div class="form-group">
+				<label for="cronGetCatalog">URL CRON DOWNLOAD CATALOGO VIA API</label>
+				<input id="cronGetCatalog" name="cronGetCatalog" class="form-control btn-url pointer" type="text" readonly value="{{ cronGetCatalog }}">
+			</div>
+            <div class="form-group">
+				<label for="cronImportCatalog">URL CRON IMPORTAZIONE CATALOGO SU PRESTASHOP</label>
+				<input id="cronImportCatalog" name="cronImportCatalog" class="form-control btn-url pointer" type="text" readonly value="{{ cronImportCatalog }}">
+			</div>
+            <script>
+                document.querySelectorAll('.btn-url').forEach((btn) => {
+                    btn.addEventListener('click', function() {
+                        navigator.clipboard.writeText(btn.value).then(function() {
+                            alert('URL copiato negli appunti.');
+                        }, function() {
+                            alert('Impossibile copiare negli appunti.');
+                        });
+                    });
+                });
+            </script>
+		</div>
+
+        <div class="wrap-form-body">
+            <h3 class="mb-2 pb-2">
+                <img src="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/img/tyre_128.png') }}" alt="tyre" class="img-thumbnail mr-2" style="width: 48px" />
+                <span class="title">SEZIONE PNEUMATICI</span>
+            </h3>
+
+            <div class="token mb-2">
+                <div class="form-group">
+                    <label for="apiTyres14Token">apiTyres14Token</label>
+                    <textarea id="apiTyres14Token" name="apiTyres14Token" class="form-control" rows="6">{{ apiTyres14Token }}</textarea>
+                </div>
+            </div>
+
+            <h3 class="mb-2 pb-2">
+                <img src="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/img/filter_128.png') }}" alt="filter" class="img-thumbnail mr-2" style="width: 48px" />
+                <span class="title">FILTRI PNEUMATICI</span>
+            </h3>
+            <div class="row" id="filters"></div>
+        </div>
+
+        <div class="wrap-form-body">
+            <h3 class="mb-2 pb-2">
+                <img src="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/img/api_128.png') }}" alt="api" class="img-thumbnail mr-2" style="width: 48px" />
+                <span class="title">TOKEN API</span>
+            </h3>
+            <div class="form-group">
+                <label for="apiTyres14Token">apiTyres14Token</label>
+                <textarea id="apiTyres14Token" name="apiTyres14Token" class="form-control" rows="6">{{ apiTyres14Token }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="apiProductsToken">apiProductsToken</label>
+                <textarea id="apiProductsToken" name="apiProductsToken" class="form-control" rows="6">{{ apiProductsToken }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="apiAlloysToken">apiAlloysToken</label>
+                <textarea id="apiAlloysToken" name="apiAlloysToken" class="form-control" rows="6">{{ apiAlloysToken }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="apiWearPartsToken">apiWearPartsToken</label>
+                <textarea id="apiWearPartsToken" name="apiWearPartsToken" class="form-control" rows="6">{{ apiWearPartsToken }}</textarea>
+            </div>
+        </div>
+        <div class="wrap-form-footer">
+            <button type="button" class="btn btn-primary">Salva</button>
+            <button type="button" class="btn btn-secondary">Annulla</button>
+            <button type="button" class="btn btn-secondary btn-read-csv">Leggi CSV</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const AdminControllerUrl = "{{ path('mpapityres_admin_get_filters_json') }}";
+    document.addEventListener("DOMContentLoaded", async () => {
+        console.log(AdminControllerUrl);
+        const response = await fetch(AdminControllerUrl);
+        const data = await response.json();
+        console.log(data);
+
+        const filtersElement = document.getElementById("filters");
+        const filtersJson = JSON.parse(data.filters);
+        const sortersJson = JSON.parse(data.sorters);
+        if (filtersJson) {
+            filtersJson.forEach((filter) => {
+                const formGroup = document.createElement("div");
+                formGroup.classList.add("form-group");
+
+                const label = document.createElement("label");
+                label.setAttribute("for", filter.filterId);
+                label.textContent = filter.filterName;
+
+                const select = document.createElement("select");
+                select.id = filter.filterId;
+                select.name = filter.filterName;
+                select.classList.add("form-control");
+                if (filter.multipleChoice) {
+                    select.setAttribute("multiple", "multiple");
+                }
+
+                filter.filterValueList.forEach((option) => {
+                    const opt = document.createElement("option");
+                    opt.value = option.valueId;
+                    opt.textContent = option.description;
+                    select.appendChild(opt);
+                });
+
+                formGroup.appendChild(label);
+                formGroup.appendChild(select);
+                filtersElement.appendChild(formGroup);
+            });
+        }
+        if (sortersJson) {
+            const formGroup = document.createElement("div");
+            formGroup.classList.add("form-group");
+            const label = document.createElement("label");
+            label.setAttribute("for", "sorter");
+            label.textContent = "Ordinatore";
+
+            const select = document.createElement("select");
+            select.id = "sorter";
+            select.name = "sorter";
+            select.classList.add("form-control");
+
+            sortersJson.forEach((sorter) => {
+                const opt = document.createElement("option");
+                opt.value = sorter.sorterId;
+                opt.textContent = sorter.sorterName;
+                select.appendChild(opt);
+            });
+
+            formGroup.appendChild(label);
+            formGroup.appendChild(select);
+            filtersElement.appendChild(formGroup);
+        }
+
+        document
+            .getElementById("wrap-form")
+            .querySelectorAll("select")
+            .forEach((select) => {
+                $(select).select2();
+
+                const btnReadCsv = document.querySelector(".btn-read-csv");
+                btnReadCsv.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    const response = await fetch("{{ path('mpapityres_admin_chunk_csv_to_json') }}");
+                    const data = await response.json();
+                    alert(`Creati ${data.chunks_created} chunk, in ${data.time}, Totale righe: ${data.total_rows}`);
+                });
+            });
+    });
+</script>
+
+<style>
+    .pointer {
+        cursor: pointer !important;
+    }
+</style>
+
+<link rel="stylesheet" href="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/select2/select2.min.css') }}" />
+<link rel="stylesheet" href="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/select2/select2.bs4.min.css') }}" />
+<link rel="stylesheet" href="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/sweetalert/sweetalert2.min.css') }}" />
+

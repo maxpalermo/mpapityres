@@ -1,0 +1,28 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('../modules/mpapityres/views/assets/components/sweetalert/sweetalert2.min.css') }}" type="text/css" media="all">
+	<link rel="stylesheet" href="{{ asset('../modules/mpapityres/views/assets/css/style.css') }}" type="text/css" media="all">
+	<link rel="stylesheet" href="{{ asset('../modules/mpapityres/views/assets/components/select2/select2.min.css') }}" type="text/css" media="all">
+	<link rel="stylesheet" href="{{ asset('../modules/mpapityres/views/assets/components/select2/select2.bs4-theme.min.css') }}" type="text/css" media="all">
+{% endblock %}
+
+{% block content %}
+	<div class="container-fluid" id="page-container"></div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('../modules/mpapityres/views/assets/components/select2/select2.min.js') }}" type="text/javascript"></script>
+	<script src="{{ asset('../modules/mpapityres/views/assets/components/sweetalert/sweetalert2.min.js') }}" type="text/javascript"></script>
+	<script type="text/javascript">
+		/** URL GENERALE CHE GESTISCE I PARAMETRI ACTION E PARAMS **/
+        const AdminControllerUrl = "{{ path('mpapityres_admin_index') }}";
+    </script>
+    <script src="{{ asset('../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/fetchTyresDialog.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/downloadCatalog.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/fetchDistributorList.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/importCatalog.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/script.js') }}" type="text/javascript"></script>
+{% endblock %}

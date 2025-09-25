@@ -1,0 +1,77 @@
+<div class="d-flex justify-content-between align-items-center flex-wrap p-2 bg-white shadow-sm rounded paginator-toolbar">
+  <!-- Sezione Sinistra: Totale record -->
+  <div class="mb-2 mb-md-0 text-muted font-weight-bold">
+    {{ 'Totale record:'|trans }} <span class="text-primary">{{ total_records }}</span>
+  </div>
+
+  <!-- Sezione Centro: Navigazione pagine -->
+  <nav aria-label="Page navigation" class="mb-2 mb-md-0 paginator-nav">
+    <ul class="pagination mb-0 justify-content-center paginator-ul">
+      {% for btn in paginator %}
+        <li class="page-item {% if not btn.enabled %}disabled{% endif %} {% if btn.label|intCast == current_page %}active{% endif %}">
+          <a class="page-link" href="{{ btn.url }}" data-page="{{ btn.page }}" data-limit="{{ btn.limit }}">
+            {% if btn.label == 'first' %}
+              <span aria-hidden="true">&laquo;&laquo;</span>
+            {% elseif btn.label == 'prev' %}
+              <span aria-hidden="true">&laquo;</span>
+            {% elseif btn.label == 'next' %}
+              <span aria-hidden="true">&raquo;</span>
+            {% elseif btn.label == 'last' %}
+              <span aria-hidden="true">&raquo;&raquo;</span>
+            {% else %}
+              {{ btn.label }}
+            {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+
+  <!-- Sezione Destra: Righe per pagina -->
+  <div class="d-flex align-items-center">
+    <span class="mr-2 text-muted">{{ 'Righe per pagina:'|trans }}</span>
+    <form method="get" class="mb-0">
+      <select name="limit" class="custom-select custom-select-sm paginator-limit">
+        {% for opt in [10, 20, 50, 100, 200, 500, 1000] %}
+          <option value="{{ opt }}" {% if opt == limit %}selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
+</div>
+
+<style>
+    .paginator-toolbar {
+      background: #f8f9fa;
+      border: 1px solid #e3e6f0;
+    }
+    .paginator-nav .page-link {
+      color: #495057;
+      border-radius: 0.25rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .paginator-nav .page-link:hover,
+    .paginator-nav .page-item.active .page-link {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+    .paginator-nav .page-item.disabled .page-link {
+      color: #adb5bd;
+      pointer-events: none;
+      background: #e9ecef;
+      border-color: #dee2e6;
+    }
+    .paginator-limit {
+      min-width: 70px;
+    }
+    @media (max-width: 767.98px) {
+    .paginator-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .paginator-nav {
+        justify-content: flex-start !important;
+    }
+    }
+</style>

@@ -1,0 +1,452 @@
+<!-- Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"/>
+<link
+rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+<style>
+	.open-dialog-btn {
+		padding: 16px 32px;
+		background: #fff;
+		color: #4361ee;
+		border: none;
+		border-radius: 10px;
+		font-size: 1.1rem;
+		font-weight: 500;
+		cursor: pointer;
+		box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.open-dialog-btn:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+	}
+
+	/* Stili per il dialog */
+	dialog {
+		width: 90%;
+		max-width: 500px;
+		border: none;
+		border-radius: 12px;
+		padding: 0;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+		overflow: hidden;
+		background: white;
+	}
+
+	dialog::backdrop {
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(5px);
+	}
+
+	.dialog-header {
+		background: var(--primary);
+		color: var(--light);
+		padding: 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.dialog-title {
+		font-size: 1.4rem;
+		font-weight: 500;
+		color: var(--light);
+	}
+
+	.close-btn {
+		background: rgba(255, 255, 255, 0.2);
+		border: none;
+		cursor: pointer;
+		color: var(--light);
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.2s ease;
+	}
+
+	.close-btn:hover {
+		background: rgba(255, 255, 255, 0.3);
+		transform: rotate(90deg);
+	}
+
+	.dialog-body {
+		padding: 25px;
+		line-height: 1.6;
+		color: #444;
+		background: #f9f9f9;
+		max-height: 60vh;
+		overflow-y: auto;
+	}
+
+	.dialog-text {
+		margin-bottom: 15px;
+		text-align: left;
+	}
+
+	.dialog-footer {
+		background: #fff;
+		padding: 20px;
+		display: flex;
+		justify-content: flex-end;
+		border-top: 1px solid #eee;
+	}
+
+	.action-btn {
+		padding: 10px 24px;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		font-weight: 500;
+		transition: all 0.2s ease;
+	}
+
+	.close-dialog-btn {
+		background: var(--primary);
+		color: var(--light);
+	}
+
+	.action-btn:hover {
+		opacity: 0.9;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.features {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 15px;
+		margin-top: 20px;
+		justify-content: center;
+	}
+
+	.feature {
+		background: rgba(255, 255, 255, 0.15);
+		backdrop-filter: blur(10px);
+		color: white;
+		padding: 15px;
+		border-radius: 10px;
+		width: 150px;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+	}
+
+	.feature i {
+		font-size: 2rem;
+		margin-bottom: 10px;
+		display: block;
+	}
+
+	@media(max-width: 600px) {
+		dialog {
+			width: 95%;
+		}
+
+		.dialog-header,
+		.dialog-body,
+		.dialog-footer {
+			padding: 15px;
+		}
+
+		.features {
+			flex-direction: column;
+			align-items: center;
+		}
+	}
+</style>
+
+<div class="card mb-2">
+	<div class="card-header">
+		<h3>Importa con API Tyre 1.4</h3>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-12">
+				<div class="alert alert-info">
+					<p>Per importare i dati con API Tyre 1.4, segui questi passaggi:</p>
+					<ol>
+						<li>Imposta i filtri di ricerca</li>
+						<li>Clicca sul pulsante "Scarica e crea file JSON" per scaricare i dati e creare il file JSON.</li>
+						<li>Clicca sul pulsante "Crea catalogo da file JSON" per creare il catalogo.</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card-body">
+		<form action="" method="post" class="align-items-center">
+			<div class="row">
+				<div class="col-md-12">
+					<h3>Imposta i filtri di ricerca</h3>
+				</div>
+
+				<div class="col-md-4">
+					<div class="form-group" data-filter-id="0">
+						<label for="filter-0">Tipo di pneumatico</label>
+						<select id="filter-0" name="filter-0[]" class="form-control select2" multiple>
+							<option value="all" {% if filters['filter-0'] is defined and 'all' in filters['filter-0'] %} selected {% endif %}>Tutti</option>
+							<option value="E" {% if filters['filter-0'] is defined and 'E' in filters['filter-0'] %} selected {% endif %}>Estivi</option>
+							<option value="I" {% if filters['filter-0'] is defined and 'I' in filters['filter-0'] %} selected {% endif %}>Invernali</option>
+							<option value="Q" {% if filters['filter-0'] is defined and 'Q' in filters['filter-0'] %} selected {% endif %}>pneumatici 4 stagioni</option>
+							<option value="O" {% if filters['filter-0'] is defined and 'O' in filters['filter-0'] %} selected {% endif %}>Pneumatici offroad</option>
+							<option value="R" {% if filters['filter-0'] is defined and 'R' in filters['filter-0'] %} selected {% endif %}>Pneumatici con scanalature</option>
+							<option value="M" {% if filters['filter-0'] is defined and 'M' in filters['filter-0'] %} selected {% endif %}>Pneumatici Moto</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="form-group" data-filter-id="1">
+						<label for="filter-1">Produttori</label>
+						<select id="filter-1" name="filter-1[]" class="form-control select2" multiple>
+							<option value="all" {% if filters['filter-1'] is defined and 'all' in filters['filter-1'] %} selected {% endif %}>Tutti</option>
+							{% for manufacturer in manufacturers %}
+								<option value="{{ manufacturer.id_manufacturer }}" {% if filters['filter-1'] is defined and manufacturer.id_manufacturer in filters['filter-1'] %} selected {% endif %}>{{ manufacturer.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="form-group" data-filter-id="2">
+						<label for="filter-2">Categorie di pneumatico</label>
+						<select id="filter-2" name="filter-2" class="form-control select2">
+							<option value="all" {% if filters['filter-2'] is defined and 'all' in filters['filter-2'] %} selected {% endif %}>Tutti</option>
+							<option value="high" {% if filters['filter-2'] is defined and 'high' in filters['filter-2'] %} selected {% endif %}>Marche premium</option>
+							<option value="middle" {% if filters['filter-2'] is defined and 'middle' in filters['filter-2'] %} selected {% endif %}>Marche di qualità</option>
+							<option value="low" {% if filters['filter-2'] is defined and 'low' in filters['filter-2'] %} selected {% endif %}>Prodotti di qualità economici</option>
+							<option value="recommendation" {% if filters['filter-2'] is defined and 'recommendation' in filters['filter-2'] %} selected {% endif %}>La nostra raccomandazione</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="form-group" data-filter-id="4">
+						<label for="filter-4">Velocità massima</label>
+						<select id="filter-4" name="filter-4" class="form-control select2">
+							<option value="all" {% if filters['filter-4'] is defined and 'all' in filters['filter-4'] %} selected {% endif %}>Tutti</option>
+							<option value="t" {% if filters['filter-4'] is defined and 't' in filters['filter-4'] %} selected {% endif %}>T fino a 190 km/h</option>
+							<option value="h" {% if filters['filter-4'] is defined and 'h' in filters['filter-4'] %} selected {% endif %}>H fino a 210 km/h</option>
+							<option value="v" {% if filters['filter-4'] is defined and 'v' in filters['filter-4'] %} selected {% endif %}>V fino a 240 km/h</option>
+							<option value="z" {% if filters['filter-4'] is defined and 'z' in filters['filter-4'] %} selected {% endif %}>ZR, Y, W</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="form-group" data-filter-id="5">
+						<label for="filter-5">Tipo di ricerca</label>
+						<select id="filter-5" name="filter-5[]" class="form-control select2" multiple>
+							<option value="all" {% if filters['filter-5'] is defined and 'all' in filters['filter-5'] %} selected {% endif %}>Tutti</option>
+							<option value="runflat" {% if filters['filter-5'] is defined and 'runflat' in filters['filter-5'] %} selected {% endif %}>Pneumatici Runflat</option>
+							<option value="hideDot" {% if filters['filter-5'] is defined and 'hideDot' in filters['filter-5'] %} selected {% endif %}>Nascondi DOT>36 mesi</option>
+							<option value="hideDiscontinued" {% if filters['filter-5'] is defined and 'hideDiscontinued' in filters['filter-5'] %} selected {% endif %}>Nascondi modelli di fine serie</option>
+							<option value="hideDemo" {% if filters['filter-5'] is defined and 'hideDemo' in filters['filter-5'] %} selected {% endif %}>Nascondi DEMO</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="form-group" data-filter-id="6">
+						<label for="filter-6">Consegna espressa</label>
+						<select id="filter-6" name="filter-6" class="form-control select2">
+							<option value="">Seleziona</option>
+							<option value="all" {% if filters['filter-6'] is defined and 'all' in filters['filter-6'] %} selected {% endif %}>Tutti</option>
+							<option value="today" {% if filters['filter-6'] is defined and 'today' in filters['filter-6'] %} selected {% endif %}>Consegna espressa oggi</option>
+							<option value="tomorrow" {% if filters['filter-6'] is defined and 'tomorrow' in filters['filter-6'] %} selected {% endif %}>Consegna espressa domani</option>
+						</select>
+					</div>
+				</div>
+
+
+				<div class="col-md-12 form-group d-flex justify-content-center align-items-center">
+					<button type="button" class="btn btn-primary" id="btn-set-api-filters">
+						<span class="material-icons">settings</span>
+						<span>Imposta i filtri</span>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="card-body">
+		<form action="" method="post" class="align-items-center">
+			<div class="row">
+				<div class="col-md-12">
+					<h3>Imposta parametri di importazione</h3>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="">Seleziona la categoria dei pneumatici</label>
+						<select name="category" id="category" class="form-control">
+							<option value="">Seleziona</option>
+							<option value="home" {% if categoryName == 'home' %} selected {% endif %}>Home</option>
+							<option value="pneumatici" {% if categoryName == 'pneumatici' %} selected {% endif %}>Pneumatici</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="">Seleziona l'aliquota IVA</label>
+						<select name="id_tax_rules_group" id="id_tax_rules_group" class="form-control">
+							<option value="">Seleziona</option>
+							{% for ruleGroup in taxRulesGroups %}
+								<option value="{{ ruleGroup.id_tax_rules_group }}" {% if ruleGroup.id_tax_rules_group == idTaxRulesGroup %} selected {% endif %}>{{ ruleGroup.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="">Azioni</label>
+						<br>
+						<button type="button" class="btn btn-primary" id="btn-save-api-settings">
+							<span class="material-icons">save</span>
+							<span>Salva le impostazioni</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="card-footer">
+		<form action="" method="post" class="d-flex justify-content-center align-items-center gap-2">
+			<button type="button" class="btn btn-primary btn-fetch-tyres-api" id="btn-fetch-tyres-api">
+				<span class="material-icons">adjust</span>
+				<span>Scarica il catalogo Tyres</span>
+			</button>
+			<button type="button" class="btn btn-success btn-create-prestashop-catalog" id="btn-create-prestashop-catalog">
+				<span class="material-icons">adjust</span>
+				<span>Crea catalogo Prestashop</span>
+			</button>
+		</form>
+	</div>
+</div>
+
+<div class="card mb-2">
+	<div class="card-header">
+		<h3>Elementi importati</h3>
+		<h4>FILE JSON</h4>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-12">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Elemento</th>
+							<th>Scaricati</th>
+							<th>Catalogo</th>
+							<th>Aggiornati</th>
+							<th>Errore</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="products">
+							<td>Prodotti</td>
+							<td class="imported">
+								<strong>{{ totalTyres }}</strong>
+							</td>
+							<td class="existing">0</td>
+							<td class="updated">0</td>
+							<td class="error">0</td>
+						</tr>
+						<tr class="images">
+							<td>Immagini</td>
+							<td class="imported">0</td>
+							<td class="existing">0</td>
+							<td class="updated">0</td>
+							<td class="error">0</td>
+						</tr>
+						<tr class="manufacturers">
+							<td>Produttori</td>
+							<td class="imported">
+								<strong>{{ totalManufacturers }}</strong>
+							</td>
+							<td class="existing">0</td>
+							<td class="updated">0</td>
+							<td class="error">0</td>
+						</tr>
+						<tr class="suppliers">
+							<td>Distributori</td>
+							<td class="imported">
+								<strong>{{ totalSuppliers }}</strong>
+							</td>
+							<td class="existing">0</td>
+							<td class="updated">0</td>
+							<td class="error">0</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="card mb-2">
+	<div class="card-header">
+		<h3>Ultimi 50 elementi presenti nel file JSON</h3>
+		<h4>FILE JSON</h4>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-12">
+				<table class="table" id="last50JsonTyres">
+					<thead>
+						<tr>
+							<th>Imm</th>
+							<th>Id Tyre</th>
+							<th>Matchcode</th>
+							<th>EAN</th>
+							<th>Produttore</th>
+							<th>Prodotto</th>
+							<th>Quantità</th>
+							<th>Prezzo</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- elementi dinamici -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<dialog id="fetchTyresDialog">
+	<div class="dialog-header">
+		<h2 class="dialog-title">Titolo del Dialog</h2>
+		<button class="close-btn" id="closeHeaderBtn" onclick="document.getElementById('fetchTyresDialog').close()">
+			<span class="material-icons">close</span>
+		</button>
+	</div>
+	<div class="dialog-body">
+		<p class="dialog-text">Questo è un esempio di dialog moderno che utilizza l'elemento nativo
+			<strong>&lt;dialog&gt;</strong>
+			di HTML5.</p>
+		<p class="dialog-text">Il dialog è diviso in tre sezioni distinte: header, body e footer, come richiesto.</p>
+		<p class="dialog-text">Nell'header è presente il titolo e il pulsante di chiusura con icona "X" di Material Icons.</p>
+		<p class="dialog-text">Il footer contiene il pulsante "CHIUDI" per chiudere il dialog.</p>
+		<p class="dialog-text">Prova a chiudere il dialog cliccando sulla X, sul pulsante CHIUDI, premendo ESC o cliccando fuori dal dialog.</p>
+	</div>
+	<div class="dialog-footer">
+		<button class="action-btn close-dialog-btn" id="closeFooterBtn" onclick="document.getElementById('fetchTyresDialog').close()">
+			<span class="material-icons" style="vertical-align: middle; margin-right: 5px;">check</span>
+			CHIUDI
+		</button>
+	</div>
+</dialog>
+<!-- Elemento nascosto per passare l'URL all'API -->
+<div data-fetch-tyres-url="{{ path('mpapityres_fetch_tyres') }}" style="display:none;"></div>
+<div data-set-api-filters-url="{{ path('mpapityres_set_api_filters') }}" style="display:none;"></div>
+<div data-last-tyres="{{ last50Tyres }}" style="display:none;"></div>

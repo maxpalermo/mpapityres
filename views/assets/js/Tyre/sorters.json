@@ -1,0 +1,30 @@
+[
+    {
+        "sorterId": "ts",
+        "sorterName": "Top venditore: prima pneumatici più venduti"
+    },
+    {
+        "sorterId": "pa",
+        "sorterName": "Prezzo: prima prezzi piú bassi"
+    },
+    {
+        "sorterId": "pd",
+        "sorterName": "Prezzo: prima prezzi piú alti"
+    },
+    {
+        "sorterId": "kb",
+        "sorterName": "Ordina in base al calcolo del prezzo base"
+    },
+    {
+        "sorterId": "mf",
+        "sorterName": "Ordina per marca"
+    },
+    {
+        "sorterId": "tl1",
+        "sorterName": "Etichetta pneumatico: miglior efficienza energetica"
+    },
+    {
+        "sorterId": "tl2",
+        "sorterName": "Etichetta pneumatico: miglior garanzia sul bagnato"
+    }
+]

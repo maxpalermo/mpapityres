@@ -1,0 +1,197 @@
+mpapityres_admin_index:
+  path: /mpapityres
+  methods: [GET, POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::index
+
+mpapityres_admin_download_catalog_api:
+  path: /mpapityres/download-catalog-api
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\DownloadCatalogApiController::index
+
+mpapityres_admin_import_catalog_from_table:
+  path: /mpapityres/import-catalog-from-table
+  methods: [GET, POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\ImportCatalogFromTableController::index
+
+mpapityres_admin_get_filters_json:
+  path: /mpapityres/get-filters-json
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::getFiltersJsonAction
+
+mpapityres_admin_read_csv:
+  path: /mpapityres/read-csv
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::readCsvAction
+
+mpapityres_admin_chunk_csv_to_json:
+  path: /mpapityres/chunk-csv-to-json
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::chunkCsvToJsonAction
+
+mpapityres_admin_load_page:
+  path: /mpapityres/load-page
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::loadPageAction
+
+mpapityres_admin_download_json:
+  path: /mpapityres/download-json
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::downloadJsonAction
+
+mpapityres_admin_read_json:
+  path: /mpapityres/read-json
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::readJsonAction
+
+mpapityres_admin_import_json:
+  path: /mpapityres/import-json
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::importJsonAction
+
+mpapityres_admin_import_chunks:
+  path: /mpapityres/import-chunks
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::importChunksAction
+
+mpapityres_admin_import_from_chunk:
+  path: /mpapityres/import-from-chunk
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::importFromChunkAction
+
+mpapityres_admin_import_chunk_part:
+  path: /mpapityres/import-chunk-part
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::importChunkPartAction
+
+mpapityres_admin_download_catalog:
+  path: /mpapityres/download-catalog
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::downloadCatalogAction
+
+mpapityres_admin_dashboard:
+  path: /mpapityres/dashboard
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\DashboardController::index
+
+mpapityres_admin_table:
+  path: /mpapityres/table
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\TableTyresController::index
+
+mpapityres_admin_import_csv:
+  path: /mpapityres/import-csv
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\ImportCsvController::index
+
+mpapityres_admin_add_product:
+  path: /mpapityres/add-product/{id}
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\TableTyresController::addProductAction
+
+mpapityres_admin_delete_duplicate_products:
+  path: /mpapityres/delete-duplicate-products
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::deleteDuplicateProductsAction
+
+mpapityres_admin_create_features:
+  path: /mpapityres/create-features
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::createProductFeaturesAction
+
+mpapityres_admin_update_catalog:
+  path: /mpapityres/update-catalog
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::updateCatalogAction
+
+mpapityres_admin_update_catalog_part:
+  path: /mpapityres/update-catalog-part
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::updateCatalogPartAction
+
+mpapityres_admin_download_images:
+  path: /mpapityres/download-images
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::downloadImagesAction
+
+mpapityres_admin_update_tyre_tables:
+  path: /mpapityres/update-tyre-tables
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::updateTyreTablesAction
+
+mpapityres_admin_set_suppliers:
+  path: /mpapityres/set-suppliers
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::setSuppliersAction
+
+mpapityres_admin_download_api:
+  path: /mpapityres/download-api
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::downloadApiAction
+
+mpapityres_admin_import_chunk_tyres:
+  path: /mpapityres/import-chunk-tyres
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::importChunkTyresAction
+
+mpapityres_admin_download_file:
+  path: /mpapityres/download-file
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::downloadFileAction
+
+mpapityres_fetch_tyres:
+  path: /mpapityres/fetch-tyres
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::fetchTyresAction
+
+mpapityres_fetch_json_catalog:
+  path: /mpapityres/fetch-json-catalog
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::fetchJsonCatalogAction
+
+mpapityres_set_api_filters:
+  path: /mpapityres/set-api-filters
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::setApiFiltersAction
+
+mpapityres_fetch_json_distributors:
+  path: /mpapityres/fetch-json-distributors
+  methods: [GET]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::fetchJsonDistributorsAction
+
+mpapityres_fetch_json_distributor_class:
+  path: /mpapityres/fetch-json-distributor-class
+  methods: [POST]
+  defaults:
+    _controller: MpSoft\MpApiTyres\Controllers\AdminMpApiTyresController::fetchJsonDistributorClassAction

@@ -1,0 +1,122 @@
+{#
+  SCHEDA DETTAGLIATA PNEUMATICO
+  Richiede: variabile 'tyre' passata dal controller
+#}
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<div class="container mt-4 mb-4">
+  <div class="card shadow-lg">
+    <div class="row no-gutters">
+      <div class="col-md-4 text-center p-4">
+        <img src="{{ tyre.image ?: 'https://via.placeholder.com/300x300?text=No+Image' }}" class="img-fluid rounded mb-3" alt="{{ tyre.articlename }}">
+        <div>
+          <a href="{{ tyre.tyrelabel_link }}" target="_blank">
+            <img src="{{ tyre.tyrelabel_link }}" alt="Tyre Label" style="max-width:120px;">
+          </a>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h3 class="card-title font-weight-bold mb-2">
+            {{ tyre.articlename }}
+            <span class="badge badge-secondary ml-2">{{ tyre.brandname }}</span>
+          </h3>
+          <h5 class="mb-3 text-muted">{{ tyre.profile }}</h5>
+          <div class="row mb-3">
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">straighten</i>
+              <span class="ml-1">{{ tyre.width }}/{{ tyre.height }} R{{ tyre.inner_diameter }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">directions_car</i>
+              <span class="ml-1">Classe: {{ tyre.vehicle_class ?: '-' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">speed</i>
+              <span class="ml-1">Speed: {{ tyre.speed_index ?: '-' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">fitness_center</i>
+              <span class="ml-1">Load: {{ tyre.load_index ?: '-' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">ac_unit</i>
+              <span class="ml-1">{{ tyre.ms ? 'M+S' : '' }} {{ tyre.three_pmfs ? '3PMSF' : '' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">local_florist</i>
+              <span class="ml-1">{{ tyre.usage ?: '-' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">wb_sunny</i>
+              <span class="ml-1">{{ tyre.type ?: '-' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">volume_up</i>
+              <span class="ml-1">Rumore: {{ tyre.noise_index ?: '-' }} ({{ tyre.noise_decible ?: '-' }} dB)</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">bolt</i>
+              <span class="ml-1">Eff. Energetica: {{ tyre.energy_efficiency_index ?: '-' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">opacity</i>
+              <span class="ml-1">Wet Grip: {{ tyre.wet_grip_index ?: '-' }}</span>
+            </div>
+            <div class="col-6 col-lg-4 mb-2">
+              <i class="material-icons text-primary align-middle">calendar_today</i>
+              <span class="ml-1">DOT: {{ tyre.dot ?: '-' }} ({{ tyre.dot_year ?: '-' }})</span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6 mb-2">
+              <i class="material-icons text-success align-middle">check_circle</i>
+              <span class="ml-1">Disponibilità: {{ tyre.availability ?: '-' }}</span>
+            </div>
+            <div class="col-6 mb-2">
+              <i class="material-icons text-info align-middle">local_shipping</i>
+              <span class="ml-1">Consegna: {{ tyre.expected_delivery_date ?: '-' }}</span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-12 col-md-4 mb-2">
+              <i class="material-icons text-warning align-middle">euro_symbol</i>
+              <span class="ml-1">Prezzo 1: <strong>{{ tyre.price_1 ?: '-' }} €</strong></span>
+            </div>
+            <div class="col-12 col-md-4 mb-2">
+              <i class="material-icons text-warning align-middle">euro_symbol</i>
+              <span class="ml-1">Prezzo 4: <strong>{{ tyre.price_4 ?: '-' }} €</strong></span>
+            </div>
+            <div class="col-12 col-md-4 mb-2">
+              <i class="material-icons text-warning align-middle">euro_symbol</i>
+              <span class="ml-1">Prezzo Medio: <strong>{{ tyre.avg_price ?: '-' }} €</strong></span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <a href="{{ tyre.direct_link }}" class="btn btn-primary btn-sm mr-2" target="_blank">
+              <i class="material-icons align-middle">shopping_cart</i> Acquista
+            </a>
+            {% if tyre.data_sheet %}
+              <a href="{{ tyre.data_sheet }}" class="btn btn-outline-secondary btn-sm mr-2" target="_blank">
+                <i class="material-icons align-middle">description</i> Scheda tecnica
+              </a>
+            {% endif %}
+            {% if tyre.info %}
+              <a href="{{ tyre.info }}" class="btn btn-outline-info btn-sm mr-2" target="_blank">
+                <i class="material-icons align-middle">info</i> Info
+              </a>
+            {% endif %}
+          </div>
+          <div class="mb-2">
+            <strong>Descrizione:</strong><br>
+            <span>{{ tyre.description ?: '-' }}</span>
+          </div>
+          <div class="mb-2">
+            <strong>Descrizione produttore:</strong><br>
+            <span>{{ tyre.manufacturer_description ?: '-' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialog Moderno con Elemento HTML Dialog</title>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Font Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
+        }
+
+        .open-dialog-btn {
+            padding: 16px 32px;
+            background: #fff;
+            color: #4361ee;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .open-dialog-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stili per il dialog */
+        dialog {
+            width: 90%;
+            max-width: 500px;
+            border: none;
+            border-radius: 12px;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background: white;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .dialog-header {
+            background: #4361ee;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dialog-title {
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            cursor: pointer;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .dialog-body {
+            padding: 25px;
+            line-height: 1.6;
+            color: #444;
+            background: #f9f9f9;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .dialog-text {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .dialog-footer {
+            background: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid #eee;
+        }
+
+        .action-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .close-dialog-btn {
+            background: #4361ee;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            width: 150px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            dialog {
+                width: 95%;
+            }
+
+            .dialog-header,
+            .dialog-body,
+            .dialog-footer {
+                padding: 15px;
+            }
+
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Dialog HTML Moderno</h1>
+    <button class="open-dialog-btn" id="openDialog">
+        <span class="material-icons">open_in_new</span>
+        Apri Dialog
+    </button>
+
+    <div class="features">
+        <div class="feature">
+            <i class="material-icons">html</i>
+            Elemento nativo
+        </div>
+        <div class="feature">
+            <i class="material-icons">palette</i>
+            Design moderno
+        </div>
+        <div class="feature">
+            <i class="material-icons">touch_app</i>
+            Interattivo
+        </div>
+    </div>
+
+    <dialog id="myDialog">
+        <div class="dialog-header">
+            <h2 class="dialog-title">Titolo del Dialog</h2>
+            <button class="close-btn" id="closeHeaderBtn">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <div class="dialog-body">
+            <p class="dialog-text">Questo è un esempio di dialog moderno che utilizza l'elemento nativo <strong>&lt;dialog&gt;</strong> di HTML5.</p>
+            <p class="dialog-text">Il dialog è diviso in tre sezioni distinte: header, body e footer, come richiesto.</p>
+            <p class="dialog-text">Nell'header è presente il titolo e il pulsante di chiusura con icona "X" di Material Icons.</p>
+            <p class="dialog-text">Il footer contiene il pulsante "CHIUDI" per chiudere il dialog.</p>
+            <p class="dialog-text">Prova a chiudere il dialog cliccando sulla X, sul pulsante CHIUDI, premendo ESC o cliccando fuori dal dialog.</p>
+        </div>
+
+        <div class="dialog-footer">
+            <button class="action-btn close-dialog-btn" id="closeFooterBtn">
+                <span class="material-icons" style="vertical-align: middle; margin-right: 5px;">check</span>
+                CHIUDI
+            </button>
+        </div>
+    </dialog>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dialog = document.getElementById('myDialog');
+            const openDialogBtn = document.getElementById('openDialog');
+            const closeHeaderBtn = document.getElementById('closeHeaderBtn');
+            const closeFooterBtn = document.getElementById('closeFooterBtn');
+
+            // Apri il dialog
+            openDialogBtn.addEventListener('click', function() {
+                dialog.showModal();
+            });
+
+            // Chiudi il dialog
+            function closeDialog() {
+                dialog.close();
+            }
+
+            closeHeaderBtn.addEventListener('click', closeDialog);
+            closeFooterBtn.addEventListener('click', closeDialog);
+
+            // Chiudi il dialog cliccando fuori dal contenuto
+            dialog.addEventListener('click', function(e) {
+                const dialogDimensions = dialog.getBoundingClientRect();
+                if (
+                    e.clientX < dialogDimensions.left ||
+                    e.clientX > dialogDimensions.right ||
+                    e.clientY < dialogDimensions.top ||
+                    e.clientY > dialogDimensions.bottom
+                ) {
+                    closeDialog();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+.dt-paging {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dt-paging nav.pagination {
+    margin-top: 2rem;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Stile moderno per i pulsanti di paginazione DataTables */
+button.dt-paging-button {
+    margin: 4px !important;
+    padding: 8px !important;
+    border: none !important;
+    border-radius: 5px !important;
+    background: #1976d2 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10), 0 1.5px 4px rgba(66, 165, 245, 0.10) !important;
+    transition: background 0.25s, box-shadow 0.2s, transform 0.15s, color 0.2s !important;
+    outline: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 48px;
+    min-height: 44px;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+button.dt-paging-button:hover:not(.disabled) {
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1) !important;
+    background-color: #1561ac !important;
+    color: #fff !important;
+}
+
+button.dt-paging-button.disabled,
+button.dt-paging-button[aria-disabled="true"] {
+    background: #e0e0e0 !important;
+    color: #bdbdbd !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+    pointer-events: none !important;
+    transform: none !important;
+}
+
+button.dt-paging-button.current {
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1) !important;
+    background-color: #39b607 !important;
+    color: #fff !important;
+}
+
+button.dt-paging-button.current:hover {
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1) !important;
+    background-color: #29740b !important;
+    color: #fff !important;
+}
+
+.dt-search {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-end;
+    gap: 0;
+    margin-bottom: 1.2rem;
+    margin-right: 2rem;
+}
+
+.dt-search label {
+    background: #1976d2;
+    color: #fff;
+    font-weight: 600;
+    padding: 0 1rem 0 1.2rem;
+    border: 2px solid #1976d2;
+    border-right: none;
+    border-top-left-radius: 2rem;
+    border-bottom-left-radius: 2rem;
+    font-size: 1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    box-shadow: none;
+    transition: border-color 0.2s;
+}
+
+.dt-search input[type="search"] {
+    padding: 0 1.2rem 0 0.8rem;
+    border: 2px solid #1976d2;
+    border-left: none;
+    border-top-right-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    font-size: 1rem;
+    outline: none;
+    background: #f5f7fa;
+    color: #222;
+    box-shadow: none;
+    transition: border-color 0.2s, background 0.2s;
+    height: 44px;
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    margin-left: 0 !important;
+    text-align: left;
+}
+
+.dt-search:focus-within label,
+.dt-search:focus-within input[type="search"] {
+    border-color: #42a5f5;
+}
+
+.dt-search input[type="search"]:focus {
+    background: #fff;
+}
+
+.dt-input {
+    text-align: right;
+    padding: 4px;
+    width: 64px;
+    height: 44px;
+    border: 1px solid #1976d2;
+    border-top-right-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    font-size: 1rem;
+    outline: none;
+    background: #f5f7fa;
+    color: #303030;
+    box-shadow: none;
+    transition: border-color 0.2s, background 0.2s;
+    min-width: 64px;
+    display: flex;
+    align-items: center;
+    margin-left: 0 !important;
+    text-align: left;
+}
+
+dt-layout-start {
+    display: flex;
+    justify-content: start;
+}
+
+dt-layout-end {
+    display: flex;
+    justify-content: right;
+}
+
+.gap-1 {
+    gap: 1rem;
+}
+
+.gap-2 {
+    gap: 2rem;
+}
+
+.gap-3 {
+    gap: 3rem;
+}
+
+.gap-4 {
+    gap: 4rem;
+}
+
+.dt-layout-row.dt-layout-table {
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
