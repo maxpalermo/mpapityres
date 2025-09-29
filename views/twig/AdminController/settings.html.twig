@@ -1,0 +1,350 @@
+<h3 class="card-title d-flex align-items-center">
+	<i class="material-icons mr-2">settings</i>
+	<span>Impostazioni</span>
+</h3>
+
+<form action="" method="post" class="bootstrap">
+	<input type="hidden" name="form-action" value="saveSettings">
+	<div class="bootstrap panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Automazioni</h3>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group">
+						<label for="cron-download">Cron download Catalogo Tyre</label>
+						<div class="input-group col-md-6">
+							<input type="text" name="cron-download" id="cron-download" class="form-control clipboard pointer" value="{{ cronControllerUrl }}" readonly>
+							<div class="input-group-addon">
+								<span class="input-group"><i class="material-icons f-1rem">schedule</i></span>
+							</div>
+						</div>
+						<small class="text-info" style="margin-left: 16rem; margin-top: 0.5rem; display: block;"><code>Fai click sulla casella per copiare il contenuto</code></small>
+					</div>
+
+					<div class="form-group">
+						<label for="cron-import">Cron importazione Catalogo su Prestashop</label>
+						<div class="input-group col-md-6">
+							<input type="text" name="cron-import" id="cron-import" class="form-control clipboard pointer" value="{{ cron_import }}" readonly>
+							<div class="input-group-addon">
+								<span class="input-group"><i class="material-icons f-1rem">schedule</i></span>
+							</div>
+						</div>
+						<small class="text-info" style="margin-left: 16rem; margin-top: 0.5rem; display: block;"><code>Fai click sulla casella per copiare il contenuto</code></small>
+					</div>
+
+					<div class="form-group">
+						<label for="cron-pause">Pausa nuova ricerca</label>
+						<div class="input-group fixed-width-lg">
+							<input type="text" name="{{ configValues.MPAPITYRES_CRON_TIME_BETWEEN_UPDATES }}" id="cron-pause" class="form-control text-right" value="{{ configValues.MPAPITYRES_CRON_TIME_BETWEEN_UPDATES }}">
+							<div class="input-group-addon">
+								<span class="input-group">minuti</span>
+							</div>
+						</div>
+					</div>
+
+					<script>
+						document.querySelectorAll('.clipboard').forEach(input => {
+							input.addEventListener('click', () => {
+								input.select();
+								document.execCommand('copy');
+								alert('Copiato: ' + input.value);
+							});
+						});
+					</script>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer d-flex justify-content-center align-items-center">
+			<button type="submit" class="btn btn-primary align-items-center">
+				<span class="material-icons">save</span>
+				<span class="label">Salva</span>
+			</button>
+		</div>
+	</div>
+
+	<div class="bootstrap panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Impostazioni API</h3>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group">
+						<label for="host-api">Host API</label>
+						<div class="input-group col-md-6">
+							<div class="input-group-addon">
+								<span class="input-group"><i class="material-icons f-1rem">dns</i></span>
+							</div>
+							<input type="text" name="{{ configValues.MPAPITYRES_API_ENDPOINT }}" id="host-api" class="form-control" value="{{ configValues.MPAPITYRES_API_ENDPOINT }}">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="token-api">Token API</label>
+						<div class="input-group col-md-6">
+							<div class="input-group-addon">
+								<span class="input-group"><i class="material-icons f-1rem">vpn_key</i></span>
+							</div>
+							<textarea name="{{ configValues.MPAPITYRES_API_TOKEN }}" id="token-api" class="form-control" rows="5">{{ configValues.MPAPITYRES_API_TOKEN }}</textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer d-flex justify-content-center align-items-center">
+			<button type="submit" class="btn btn-primary align-items-center">
+				<span class="material-icons">save</span>
+				<span class="label">Salva</span>
+			</button>
+		</div>
+	</div>
+					
+
+	<div class="bootstrap panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Filtri di ricerca</h3>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group" data-filter-id="0">
+						<label for="filter-0">Tipo di pneumatico</label>
+						<div style="width: 50%;">
+							<select id="filter-0" name="filter-0[]" class="form-control select2" multiple>
+								<option value="all" {% if filters['filter-0'] is defined and 'all' in filters['filter-0'] %} selected {% endif %}>Tutti</option>
+								<option value="E" {% if filters['filter-0'] is defined and 'e' in filters['filter-0'] %} selected {% endif %}>Estivi</option>
+								<option value="I" {% if filters['filter-0'] is defined and 'i' in filters['filter-0'] %} selected {% endif %}>Invernali</option>
+								<option value="Q" {% if filters['filter-0'] is defined and 'q' in filters['filter-0'] %} selected {% endif %}>pneumatici 4 stagioni</option>
+								<option value="O" {% if filters['filter-0'] is defined and 'o' in filters['filter-0'] %} selected {% endif %}>Pneumatici offroad</option>
+								<option value="R" {% if filters['filter-0'] is defined and 'r' in filters['filter-0'] %} selected {% endif %}>Pneumatici con scanalature</option>
+								<option value="M" {% if filters['filter-0'] is defined and 'm' in filters['filter-0'] %} selected {% endif %}>Pneumatici Moto</option>
+							</select>
+						</div>
+						<div>
+							<code class="text-info ml-2">Seleziona uno o più filtri</code>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group" data-filter-id="1">
+						<label for="filter-1">Produttori</label>
+						<div style="width: 50%;">
+							<select id="filter-1" name="filter-1[]" class="form-control select2" multiple>
+								<option value="all" {% if filters['filter-1'] is defined and 'all' in filters['filter-1'] %} selected {% endif %}>Tutti</option>
+								{% for manufacturer in manufacturers %}
+								<option value="{{ manufacturer.id_manufacturer }}" {% if filters['filter-1'] is defined and manufacturer.id_manufacturer in filters['filter-1'] %} selected {% endif %}>{{ manufacturer.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div>
+							<code class="text-info ml-2">Seleziona uno o più filtri</code>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group" data-filter-id="2">
+						<label for="filter-2">Categorie di pneumatico</label>
+						<div style="width: 50%;">
+							<select id="filter-2" name="filter-2" class="form-control select2">
+								<option value="all" {% if filters['filter-2'] is defined and filters['filter-2'][0] == 'all' %} selected {% endif %}>Tutti</option>
+								<option value="high" {% if filters['filter-2'] is defined and filters['filter-2'][0] == 'high' %} selected {% endif %}>Marche premium</option>
+								<option value="middle" {% if filters['filter-2'] is defined and filters['filter-2'][0] == 'middle' %} selected {% endif %}>Marche di qualità</option>
+								<option value="low" {% if filters['filter-2'] is defined and filters['filter-2'][0] == 'low' %} selected {% endif %}>Prodotti di qualità economici</option>
+								<option value="recommendation" {% if filters['filter-2'] is defined and filters['filter-2'][0] == 'recommendation' %} selected {% endif %}>La nostra raccomandazione</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group" data-filter-id="4">
+						<label for="filter-4">Velocità massima</label>
+						<div style="width: 50%;">
+							<select id="filter-4" name="filter-4" class="form-control select2">
+								<option value="all" {% if filters['filter-4'] is defined and filters['filter-4'] == 'all' %} selected {% endif %}>Tutti</option>
+								<option value="t" {% if filters['filter-4'] is defined and filters['filter-4'] == 't' %} selected {% endif %}>T fino a 190 km/h</option>
+								<option value="h" {% if filters['filter-4'] is defined and filters['filter-4'] == 'h' %} selected {% endif %}>H fino a 210 km/h</option>
+								<option value="v" {% if filters['filter-4'] is defined and filters['filter-4'] == 'v' %} selected {% endif %}>V fino a 240 km/h</option>
+								<option value="z" {% if filters['filter-4'] is defined and filters['filter-4'] == 'z' %} selected {% endif %}>ZR, Y, W</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group" data-filter-id="5">
+						<label for="filter-5">Tipo di ricerca</label>
+						<div style="width: 50%;">
+							<select id="filter-5" name="filter-5[]" class="form-control select2" multiple>
+								<option value="all" {% if filters['filter-5'] is defined and 'all' in filters['filter-5'] %} selected {% endif %}>Tutti</option>
+								<option value="runflat" {% if filters['filter-5'] is defined and 'runflat' in filters['filter-5'] %} selected {% endif %}>Pneumatici Runflat</option>
+								<option value="hideDot" {% if filters['filter-5'] is defined and 'hideDot' in filters['filter-5'] %} selected {% endif %}>Nascondi DOT>36 mesi</option>
+								<option value="hideDiscontinued" {% if filters['filter-5'] is defined and 'hideDiscontinued' in filters['filter-5'] %} selected {% endif %}>Nascondi modelli di fine serie</option>
+								<option value="hideDemo" {% if filters['filter-5'] is defined and 'hideDemo' in filters['filter-5'] %} selected {% endif %}>Nascondi DEMO</option>
+							</select>
+						</div>
+						<div>
+							<code class="text-info ml-2">Seleziona uno o più filtri</code>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group" data-filter-id="6">
+						<label for="filter-6">Consegna espressa</label>
+						<div style="width: 50%;">
+							<select id="filter-6" name="filter-6" class="form-control select2">
+								<option value="">Seleziona</option>
+								<option value="all" {% if filters['filter-6'] is defined and filters['filter-6'] == 'all' %} selected {% endif %}>Tutti</option>
+								<option value="today" {% if filters['filter-6'] is defined and filters['filter-6'] == 'today' %} selected {% endif %}>Consegna espressa oggi</option>
+								<option value="tomorrow" {% if filters['filter-6'] is defined and filters['filter-6'] == 'tomorrow' %} selected {% endif %}>Consegna espressa domani</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer d-flex justify-content-center align-items-center">
+			<button type="submit" class="btn btn-primary align-items-center">
+				<span class="material-icons">save</span>
+				<span class="label">Salva</span>
+			</button>
+		</div>
+	</div>
+
+	<div class="bootstrap panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Parametri di importazione</h3>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Seleziona la categoria dei pneumatici</label>
+						<div class="bootstrap select-wrapper">
+							{{categoryTree | raw}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Seleziona l'aliquota IVA</label>
+						<div class="select-wrapper">
+							<select name="id_tax_rules_group" id="id_tax_rules_group" class="form-control select2">
+								<option value="">Seleziona</option>
+								{% for ruleGroup in taxRulesGroups %}
+								<option value="{{ ruleGroup.id_tax_rules_group }}" {% if ruleGroup.id_tax_rules_group == configValues.MPAPITYRES_ID_TAX_RULES_GROUP %} selected {% endif %}>{{ ruleGroup.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Ricarico prezzo</label>
+						<div class="input-group col-md-6">
+							<table class="table table-condensed fixed-width-xxl">
+								<thead>
+									<tr>
+										<th>Classe Veicolo</th>
+										<th>Ricarico</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>C1</td>
+										<td>
+											<div class="input-group fixed-width-lg">
+												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_C1 }}" id="ricarico-c1" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C1 }}">
+												<div class="input-group-addon">
+													<span class="input-group">%</span>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>C2</td>
+										<td>
+											<div class="input-group fixed-width-lg">
+												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_C2 }}" id="ricarico-c2" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C2 }}">
+												<div class="input-group-addon">
+													<span class="input-group">%</span>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>C3</td>
+										<td>
+											<div class="input-group fixed-width-lg">
+												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_C3 }}" id="ricarico-c3" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C3 }}">
+												<div class="input-group-addon">
+													<span class="input-group">%</span>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>Default</td>
+										<td>
+											<div class="input-group fixed-width-lg">
+												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_DEFAULT }}" id="ricarico-default" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_DEFAULT }}">
+												<div class="input-group-addon">
+													<span class="input-group">%</span>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<code>
+								Inserisci -1 per disattivare il tipo di ricarico
+							</code>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer d-flex justify-content-center align-items-center">
+			<button type="submit" class="btn btn-primary align-items-center">
+				<span class="material-icons">save</span>
+				<span class="label">Salva</span>
+			</button>
+		</div>
+	</div>
+</form>
+
+<script>
+	const cronControllerURL = "{{ cronControllerUrl }}";
+	const adminControllerURL = "{{ adminControllerUrl }}";
+
+	document.addEventListener('DOMContentLoaded', function () {
+        $('.select2').select2(
+            {
+                placeholder: 'Seleziona',
+                allowClear: true,
+                width: '100%',
+                language: 'it',
+                theme: 'classic'
+            }
+        );
+    });
+</script>

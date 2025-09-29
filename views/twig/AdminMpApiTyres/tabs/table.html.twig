@@ -1,0 +1,126 @@
+<div class="table-responsive">
+    <div class="paginator-container">
+        {{ paginator|raw }}
+    </div>
+    <table class="table table-bordered table-hover table-sm sticky-header" id="table-tyres">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Matchcode</th>
+                <th>Outer Diameter</th>
+                <th>Height</th>
+                <th>Width</th>
+                <th>Tyre Type</th>
+                <th>Inner Diameter</th>
+                <th>Brand</th>
+                <th>Profile</th>
+                <th>Article Name</th>
+                <th>Description</th>
+                <th>Manufacturer Number</th>
+                <th>Usage</th>
+                <th>Type</th>
+                <th>Load Index</th>
+                <th>Speed Index</th>
+                <th>Runflat</th>
+                <th>MS</th>
+                <th>3PMFS</th>
+                <th>Da Decke</th>
+                <th>Price 1</th>
+                <th>Price 4</th>
+                <th>Avg Price</th>
+                <th>Price Anonym</th>
+                <th>Price RVO</th>
+                <th>Availability</th>
+                <th>Expected Delivery</th>
+                <th>Direct Link</th>
+                <th>Info</th>
+                <th>Image</th>
+                <th>Image TN</th>
+                <th>Tyrelabel Link</th>
+                <th>Energy Eff.</th>
+                <th>Wet Grip</th>
+                <th>Noise Index</th>
+                <th>Noise dB</th>
+                <th>Vehicle Class</th>
+                <th>Ice Grip</th>
+                <th>Data Sheet</th>
+                <th>Demo</th>
+                <th>DOT</th>
+                <th>DOT Year</th>
+                <th>Price Anonym One</th>
+                <th>Manufacturer Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tyre in tyres %}
+            <tr data-id="{{ tyre.id }}">
+                <td>{{ tyre.id }}</td>
+                <td>{{ tyre.matchcode }}</td>
+                <td>{{ tyre.outer_diameter }}</td>
+                <td>{{ tyre.height }}</td>
+                <td>{{ tyre.width }}</td>
+                <td>{{ tyre.tyre_type }}</td>
+                <td>{{ tyre.inner_diameter }}</td>
+                <td>{{ tyre.brandname }}</td>
+                <td>{{ tyre.profile }}</td>
+                <td>{{ tyre.articlename }}</td>
+                <td>{{ tyre.description|length > 60 ? tyre.description[:60] ~ '…' : tyre.description }}</td>
+                <td>{{ tyre.manufacturer_number }}</td>
+                <td>{{ tyre.usage }}</td>
+                <td>{{ tyre.type }}</td>
+                <td>{{ tyre.load_index }}</td>
+                <td>{{ tyre.speed_index }}</td>
+                <td>{{ tyre.runflat ? '✔' : '' }}</td>
+                <td>{{ tyre.ms ? '✔' : '' }}</td>
+                <td>{{ tyre.three_pmfs ? '✔' : '' }}</td>
+                <td>{{ tyre.da_decke ? '✔' : '' }}</td>
+                <td>{{ tyre.price_1 }}</td>
+                <td>{{ tyre.price_4 }}</td>
+                <td>{{ tyre.avg_price }}</td>
+                <td>{{ tyre.price_anonym }}</td>
+                <td>{{ tyre.price_rvo }}</td>
+                <td>{{ tyre.availability }}</td>
+                <td>{{ tyre.expected_delivery_date }}</td>
+                <td><a href="{{ tyre.direct_link }}" target="_blank">Link</a></td>
+                <td>{{ tyre.info }}</td>
+                <td>{% if tyre.image %}<img src="{{ tyre.image }}" alt="img" style="max-width:48px;max-height:48px;" />{% endif %}</td>
+                <td>{% if tyre.image_tn %}<img src="{{ tyre.image_tn }}" alt="tn" style="max-width:32px;max-height:32px;" />{% endif %}</td>
+                <td>{% if tyre.tyrelabel_link %}<img src="{{ tyre.tyrelabel_link }}" alt="tn" style="max-width:32px;max-height:32px;" />{% endif %}</td>
+                <td>{{ tyre.energy_efficiency_index }}</td>
+                <td>{{ tyre.wet_grip_index }}</td>
+                <td>{{ tyre.noise_index }}</td>
+                <td>{{ tyre.noise_decible }}</td>
+                <td>{{ tyre.vehicle_class }}</td>
+                <td>{{ tyre.ice_grip ? '✔' : '' }}</td>
+                <td>{{ tyre.data_sheet }}</td>
+                <td>{{ tyre.demo ? '✔' : '' }}</td>
+                <td>{{ tyre.dot }}</td>
+                <td>{{ tyre.dot_year }}</td>
+                <td>{{ tyre.price_anonym_one }}</td>
+                <td>{{ tyre.manufacturer_description|length > 60 ? tyre.manufacturer_description[:60] ~ '…' : tyre.manufacturer_description }}</td>
+                <td>
+                    <a href="{{ path('mpapityres_admin_add_product', {'id': tyre.id}) }}" class="btn btn-primary btn-sm btn-add-product">Aggiungi</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="46" class="text-center text-muted">Nessun risultato trovato.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="paginator-container">
+        {{ paginator|raw }}
+    </div>
+</div>
+
+<style>
+.sticky-header thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #343a40;
+    color: #fff;
+}
+</style>

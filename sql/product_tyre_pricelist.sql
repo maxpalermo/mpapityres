@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `{pfx}product_tyre_pricelist` (
+  `id_t24` int(11) NOT NULL AUTO_INCREMENT,
+  `id_distributor` int(11) NOT NULL,
+  `id_pricelist` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `country` varchar(64) NOT NULL,
+  `country_code` char(2) NOT NULL,
+  `type` varchar(64) NOT NULL,
+  `min_order_1` decimal(20,6) DEFAULT 0.000000,
+  `min_order_2` decimal(20,6) DEFAULT 0.000000,
+  `min_order_4` decimal(20,6) DEFAULT 0.000000,
+  `delivery_time` date NOT NULL,
+  `stock` int(11) NOT NULL,
+  `active` tinyint(1) NOT NULL,
+  `date_add` datetime NOT NULL,
+  `date_upd` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_t24`) USING BTREE,
+  KEY `id_product_tyre_api` (`id_distributor`),
+  KEY `id_pricelist` (`id_pricelist`)
+) ENGINE=InnoDB;

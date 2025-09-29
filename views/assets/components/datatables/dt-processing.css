@@ -1,0 +1,101 @@
+@keyframes datatables-loader-1 {
+    0% {
+        transform: scale(0)
+    }
+
+    100% {
+        transform: scale(1)
+    }
+}
+
+@keyframes datatables-loader-2 {
+    0% {
+        transform: translate(0, 0)
+    }
+
+    100% {
+        transform: translate(24px, 0)
+    }
+}
+
+@keyframes datatables-loader-3 {
+    0% {
+        transform: scale(1)
+    }
+
+    100% {
+        transform: scale(0)
+    }
+}
+
+div.dt-processing {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    text-align: center;
+    padding: 2px;
+    z-index: 10000;
+    border: 1px solid #cacaca;
+    background-color: #fcfcfc;
+    color: #303030;
+    border-radius: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+div.dt-processing>div:last-child {
+    position: relative;
+    width: 80px;
+    height: 15px;
+    margin: 1em auto
+}
+
+div.dt-processing>div:last-child>div {
+    position: absolute;
+    top: 0;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: rgb(13, 110, 253);
+    background: rgb(var(--dt-row-selected));
+    animation-timing-function: cubic-bezier(0, 1, 1, 0)
+}
+
+div.dt-processing>div:last-child>div:nth-child(1) {
+    left: 8px;
+    animation: datatables-loader-1 .6s infinite
+}
+
+div.dt-processing>div:last-child>div:nth-child(2) {
+    left: 8px;
+    animation: datatables-loader-2 .6s infinite
+}
+
+div.dt-processing>div:last-child>div:nth-child(3) {
+    left: 32px;
+    animation: datatables-loader-2 .6s infinite
+}
+
+div.dt-processing>div:last-child>div:nth-child(4) {
+    left: 56px;
+    animation: datatables-loader-3 .6s infinite
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1e978 !important;
+    color: #303030 !important;
+}
+
+.table-hover tbody tr:hover td {
+    background-color: #f1e978 !important;
+    color: #303030 !important;
+}
+
+
+:is(body:not(.ps-bo-rebrand)):is(body:not(.no-smb-reskin)) .table tbody>tr:not(.fees):not(.fees_all):not(.range_sup):not(.range_inf):hover>td {
+    background-color: #f1e978 !important;
+    color: #303030 !important;
+}

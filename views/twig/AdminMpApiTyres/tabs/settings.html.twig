@@ -1,0 +1,61 @@
+<div class="d-flex justify-content-start align-items-top gap-4">
+    <div class="wrap-form" id="wrap-form">
+        <div class="wrap-form-header">
+            <span class="material-icons">settings</span>
+            <span class="title">Impostazioni</span>
+        </div>
+
+        <div class="wrap-form-header">
+            <h3 class="pb-2">
+                <img src="{{ asset('../modules/mpapityres/views/assets/img/tyre_128.png') }}" alt="tyre" class="img-thumbnail mr-2" style="width: 48px;">
+                <span class="title">SEZIONE PNEUMATICI</span>
+            </h3>
+        </div>
+        <div class="wrap-form-body">
+            <div class="token mb-2">
+                <div class="form-group">
+                    <label for="apiTyres14Token">apiTyres14Token</label>
+                    <textarea id="apiTyres14Token" name="apiTyres14Token" class="form-control" rows="6">{{ apiTyres14Token }}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="wrap-form-header">
+            <h3 class="pb-2">
+                <img src="{{ asset('../modules/mpapityres/views/assets/img/filter_128.png') }}" alt="filter" class="img-thumbnail mr-2" style="width: 48px;">
+                <span class="title">FILTRI PNEUMATICI</span>
+            </h3>
+        </div>
+        <div class="wrap-form-body">
+            <div id="filters"></div>
+        </div>
+        <div class="wrap-form-header">
+            <h3 class="pb-2">
+                <img src="{{ asset('../modules/mpapityres/views/assets/img/api_128.png') }}" alt="api" class="img-thumbnail mr-2" style="width: 48px;">
+                <span class="title">TOKEN API</span>
+            </h3>
+        </div>
+        <div class="wrap-form-body">
+            <div class="form-group">
+                <label for="apiTyres14Token">apiTyres14Token</label>
+                <textarea id="apiTyres14Token" name="apiTyres14Token" class="form-control" rows="6">{{ apiTyres14Token }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="apiProductsToken">apiProductsToken</label>
+                <textarea id="apiProductsToken" name="apiProductsToken" class="form-control" rows="6">{{ apiProductsToken }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="apiAlloysToken">apiAlloysToken</label>
+                <textarea id="apiAlloysToken" name="apiAlloysToken" class="form-control" rows="6">{{ apiAlloysToken }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="apiWearPartsToken">apiWearPartsToken</label>
+                <textarea id="apiWearPartsToken" name="apiWearPartsToken" class="form-control" rows="6">{{ apiWearPartsToken }}</textarea>
+            </div>
+        </div>
+        <div class="wrap-form-footer">
+            <button type="button" class="btn btn-primary" id="btn-save-settings">Salva</button>
+            <button type="button" class="btn btn-secondary">Annulla</button>
+            <button type="button" class="btn btn-warning" id="btn-create-features">Crea caratteristiche pneumatici</button>
+        </div>
+    </div>
+</div>

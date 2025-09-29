@@ -20,9 +20,11 @@
 !/cache/tcpdf/index.php
 
 # Download
+/downloads/
 /download/*
 !/download/.htaccess
 !/download/index.php
+/runtime/
 
 # Images
 /img/*

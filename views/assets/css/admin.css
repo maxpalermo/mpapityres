@@ -1,0 +1,828 @@
+.mb-4 {
+    margin-bottom: 1rem !important;
+}
+
+.bootstrap .panel-footer {
+    margin: 0 auto !important;
+}
+
+.pointer {
+    cursor: pointer !important;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem !important;
+}
+
+.hide {
+    display: none;
+}
+
+.alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border: none;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    color: #fff;
+    background-color: #aaaaaa;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.alert-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.f-1rem {
+    font-size: 1rem !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.full-width {
+    width: 100% !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.justify-content-between {
+    justify-content: space-between !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+.align-items-top {
+    align-items: flex-start !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.gap-3 {
+    gap: 1rem !important;
+}
+
+.gap-4 {
+    gap: 1.5rem !important;
+}
+
+.btn-primary-sq {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-flex {
+    display: inline-flex !important;
+    justify-content: start !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.ml-1 {
+    margin-left: 0.25rem !important;
+}
+
+.ml-2 {
+    margin-left: 0.5rem !important;
+}
+
+.ml-3 {
+    margin-left: 1rem !important;
+}
+
+.ml-4 {
+    margin-left: 1.5rem !important;
+}
+
+.mr-1 {
+    margin-right: 0.25rem !important;
+}
+
+.mr-2 {
+    margin-right: 0.5rem !important;
+}
+
+.mr-3 {
+    margin-right: 1rem !important;
+}
+
+.mr-4 {
+    margin-right: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+    .select-wrapper {
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px) {
+    .select-wrapper {
+        width: 50%;
+    }
+}
+
+.fieldset {
+    border: 1px solid #dee2e6 !important;
+    padding: 1rem !important;
+    padding-bottom: 3rem !important;
+    margin-bottom: 3rem !important;
+    border-radius: 0.25rem !important;
+    background-color: #fff !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Form group styling */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+legend {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 1rem -1rem;
+    color: #212529;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+
+/* Stili per i bottoni di azione */
+.action-buttons-container {
+    gap: 3rem;
+    margin: 2rem 0;
+}
+
+.action-button {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
+    transform: translateY(0);
+    min-width: 320px;
+    border: none;
+    color: white;
+}
+
+.action-button:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-100%) skewX(-15deg);
+    transition: all 0.5s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+.action-button:hover:before {
+    transform: translateX(100%) skewX(-15deg);
+}
+
+/* Stili specifici per ogni bottone */
+#btn-fetch-api-json_ {
+    background: linear-gradient(135deg, #4a6cf7, #3b5fe2) !important;
+    border-bottom: 4px solid #2d4cca;
+}
+
+#btn-import-json-catalog_ {
+    background: linear-gradient(135deg, #ff6b35, #e85a2c) !important;
+    border-bottom: 4px solid #d24a1e;
+}
+
+/* Effetto pulsante premuto */
+.action-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    border-bottom-width: 2px;
+    margin-top: 2px;
+}
+
+/* Effetto pulsazione per le icone */
+.action-button .material-icons {
+    transition: transform 0.3s ease;
+    font-size: 2.2rem;
+}
+
+.action-button:hover .material-icons {
+    transform: scale(1.2);
+    animation: pulse 1s infinite;
+}
+
+/* Stile per il testo dei bottoni */
+.button-text {
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    margin-left: 0.75rem !important;
+}
+
+/* Animazione di pulsazione */
+@keyframes pulse {
+    0% {
+        transform: scale(1.1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+/* Stili per il dialog */
+#modal-dialog {
+    border: none;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+    background: #fff;
+    animation: dialog-appear 0.3s ease-out;
+    overflow: hidden;
+}
+
+#modal-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    animation: backdrop-appear 0.3s ease-out;
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.dialog-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #343a40;
+}
+
+.dialog-body {
+    padding: 24px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #495057;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-footer {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #dee2e6;
+    background: #f8f9fa;
+}
+
+.close-dialog-btn {
+    background: #4a6cf7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.close-dialog-btn:hover {
+    background: #3b5fe2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-dialog-btn:active {
+    transform: translateY(0);
+}
+
+.dialog-header .close-dialog-btn {
+    background: transparent;
+    color: #6c757d;
+    font-size: 1.5rem;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.dialog-header .close-dialog-btn:hover {
+    background: rgba(108, 117, 125, 0.1);
+    color: #343a40;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Stili per i diversi tipi di dialog */
+.dialog-info .dialog-header {
+    background: linear-gradient(135deg, #cfe2ff, #9ec5fe);
+}
+
+.dialog-success .dialog-header {
+    background: linear-gradient(135deg, #d1e7dd, #a3cfbb);
+}
+
+.dialog-warning .dialog-header {
+    background: linear-gradient(135deg, #fff3cd, #ffe69c);
+}
+
+.dialog-error .dialog-header {
+    background: linear-gradient(135deg, #f8d7da, #f5c2c7);
+}
+
+/* Animazioni per il dialog */
+@keyframes dialog-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes backdrop-appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Stili per lo spinner */
+.dialog-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border: 0.25rem solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+.spinner-border.text-primary {
+    color: #4a6cf7;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Stili per la dashboard di riepilogo */
+.card.mb-4.summary {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    margin-bottom: 2rem;
+}
+
+.card.mb-4.summary:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card.mb-4.summary .card-header {
+    background: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 1.25rem 1.5rem;
+}
+
+.card.mb-4.summary .card-title {
+    font-weight: 700;
+    color: #343a40;
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.card.mb-4.summary .badge {
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 30px;
+}
+
+.card.mb-4.summary .bg-info {
+    background-color: #0dcaf0 !important;
+}
+
+.card.mb-4.summary .card-body {
+    padding: 1.5rem;
+    background-color: #fff;
+}
+
+.card.mb-4.summary .d-flex {
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center !important;
+}
+
+/* Stili per i box di statistiche */
+.card.mb-4.summary .rounded {
+    border-radius: 8px !important;
+    transition: all 0.3s ease;
+    height: 100%;
+    background-color: #f8f9fa !important;
+    border-left: 5px solid #dee2e6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card.mb-4.summary .postit {
+    margin: 16px;
+    min-height: 150px;
+    width: 250px;
+    flex: 0 0 250px;
+}
+
+.card.mb-4.summary .rounded:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card.mb-4.summary .fs-2,
+.card.mb-4.summary .fs-5 {
+    font-size: 1.8rem !important;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.card.mb-4.summary .rounded div:not(.fs-2):not(.fs-5):not(.fw-bold) {
+    font-size: 1rem;
+    color: #555;
+}
+
+.card.mb-4.summary .bg-primary,
+.card.mb-4.summary .bg-danger,
+.card.mb-4.summary .bg-success,
+.card.mb-4.summary .bg-warning,
+.card.mb-4.summary .bg-secondary,
+.card.mb-4.summary .bg-info {
+    background-color: #f8f9fa !important;
+    color: #333 !important;
+    height: 100%;
+    padding: 1.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Stile per il titolo delle schede */
+.card.mb-4.summary .rounded .postit-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Stile per la descrizione delle schede */
+.card.mb-4.summary .rounded .postit-description {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 0.5rem;
+}
+
+.card.mb-4.summary .bg-primary {
+    border-left: 5px solid #0d6efd !important;
+}
+
+.card.mb-4.summary .bg-danger {
+    border-left: 5px solid #dc3545 !important;
+}
+
+.card.mb-4.summary .bg-success {
+    border-left: 5px solid #198754 !important;
+}
+
+.card.mb-4.summary .bg-warning {
+    border-left: 5px solid #ffc107 !important;
+}
+
+.card.mb-4.summary .bg-secondary {
+    border-left: 5px solid #6c757d !important;
+}
+
+.card.mb-4.summary .bg-info {
+    border-left: 5px solid #0dcaf0 !important;
+}
+
+/* Stili per le liste */
+.card.mb-4.summary ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.card.mb-4.summary ul li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.card.mb-4.summary ul li:before {
+    content: "\2022";
+    color: #6c757d;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-right: 0.5em;
+}
+
+.card.mb-4.summary ul li:last-child {
+    border-bottom: none;
+}
+
+/* Stili per i badge */
+.card.mb-4.summary .badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 30px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.card.mb-4.summary .badge.bg-light {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    color: #555 !important;
+}
+
+.card.mb-4.summary .badge.bg-info {
+    background-color: rgba(13, 202, 240, 0.1) !important;
+    color: #0aa2c0 !important;
+    border: 1px solid rgba(13, 202, 240, 0.3);
+}
+
+/* Animazione per i numeri */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card.mb-4.summary .fs-2 {
+    animation: countUp 1s ease-out forwards;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card.mb-4.summary .row>div {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Number input styling */
+input[type="number"] {
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Input with unit styling */
+.input-with-unit {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-unit input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+.input-with-unit .unit {
+    padding: 0.375rem 0.75rem;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0 0.25rem 0.25rem 0;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Readonly inputs */
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+    cursor: default;
+}
+
+/* Select styling enhancement */
+select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cpath fill='%23495057' d='M0 0l4 6 4-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 8px 6px;
+    padding-right: 2rem;
+}
+
+.tree-folder-name {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tree-toggler {
+    cursor: pointer;
+    font-weight: 500;
+    padding: 0.5rem;
+    text-decoration: none;
+    text-align: left !important;
+}
+
+.tree-panel-heading-controls {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #e9ecef !important;
+    padding-bottom: 0.5rem !important;
+}
+
+.tree-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.5rem !important;
+}
+
+.tree-actions a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: left !important;
+    gap: 0.5rem !important;
+}
+
+/* Stile per il div parent con classe .panel che contiene .tree-panel */
+.panel .tree-panel {
+    border: 1px solid #e9ecef !important;
+    border-radius: 0.25rem !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.panel:has(.tree-panel) {
+    background-color: #ffffff !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 0.25rem !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1) !important;
+    padding: 1rem !important;
+    margin-bottom: 2rem !important;
+}
+
+dialog {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, .2);
+    max-width: 500px;
+    width: 90%;
+    padding: 0;
+    background: #fff;
+    animation: dialog-in .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+@keyframes dialog-in {
+    from {
+        transform: translateY(-30px) scale(.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(2px);
+}
+
+dialog .card {
+    padding: 1rem;
+    margin: 0 auto;
+}
+
+dialog .panel {
+    padding: 1rem;
+    margin: 0 auto;
+}
