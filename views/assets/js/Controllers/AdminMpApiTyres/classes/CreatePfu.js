@@ -1,110 +1,86 @@
 class CreatePfu {
     endpoint = null;
-    action = 'createPfuAction';
+    action = "createPfuAction";
 
     constructor(endpoint) {
         this.endpoint = endpoint;
     }
 
     async create() {
-        const self = this;
         if (!confirm("Sei sicuro di voler creare i prodotti PFU?")) {
             return false;
         }
 
-        //Creo l'elemento dialog dal template
-        const existDialogElement = document.getElementById("modal-pfu");
-        if (existDialogElement) {
-            existDialogElement.remove();
+        const self = this;
+        const pfuPriceList = document.getElementById("pfu-price-list");
+        const list = pfuPriceList.value;
+        //divido il contenuto della textarea in un array di oggetti {start, end, price}
+        //divido il contenuto per \n
+        const lines = list.split("\n");
+        const result = [];
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].trim() == "") {
+                continue;
+            }
+            const line = lines[i];
+            const [range, price] = line.split(";");
+            const [start, end] = range.split("-");
+            result.push({ start, end, price });
         }
 
-        const template = document.getElementById("template-modal-pfu");
-        const fragment = template.content.cloneNode(true);
-        document.body.appendChild(fragment);
-        
-        const dialogElement = document.getElementById("modal-pfu");
-        dialogElement.showModal();
-
-        const totalProducts = document.getElementById("pfu-total-products");
-        const priceList = document.getElementById("pfu-price-list");
-        priceList.addEventListener("input", () =>{
-            console.log("input - pfu-price-list");
-            const values = priceList.value;
-            const lines = values.split("\n");
-        
-            totalProducts.value = lines.length;
+        const response = await fetch(self.endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+                ajax: 1,
+                action: self.action,
+                lines: JSON.stringify(result),
+                id_start: document.getElementById("pfu-id-start").value,
+                tax_rule_group: document.getElementById("pfu-tax-rule-group").value,
+            }),
         });
 
-        return;
+        const data = await response.json();
 
-        // Creiamo un nuovo AbortController per questa operazione
-        const abortController = new AbortController();
+        //console.clear();
+        console.log(data);
 
-        await showModalDialog({
-            title: "Creazione prodotti PFU",
-            message: "In corso la creazione dei prodotti PFU",
-            style: "info",
-            spinner: true,
-            abortController: abortController, // Passiamo l'AbortController al dialog
-        });
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        let isFirstLoop = true;
-
-        while (true) {
-            try {
-                // Se è il primo ciclo, possiamo fare qualcosa di specifico
-                let url = isFirstLoop ? `${self.endpoint}?action=${self.action}&reset=1` : `${self.endpoint}?action=${self.action}`;
-                isFirstLoop = false;
-
-                const response = await fetch(url, { signal: abortController.signal });
-                const data = await response.json();
-
-                console.clear();
-                console.log(data);
-
-                if (data.status == "DONE") {
-                    await showModalDialog({
-                        title: "Creazione prodotti PFU",
-                        message: "Prodotti PFU creati con successo",
-                        style: "success",
-                        spinner: false,
-                    });
-                    break;
-                } else {
-                    await showModalDialog({
-                        title: "Creazione prodotti PFU",
-                        message: "In corso la creazione dei prodotti PFU",
-                        style: "info",
-                        spinner: true,
-                        response: data,
-                        abortController: abortController,
-                    });
-                    //Attendo mezzo secondo
-                    await new Promise((resolve) => setTimeout(resolve, 500));
-                }
-            } catch (error) {
-                // Verifica se l'errore è dovuto all'interruzione dell'utente
-                if (error.name === "AbortError") {
-                    console.log("Operazione interrotta dall'utente");
-                    await showModalDialog({
-                        title: "Operazione interrotta",
-                        message: "La creazione dei prodotti PFU è stata interrotta",
-                        style: "warning",
-                        spinner: false,
-                    });
-                } else {
-                    console.error("Errore durante la creazione dei prodotti PFU:", error);
-                    await showModalDialog({
-                        title: "Errore",
-                        message: `Si è verificato un errore: ${error.message}`,
-                        style: "error",
-                        spinner: false,
-                    });
-                }
-                break;
+        if (data.status == "DONE") {
+            if (data.success) {
+                alert("Prodotti PFU creati con successo");
+            } else {
+                alert("Si sono verificati errori:\n " + data.errors.join("\n"));
+            }
+        } else {
+            if (data.errors) {
+                alert("Si sono verificati errori:\n " + data.errors.join("\n"));
+            } else {
+                alert(data.message);
             }
         }
     }
-}
 
+    async setProductsPfu() {
+        if (!confirm("Sei sicuro di voler creare i prodotti PFU?")) {
+            return false;
+        }
+
+        const self = this;
+        const response = await fetch(self.endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+                ajax: 1,
+                action: "setProductsToPfuAction",
+            }),
+        });
+
+        const json = response.json();
+
+        alert`Sono stati associati ${json.result} prodotti`;
+    }
+}

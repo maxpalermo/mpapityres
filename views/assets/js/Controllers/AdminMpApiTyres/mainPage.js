@@ -74,7 +74,7 @@ async function importJsonCatalog2() {
             const response = await fetch(url, { signal: abortController.signal });
             const data = await response.json();
 
-            console.clear();
+            //console.clear();
             console.log(data);
 
             if (data.status == "DONE") {
@@ -261,7 +261,7 @@ async function reloadImages2() {
             const response = await fetch(url, { signal: abortController.signal });
             const data = await response.json();
 
-            console.clear();
+            //console.clear();
             console.log(data);
 
             if (data.status == "DONE") {
@@ -337,7 +337,7 @@ async function deleteProducts() {
             const response = await fetch(url, { signal: abortController.signal });
             const data = await response.json();
 
-            console.clear();
+            //console.clear();
             console.log(data);
 
             if (data.status == "DONE") {

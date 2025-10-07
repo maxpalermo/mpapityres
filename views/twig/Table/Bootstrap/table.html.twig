@@ -1,0 +1,56 @@
+<div id="toolbar" style="max-width: 100%; min-width: 600px;">
+    <div class="d-flex justify-content-left align-items-center gap-2">
+        <div class="form-group flex-1">
+            <label class="label-line">Seleziona PFU</label>
+            <select class="chosen" id="pfu-list">
+                <option>Seleziona</option>
+                {% for pfu in pfuList %}
+                    <option value="{{ pfu.id_product }}">{{ pfu.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button id="btn-associate" class="btn btn-info">
+            <i class="fa fa-chain"></i> Associa
+        </button>
+
+        <button id="btn-dissociate" class="btn btn-danger">
+            <i class="fa fa-chain-broken"></i> Dissocia
+        </button>
+    </div>
+</div>
+
+<table
+  id="table-products-fpu"
+  data-toolbar="#toolbar"
+  data-search="true"
+  data-show-refresh="true"
+  data-show-toggle="true"
+  data-show-fullscreen="false"
+  data-show-columns="false"
+  data-show-columns-toggle-all="false"
+  data-detail-view="false"
+  data-show-export="false"
+  data-click-to-select="true"
+  data-detail-formatter="detailFormatter"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="false"
+  data-pagination="true"
+  data-id-field="id"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-show-footer="true"
+  data-side-pagination="server"
+  data-url="{{ cronControllerUrl }}?action=getPfuListAction&ajax=1"
+  data-response-handler="responseHandler"
+>
+</table>
+
+<style>
+  .select,
+  #locale {
+    width: 100%;
+  }
+  .like {
+    margin-right: 10px;
+  }
+</style>

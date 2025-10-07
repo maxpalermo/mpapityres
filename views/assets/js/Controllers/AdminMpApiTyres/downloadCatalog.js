@@ -34,8 +34,8 @@ class DownloadCatalog {
             });
 
             const json = await response.json();
-            console.clear();
-            console.log(`Azione: ${json.action}, Success: ${json.success}, Elapsed: ${json.elapsed}, Time: ${json.time}`)
+            //console.clear();
+            console.log(`Azione: ${json.action}, Success: ${json.success}, Elapsed: ${json.elapsed}, Time: ${json.time}`);
         }
 
         // Forza il rendering del DOM prima di continuare

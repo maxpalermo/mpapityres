@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const response = await fetch(url, { signal: UpdateAbortController.signal });
                     const data = await response.json();
 
-                    console.clear();
+                    //console.clear();
                     console.log(data);
 
                     if (data.status == "DONE") {

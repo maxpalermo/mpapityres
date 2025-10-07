@@ -1,6 +1,6 @@
 class ReloadImages {
     endpoint = null;
-    action="reloadImagesAction";
+    action = "reloadImagesAction";
 
     constructor(endpoint) {
         this.endpoint = endpoint;
@@ -35,7 +35,7 @@ class ReloadImages {
                 const response = await fetch(url, { signal: abortController.signal });
                 const data = await response.json();
 
-                console.clear();
+                //console.clear();
                 console.log(data);
 
                 if (data.status == "DONE") {
@@ -83,4 +83,3 @@ class ReloadImages {
         }
     }
 }
-

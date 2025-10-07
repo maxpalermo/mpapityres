@@ -25,11 +25,13 @@ if (!defined('_PS_VERSION_')) {
 
 use MpSoft\MpApiTyres\Helpers\ExecuteSqlHelper;
 use MpSoft\MpApiTyres\Helpers\TwigHelper;
+use MpSoft\MpApiTyres\Models\ModelProductPfu;
 use MpSoft\MpApiTyres\Models\ProductTyreDistributorModel;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use Symfony\Component\Dotenv\Dotenv;
 
-class MpApiTyres extends Module
+class MpApiTyres extends Module implements WidgetInterface
 {
     public function __construct()
     {
@@ -53,6 +55,7 @@ class MpApiTyres extends Module
     {
         $hooks = [
             'actionAdminControllerSetMedia',
+            'displayAdminEndContent',
         ];
 
         if (!parent::install()) {
@@ -72,13 +75,12 @@ class MpApiTyres extends Module
             $tab->name[$language['id_lang']] = "Tyre 24 API";
         }
         $add = $tab->add();
-        $executeSqlHelper = new ExecuteSqlHelper();
-        $res1 = $executeSqlHelper->run('product_tyre_api');
-        $res2 = $executeSqlHelper->run('product_tyre_image');
-        $res3 = $executeSqlHelper->run('product_tyre_manufacturer');
-        $res4 = ProductTyreDistributorModel::install();
 
-        return $add && $res1 && $res2 && $res3 && $res4;
+        $executeSqlHelper = new ExecuteSqlHelper();
+        $res1 = $executeSqlHelper->run('product_tyre');
+        $res2 = $executeSqlHelper->run('product_pfu');
+
+        return $add && $res1 && $res2;
     }
 
     public function uninstall()
@@ -131,6 +133,11 @@ class MpApiTyres extends Module
         }
     }
 
+    public function hookDisplayAdminEndContent($params)
+    {
+        return $this->renderWidget('displayAdminEndContent', $params);
+    }
+
     public function getAdminLink($controller)
     {
         $router = SymfonyContainer::getInstance()->get('router');
@@ -143,5 +150,35 @@ class MpApiTyres extends Module
         } else {
             return null;
         }
+    }
+
+    public function getWidgetVariables($hookName, array $configuration)
+    {
+        return [];
+    }
+
+    public function renderWidget($hookName, array $configuration)
+    {
+        $controller = Tools::getValue('controller');
+        $id_product = (int) Tools::getValue('id_product');
+
+        $variables = $this->getWidgetVariables($hookName, $configuration);
+        switch ($hookName) {
+            case 'displayAdminEndContent':
+                if (preg_match('/adminproducts/i', $controller) && $id_product) {
+                    $pfu = new ModelProductPfu($id_product);
+                    if (Validate::isLoadedObject($pfu)) {
+                        $twigHelper = new TwigHelper();
+                        return $twigHelper->renderView(
+                            '@Modules/mpapityres/views/twig/adminProductShipping.html.twig',
+                            [
+                                'baseUrl' => $this->context->link->getBaseLink(),
+                                'pfu' => $pfu,
+                            ],
+                        );
+                    }
+                }
+        }
+        return '';
     }
 }

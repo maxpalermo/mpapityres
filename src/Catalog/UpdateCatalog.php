@@ -140,12 +140,12 @@ class UpdateCatalog
 
             // Prezzi e tasse
             $prestashopProduct->ean13 = (string) ($product['ean'] ?? '');
-            $prestashopProduct->price = (float) ($product['price'] ?? 0);
+            $prestashopProduct->price = (float) ($product['price_1'] ?? 0);
             $prestashopProduct->wholesale_price = (float) ($product['wholesale_price'] ?? 0);
             $prestashopProduct->id_tax_rules_group = (int) ($product['id_tax_rules_group'] ?? 0);
 
             // Stock
-            $prestashopProduct->quantity = (int) ($product['quantity'] ?? 0);
+            $prestashopProduct->quantity = (int) ($product['availability'] ?? 0);
             $prestashopProduct->minimal_quantity = (int) ($product['minimal_quantity'] ?? 1);
             $prestashopProduct->low_stock_threshold = (int) ($product['low_stock_threshold'] ?? 0);
             $prestashopProduct->low_stock_alert = (bool) ($product['low_stock_alert'] ?? false);
@@ -155,6 +155,11 @@ class UpdateCatalog
             $prestashopProduct->visibility = $product['visibility'] ?? 'both'; // both, catalog, search, none
             $prestashopProduct->available_for_order = (bool) ($product['available_for_order'] ?? true);
             $prestashopProduct->show_price = (bool) ($product['show_price'] ?? true);
+
+            // Misure
+            $prestashopProduct->width = (float) ($product['width'] ?? 0);
+            $prestashopProduct->height = (float) ($product['height'] ?? 0);
+            $prestashopProduct->depth = (float) ($product['depth'] ?? 0);
 
             // Categorie
             $prestashopProduct->id_category_default = $id_category_default;
@@ -175,6 +180,10 @@ class UpdateCatalog
             $prestashopProduct->weight = (float) ($product['weight'] ?? 0);
 
             // Meta informazioni per SEO
+            $prestashopProduct->delivery_in_stock = $product['delivery_date'] ?? '';
+            if ($prestashopProduct->delivery_in_stock) {
+                $prestashopProduct->additional_delivery_times = 2;
+            }
             $prestashopProduct->meta_title = $this->createMultiLangField($product['meta_title'] ?? '');
             $prestashopProduct->meta_description = $this->createMultiLangField($product['meta_description'] ?? '');
             $prestashopProduct->meta_keywords = $this->createMultiLangField($product['meta_keywords'] ?? '');
@@ -207,6 +216,18 @@ class UpdateCatalog
             $prestashopProduct->updateCategories(array_unique($categories));
 
             $product['features'] = [
+                [
+                    'name' => 'Uso',
+                    'value' => $product['usage'] ?? null,
+                ],
+                [
+                    'name' => 'M+S',
+                    'value' => $product['ms'] ?? null,
+                ],
+                [
+                    'name' => 'Tipo pneumatico',
+                    'value' => $product['tyre_type'] ?? null,
+                ],
                 [
                     'name' => 'Stagione',
                     'value' => $product['type'] ?? null,
@@ -282,8 +303,13 @@ class UpdateCatalog
 
 
             // Aggiorno la quantità di stock
-            if (isset($product['stock'])) {
-                \StockAvailable::setQuantity($id_product, 0, (int) $product['stock']);
+            if (isset($product['availability'])) {
+                \StockAvailable::setQuantity($id_product, 0, (int) $product['availability']);
+            }
+
+            //Imposto lo specific price per 4 pneumatici
+            if ($product['price_4'] > 0 && $product['price_1'] != $product['price_4']) {
+                $this->addQuantityPrice($id_product, 4, $product['price_4']);
             }
 
             return [
@@ -299,6 +325,53 @@ class UpdateCatalog
                 'errors' => $errors
             ];
         }
+    }
+
+    /**
+     * Aggiunge uno specific price per quantità >= 4
+     * @param int $id_product - ID prodotto
+     * @param float $reduction - Importo riduzione (es: 0.10 per 10%)
+     * @param string $reduction_type - 'percentage' o 'amount'
+     * @return bool
+     */
+    public function addQuantityPrice($id_product, $quantity, $price)
+    {
+        // Verifica se il prodotto esiste
+        if (!\Product::existsInDatabase($id_product, 'product')) {
+            throw new \Exception("Prodotto non trovato");
+        }
+
+        // Verifica se esiste già uno specific price per quantità >= 4
+        $existingPrice = \Db::getInstance()->getValue('
+        SELECT id_specific_price 
+        FROM ' . _DB_PREFIX_ . 'specific_price 
+        WHERE id_product = ' . (int) $id_product . ' 
+        AND from_quantity >= 4
+        AND id_shop = 0 
+        AND id_currency = 0 
+        AND id_country = 0 
+        AND id_group = 0
+    ');
+
+        if ($existingPrice) {
+            throw new \Exception("Esiste già uno sconto per quantità >= 4 per questo prodotto");
+        }
+
+        // Crea il nuovo specific price
+        $specificPrice = new \SpecificPrice();
+        $specificPrice->id_product = $id_product;
+        $specificPrice->id_shop = 0;
+        $specificPrice->id_currency = 0;
+        $specificPrice->id_country = 0;
+        $specificPrice->id_group = 0;
+        $specificPrice->id_customer = 0;
+        $specificPrice->from_quantity = $quantity;
+        $specificPrice->reduction_type = 'amount';
+        $specificPrice->reduction = $price;
+        $specificPrice->from = '0000-00-00 00:00:00';
+        $specificPrice->to = '0000-00-00 00:00:00';
+
+        return $specificPrice->add();
     }
 
     protected function createDescription($product)

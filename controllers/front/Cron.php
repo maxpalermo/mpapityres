@@ -19,13 +19,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use MpSoft\MpApiTyres\Catalog\CreatePFU;
 use MpSoft\MpApiTyres\Catalog\DownloadCatalog;
 use MpSoft\MpApiTyres\Catalog\ImportCatalog;
 use MpSoft\MpApiTyres\Configuration\ConfigValues;
 use MpSoft\MpApiTyres\Const\Constants;
 use MpSoft\MpApiTyres\Curl\GetCatalogApi;
-use MpSoft\MpApiTyres\Import\CreatePfu;
+use MpSoft\MpApiTyres\Helpers\GetCategoryIdByName;
 use MpSoft\MpApiTyres\Import\ReloadImages;
+use MpSoft\MpApiTyres\Models\ModelProductPfu;
 use MpSoft\MpApiTyres\Traits\GetCategoryIdFromNameTrait;
 use MpSoft\MpApiTyres\Traits\HumanTimingTrait;
 use MpSoft\MpApiTyres\Zip\DownloadZip;
@@ -47,27 +49,45 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
     public function initContent()
     {
-        $ajax = (int) Tools::getValue('ajax');
-        $action = Tools::getValue('action');
-        if ($ajax && !preg_match('/Action$/', $action)) {
-            $action .= 'Action';
-        }
+        try {
+            $ajax = (int) Tools::getValue('ajax');
+            $action = Tools::getValue('action');
+            
+            if ($ajax && !preg_match('/Action$/', $action)) {
+                $action .= 'Action';
+            }
 
-        if (method_exists($this, $action) && $ajax) {
-            $result = $this->$action();
+            if (method_exists($this, $action) && $ajax) {
+                $result = $this->$action();
+                header('Content-Type: application/json');
+                http_response_code(200);
+                exit(json_encode($result));
+            }
+
+            if (method_exists($this, $action) && !$ajax) {
+                $result = $this->$action();
+                return $result;
+            }
+
             header('Content-Type: application/json');
-            exit(json_encode($result));
+            http_response_code(404);
+            exit(json_encode([
+                'success' => false,
+                'error' => "metodo {$action} non esistente",
+            ]));
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
+                'Errore in initContent: ' . $e->getMessage() . ' - ' . $e->getTraceAsString(),
+                3
+            );
+            header('Content-Type: application/json');
+            http_response_code(500);
+            exit(json_encode([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'trace' => _PS_MODE_DEV_ ? $e->getTraceAsString() : null,
+            ]));
         }
-
-        if (method_exists($this, $action) && !$ajax) {
-            $result = $this->$action();
-            return $result;
-        }
-
-        exit(json_encode([
-            'success' => false,
-            'error' => "metodo {$action} non esistente",
-        ]));
     }
 
     public function getCatalogAction()
@@ -251,33 +271,38 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
     private function createPfuAction()
     {
-        $idStart = Tools::getValue('idStart');
-        $idTaxRulesGroup = Tools::getValue('taxRuleGroup');
-        $priceList = Tools::getValue('priceList');
-        $list = explode("\n", $priceList);
-        foreach ($list as $key => $item) {
-            $value = trim($item);
-            if (!$value) {
-                unset($list[$key]);
-            }
-            if (!is_numeric($value)) {
-                unset($list[$key]);
-            }
-        }
-        $totalProducts = count($list);
-
-        if (!$totalProducts) {
-            return [
-                'success' => false,
-                'error' => 'Listino prezzi non valido',
-            ];
+        $idStart = Tools::getValue('id_start');
+        $idTaxRulesGroup = Tools::getValue('tax_rule_group');
+        $lines = Tools::getValue('lines');
+        if ($lines) {
+            $lines = json_decode($lines, true);
         }
 
-        $createPFU = new CreatePfu($totalProducts, $idStart, $idTaxRulesGroup, $priceList);
-        $createPFU->run();
+        foreach ($lines as $key => $item) {
+            if (!$item['start'] && !$item['end'] && !$item['price']) {
+                continue;
+            }
+            $pfu = new CreatePFU(
+                $item['start'],
+                $item['end'],
+                $item['price'],
+                $idStart + $key,
+                $idTaxRulesGroup
+            );
+
+            $result = $pfu->run();
+            if (!$result) {
+                $error = $pfu->getError();
+                $this->errors[] = $error;
+            }
+
+        }
 
         return [
-            'success' => true,
+            'success' => $this->errors ? false : true,
+            'status' => 'DONE',
+            'errors' => $this->errors,
+            'message' => 'Operazione eseguita.',
         ];
     }
 
@@ -844,7 +869,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
     /**
      * Elimina tutte le sottocartelle della cartella $root, lasciando intatti eventuali file in $root.
      */
-    function deleteAllSubfolders(string $root): void
+    public function deleteAllSubfolders(string $root): void
     {
         if (!is_dir($root)) {
             throw new InvalidArgumentException("Percorso non valido: {$root}");
@@ -862,5 +887,309 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 $this->rrmdir($entry->getPathname());
             }
         }
+    }
+
+    public function setProductsToPfuAction()
+    {
+        $db = Db::getInstance();
+        $id_category = (int) GetCategoryIdByName::get(GetCategoryIdByName::getDefaultTyreCategoryName());
+
+        $sql = new DbQuery();
+        $sql->select("id_product")
+            ->from("product")
+            ->where('id_category_default=' . (int) $id_category)
+            ->orderBy("id_product ASC");
+
+        $products = $db->executeS($sql);
+
+        foreach ($products as $product) {
+            $this->setProductToPfu((int) $product['id_product']);
+        }
+    }
+
+    public function setProductToPfu($id_product)
+    {
+        $createPfu = new CreatePFU();
+
+        $result = $createPfu->setProductToPfu($id_product);
+
+        return [
+            'success' => $result['success'],
+            'id_product' => $id_product,
+            'id_pfu' => $result['id_pfu'],
+            'errors' => $result['errors'] ?? [],
+        ];
+    }
+
+    public function getPfuListAction()
+    {
+        $offset = (int) Tools::getValue('offset', 0);
+        $limit = (int) Tools::getValue('limit', 20);
+        $search = (string) Tools::getValue('search');
+        $order = (string) Tools::getValue('order', 'reference');
+        $sort = (string) Tools::getValue('sort', 'asc');
+
+        $db = Db::getInstance();
+        $pfx = _DB_PREFIX_;
+        $id_lang = (int) Context::getContext()->language->id;
+
+        $sql = "
+            SELECT
+                distinct p.id_product,
+                p.ean13,
+                p.reference,
+                pl.name, 
+                pfu.id_pfu, 
+                ppfu.reference AS ppfu_reference, 
+                ppful.name AS pfu_name
+            FROM
+                {$pfx}product p
+            INNER JOIN
+                {$pfx}product_lang pl ON (p.id_product = pl.id_product AND pl.id_lang = {$id_lang})
+            LEFT JOIN
+                {$pfx}product_pfu pfu ON (p.id_product = pfu.id_product)
+            LEFT JOIN
+                {$pfx}product ppfu ON (pfu.id_pfu = ppfu.id_product)
+            LEFT JOIN
+                {$pfx}product_lang ppful ON (ppfu.id_product = ppful.id_product AND ppful.id_lang = {$id_lang})
+        ";
+
+        if ($search) {
+            $search = pSQL(trim(str_replace("'", "''", $search)));
+
+            $sql_feature = "
+                SELECT
+                    f.id_feature
+                FROM
+                    {$pfx}feature_lang f
+                WHERE
+                    f.name = 'grandezza'
+                    AND f.id_lang = {$id_lang}
+            ";
+
+            $id_feature = $db->getValue($sql_feature);
+
+            $sql_feature_value = "
+                SELECT
+                    fv.id_feature_value
+                FROM
+                    {$pfx}feature_value fv
+                INNER JOIN
+                    {$pfx}feature_value_lang fvl ON (fv.id_feature_value = fvl.id_feature_value AND fvl.id_lang = {$id_lang})
+                WHERE
+                    fv.id_feature = {$id_feature}
+                    AND fvl.value LIKE '{$search}'
+            ";
+
+            $id_feature_value = $db->getValue($sql_feature_value);
+
+            if ($id_feature_value) {
+                $sql .= "\n
+                    LEFT JOIN
+                    {$pfx}feature_product fp ON (fp.id_product = p.id_product)
+                ";
+            }
+
+            $sql .= "\n
+                WHERE 
+                pl.name != 'PFU%'
+                AND 
+                (
+                    p.reference like '%{$search}%' OR
+                    p.ean13 like '%{$search}%' OR
+                    pl.name like '%{$search}%' OR
+                    fp.id_feature_value = {$id_feature_value}
+                )
+            ";
+        } else {
+            $sql .= "\nWHERE pl.name != 'PFU%'";
+        }
+
+        if (!$order) {
+            $sql .= "\nORDER BY p.reference ASC";
+        } else {
+            $sql .= "\nORDER BY {$order} {$sort}";
+        }
+
+        if ($limit && $offset) {
+            $sql .= "\n LIMIT {$offset}, {$limit}";
+        }
+
+        if ($limit && !$offset) {
+            $sql .= "\n LIMIT {$limit}";
+        }
+
+        try {
+            $list = $db->executeS($sql);
+        } catch (\Throwable $th) {
+            return [
+                'sql' => $sql,
+                'error' => $th->getMessage(),
+            ];
+        }
+        if ($list) {
+            foreach ($list as &$item) {
+                $product = new Product($item['id_product']);
+                $features = $product->getFrontFeatures($id_lang);
+                foreach ($features as $feature) {
+                    $key = strtolower(str_replace(' ', '_', $feature['name']));
+                    $item[$key] = $feature['value'];
+                }
+            }
+
+            return [
+                'rows' => $list,
+                'total' => $db->getValue("SELECT COUNT(*) FROM {$pfx}product"),
+                'totalNotFiltered' => $db->getValue("SELECT COUNT(*) FROM {$pfx}product"),
+                'sql' => $sql,
+            ];
+        }
+
+        return [];
+    }
+
+    public function associatePfuAction()
+    {
+        try {
+            $ids = Tools::getValue('ids');
+            $idPfu = (int) Tools::getValue('idPfu');
+
+            if (empty($ids) || !$idPfu) {
+                return [
+                    'success' => 0,
+                    'message' => 'Parametri mancanti: ids o idPfu',
+                ];
+            }
+
+            $pfus = ModelProductPfu::getPfuStatic();
+
+            if (!isset($pfus[$idPfu])) {
+                return [
+                    'success' => 0,
+                    'message' => 'PFU non trovato con ID: ' . $idPfu,
+                ];
+            }
+
+            $db = Db::getInstance();
+            $idsArray = explode(',', $ids);
+
+            // Rimuovi associazioni esistenti
+            $db->delete(
+                'product_pfu',
+                "id_product IN ({$ids})"
+            );
+
+            // Inserisci nuove associazioni
+            foreach ($idsArray as $id) {
+                $id = (int) trim($id);
+                if ($id > 0) {
+                    $result = $db->insert(
+                        'product_pfu',
+                        [
+                            'id_product' => $id,
+                            'id_pfu' => $idPfu,
+                            'price' => (float) $pfus[$idPfu]['price'],
+                            'active' => 1,
+                            'date_add' => date('Y-m-d H:i:s'),
+                            'date_upd' => date('Y-m-d H:i:s'),
+                        ],
+                        false,
+                        true,
+                        Db::INSERT_IGNORE
+                    );
+
+                    if (!$result) {
+                        PrestaShopLogger::addLog(
+                            "Errore inserimento PFU per prodotto {$id}",
+                            3
+                        );
+                    }
+                }
+            }
+
+            return [
+                'success' => 1,
+                'message' => 'PFU associato con successo a ' . count($idsArray) . ' prodotti',
+            ];
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
+                'Errore in associatePfuAction: ' . $e->getMessage(),
+                3
+            );
+            return [
+                'success' => 0,
+                'message' => 'Errore: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    public function dissociatePfuAction()
+    {
+        try {
+            $ids = Tools::getValue('ids');
+
+            if (empty($ids)) {
+                return [
+                    'success' => 0,
+                    'message' => 'Nessun prodotto selezionato',
+                ];
+            }
+
+            $db = Db::getInstance();
+            $result = $db->delete(
+                'product_pfu',
+                "id_product IN ({$ids})"
+            );
+
+            if ($result) {
+                $idsArray = explode(',', $ids);
+                return [
+                    'success' => 1,
+                    'message' => 'PFU dissociato con successo da ' . count($idsArray) . ' prodotti',
+                ];
+            } else {
+                return [
+                    'success' => 0,
+                    'message' => 'Errore durante la dissociazione del PFU',
+                ];
+            }
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
+                'Errore in dissociatePfuAction: ' . $e->getMessage(),
+                3
+            );
+            return [
+                'success' => 0,
+                'message' => 'Errore: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    public function associatePfu($id, $idPfu)
+    {
+        $db = Db::getInstance();
+        $pfx = _DB_PREFIX_;
+
+        $sql = "
+            UPDATE {$pfx}product_pfu
+            SET id_pfu = {$idPfu}
+            WHERE id_product = {$id}
+        ";
+
+        return $db->execute($sql);
+    }
+
+    public function dissociatePfu($id)
+    {
+        $db = Db::getInstance();
+        $pfx = _DB_PREFIX_;
+
+        $sql = "
+            UPDATE {$pfx}product_pfu
+            SET id_pfu = NULL
+            WHERE id_product = {$id}
+        ";
+
+        return $db->execute($sql);
     }
 }

@@ -29,6 +29,7 @@ class AdminMpApiTyresController extends ModuleAdminController
 {
     private $id_lang;
     private $configValues;
+    private $message;
 
     public function __construct()
     {
@@ -42,17 +43,15 @@ class AdminMpApiTyresController extends ModuleAdminController
 
         $this->addJqueryUI('ui.widget');
         $this->addJqueryUI('ui.mouse');
-        $this->addCSS($this->module->getLocalPath() . 'views/assets/components/select2/select2.min.css');
-        $this->addCSS($this->module->getLocalPath() . 'views/assets/components/select2/select2.bs4-theme.min.css');
+        $this->addJqueryUI('chosen');
+
         $this->addCSS($this->module->getLocalPath() . 'views/assets/css/admin.css', 'all', 9999);
         $this->addJS($this->module->getLocalPath() . 'views/assets/components/select2/select2.min.js');
         $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/progressDownloadCsv.js');
 
         $this->addJS('https://cdn.jsdelivr.net/npm/chart.js@2.9.4');
         $this->addJS($this->module->getLocalPath() . 'views/assets/js/FetchManager.js');
-        $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/DownloadCatalogCSV.js');
-        $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/DownloadCatalogAPI.js');
-        $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/UpdateCatalogAPI.js');
+
         $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/classes/ShowModalDialog.js');
         $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/classes/FetchApiJson.js');
         $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/classes/FetchCsvJson.js');
@@ -80,7 +79,10 @@ class AdminMpApiTyresController extends ModuleAdminController
 
         switch ($action) {
             case 'showSettings':
-                $this->content = $disableJqueryMigrateLog . $this->showSettingsPage();
+                $this->content = $disableJqueryMigrateLog . $this->message . $this->showSettingsPage();
+                break;
+            case 'showPfu':
+                $this->content = $disableJqueryMigrateLog . $this->message . $this->showPfuPage();
                 break;
             case 'default':
             default:
@@ -103,40 +105,76 @@ class AdminMpApiTyresController extends ModuleAdminController
     {
         parent::initPageHeaderToolbar();
         $action = Tools::getValue('action', 'default');
+
         if ($action == 'default') {
-            $this->page_header_toolbar_btn['show-settings'] = [
-                'href' => $this->context->link->getAdminLink($this->controller_name, true, [], ['action' => 'showSettings']),
-                'desc' => $this->trans('Impostazioni'),
-                'icon' => 'process-icon-cogs',
-                'class' => 'btn-show-settings',
-            ];
+            $this->getToolbarBtn('default');
+            $this->getToolbarBtn('pfu');
         }
         if ($action == 'showSettings') {
-            $this->page_header_toolbar_btn['show-import'] = [
-                'href' => $this->context->link->getAdminLink($this->controller_name, true, [], ['action' => 'default']),
-                'desc' => $this->trans('Pagina di importazione'),
-                'icon' => 'process-icon-download',
-                'class' => 'btn-main-page',
-            ];
+            $this->getToolbarBtn('settings');
+            $this->getToolbarBtn('pfu');
 
         }
+        if ($action == 'showPfu') {
+            $this->getToolbarBtn('default');
+            $this->getToolbarBtn('settings');
+
+        }
+
         unset($this->page_header_toolbar_btn['new']);
         unset($this->page_header_toolbar_btn['delete']);
+    }
+
+    protected function getToolbarBtn($page)
+    {
+        switch ($page) {
+            case 'default':
+                $this->page_header_toolbar_btn['show-settings'] = [
+                    'href' => $this->context->link->getAdminLink($this->controller_name, true, [], ['action' => 'showSettings']),
+                    'desc' => $this->trans('Impostazioni'),
+                    'icon' => 'process-icon-cogs',
+                    'class' => 'btn-show-settings',
+                ];
+                break;
+            case 'settings':
+                $this->page_header_toolbar_btn['show-import'] = [
+                    'href' => $this->context->link->getAdminLink($this->controller_name, true, [], ['action' => 'default']),
+                    'desc' => $this->trans('Pagina di importazione'),
+                    'icon' => 'process-icon-download',
+                    'class' => 'btn-main-page',
+                ];
+                break;
+            case 'pfu':
+                $this->page_header_toolbar_btn['show-pfu'] = [
+                    'href' => $this->context->link->getAdminLink($this->controller_name, true, [], ['action' => 'showPfu']),
+                    'desc' => $this->trans('Associa i PFU'),
+                    'icon' => 'process-icon-compress',
+                    'class' => 'btn-show-pfu',
+                ];
+                break;
+        }
     }
 
     public function getAdminLink($controller, $method = 'index')
     {
         $moduleName = $this->module->name;
-        $controllerRoterName = "{$moduleName}_{$controller}_{$method}";
+        $controllerRouterName = "{$moduleName}_{$controller}_{$method}";
         return SymfonyContainer::getInstance()
             ->get('router')
-            ->generate($controllerRoterName);
+            ->generate($controllerRouterName);
     }
 
     protected function showSettingsPage()
     {
         $path = 'AdminController/settings.html.twig';
         $params = $this->getSettingsPageTplVars();
+        return $this->setTpl($path, $params);
+    }
+
+    protected function showPfuPage()
+    {
+        $path = 'AdminController/pfu.html.twig';
+        $params = $this->getPfuPageTplVars();
         return $this->setTpl($path, $params);
     }
 
@@ -227,9 +265,52 @@ class AdminMpApiTyresController extends ModuleAdminController
             'cronControllerUrl' => $cronControllerUrl,
             'taxRulesGroups' => $this->configValues->getTaxRulesGroups(),
             'idTaxRulesGroup' => $this->configValues->MPAPITYRES_ID_TAX_RULES_GROUP,
+            'idTaxRulesGroupPfu' => $this->configValues->MPAPITYRES_ID_TAX_RULES_GROUP_PFU,
             'csvEndpointUrl' => $this->configValues->getCsvEndpointUrl(),
             'summary' => $this->getSummary(),
         ];
+    }
+
+    protected function getPfuPageTplVars()
+    {
+        $cronControllerUrl = $this->context->link->getModuleLink($this->module->name, 'Cron');
+        $adminController = $this->context->link->getAdminLink($this->controller_name, true);
+
+        return [
+            'baseUrl' => $this->context->link->getBaseLink(),
+            'adminControllerUrl' => $adminController,
+            'cronControllerUrl' => $cronControllerUrl,
+            'taxRulesGroups' => $this->configValues->getTaxRulesGroups(),
+            'idTaxRulesGroup' => $this->configValues->MPAPITYRES_ID_TAX_RULES_GROUP,
+            'idTaxRulesGroupPfu' => $this->configValues->MPAPITYRES_ID_TAX_RULES_GROUP_PFU,
+            'csvEndpointUrl' => $this->configValues->getCsvEndpointUrl(),
+            'profiles' => $this->getProfiles(),
+            'summary' => $this->getSummary(),
+            'pfuList' => $this->getPfuList(),
+        ];
+    }
+
+    protected function getPfuList()
+    {
+        $id_lang = (int)Context::getContext()->language->id;
+        $db = Db::getInstance();
+        $sql = new DbQuery();
+        $sql->select('id_product, name')
+            ->from('product_lang')
+            ->where('name like \'PFU%\'')
+            ->where('id_lang='.(int)$id_lang)
+            ->orderBy('name');
+            
+        return $db->executeS($sql);
+    }
+
+    protected function getProfiles()
+    {
+        $id_feature = 6;
+        $id_lang = (int) Context::getContext()->language->id;
+        $profiles = FeatureValue::getFeatureValuesWithLang($id_lang, $id_feature);
+
+        return $profiles;
     }
 
     protected function getSummary()
@@ -345,25 +426,36 @@ class AdminMpApiTyresController extends ModuleAdminController
     public function postProcess()
     {
         $params = Tools::getAllValues();
+        $message = '';
 
         if (isset($params['form-action']) && $params['form-action'] == 'saveSettings') {
             $this->saveSettingsApi($params);
             $this->saveSettingFilters($params);
             $this->saveSettingProducts($params);
+
+            $message = "
+                <div class=\"alert alert-success\">
+                    <p>Impostazioni salvate</p>
+                </div>
+            ";
         }
+
+        $this->message = $message;
 
         return true;
     }
 
     private function saveSettingsApi($params)
     {
-        $host = $params['host-api'];
-        $token = $params['token-api'];
-        $pause = $params['cron-pause'];
+        $host = $params['MPAPITYRES_API_ENDPOINT'];
+        $token = $params['MPAPITYRES_API_TOKEN'];
+        $pause = $params['MPAPITYRES_CRON_TIME_BETWEEN_UPDATES'];
 
-        Constants::set(Constants::MPAPITYRES_HOST, $host);
-        Constants::set(Constants::MPAPITYRES_TOKEN, $token);
-        Constants::set(Constants::MPAPITYRES_CRON_TIME_BETWEEN_UPDATES, $pause);
+        $config = ConfigValues::getInstance();
+
+        $config->setValue('MPAPITYRES_API_ENDPOINT', $host);
+        $config->setValue('MPAPITYRES_API_TOKEN', $token);
+        $config->setValue('MPAPITYRES_CRON_TIME_BETWEEN_UPDATES', $pause);
 
         return true;
     }
@@ -375,17 +467,19 @@ class AdminMpApiTyresController extends ModuleAdminController
         $category = new \Category($id_category, $id_lang);
         $category_name = (string) $category->name;
         $id_tax_rules_group = $params['id_tax_rules_group'];
-        $ricaricoC1 = $params['ricarico-c1'];
-        $ricaricoC2 = $params['ricarico-c2'];
-        $ricaricoC3 = $params['ricarico-c3'];
-        $ricaricoDefault = $params['ricarico-default'];
+        $ricaricoC1 = $params['MPAPITYRES_RICARICO_C1'];
+        $ricaricoC2 = $params['MPAPITYRES_RICARICO_C2'];
+        $ricaricoC3 = $params['MPAPITYRES_RICARICO_C3'];
+        $ricaricoDefault = $params['MPAPITYRES_RICARICO_DEFAULT'];
 
-        Constants::set(Constants::MPAPITYRES_DEFAULT_CATEGORY, $category_name);
-        Constants::set(Constants::MPAPITYRES_ID_TAX_RULES_GROUP, $id_tax_rules_group);
-        Constants::set(Constants::MPAPITYRES_RICARICO_C1, $ricaricoC1);
-        Constants::set(Constants::MPAPITYRES_RICARICO_C2, $ricaricoC2);
-        Constants::set(Constants::MPAPITYRES_RICARICO_C3, $ricaricoC3);
-        Constants::set(Constants::MPAPITYRES_RICARICO_DEFAULT, $ricaricoDefault);
+        $config = ConfigValues::getInstance();
+
+        $config->setValue('MPAPITYRES_DEFAULT_CATEGORY', $category_name);
+        $config->setValue('MPAPITYRES_ID_TAX_RULES_GROUP', $id_tax_rules_group);
+        $config->setValue('MPAPITYRES_RICARICO_C1', $ricaricoC1);
+        $config->setValue('MPAPITYRES_RICARICO_C2', $ricaricoC2);
+        $config->setValue('MPAPITYRES_RICARICO_C3', $ricaricoC3);
+        $config->setValue('MPAPITYRES_RICARICO_DEFAULT', $ricaricoDefault);
 
         return true;
     }

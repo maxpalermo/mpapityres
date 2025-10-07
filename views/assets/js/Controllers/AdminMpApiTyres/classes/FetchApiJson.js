@@ -1,6 +1,6 @@
 class FetchApiJson {
     endpoint = null;
-    action = 'getCatalogAction';
+    action = "getCatalogAction";
 
     constructor(endpoint) {
         this.endpoint = endpoint;
@@ -35,7 +35,7 @@ class FetchApiJson {
                 const response = await fetch(url, { signal: abortController.signal });
                 const data = await response.json();
 
-                console.clear();
+                //console.clear();
                 console.log(data);
 
                 if (data.status == "DONE") {
@@ -82,4 +82,3 @@ class FetchApiJson {
         }
     }
 }
-

@@ -1,0 +1,25 @@
+<template id="template-pfu">
+    <div class="form-group number-widget">
+        <label for="product_shipping_pfu">PFU</label>
+        <div class="input-group">
+            <input readonly type="text" id="product_shipping_pfu" name="product[shipping][dimensions][pfu]" class="js-comma-transformer form-control" value="{{ pfu.price }}">
+            <div class="input-group-append">
+                <span class="input-group-text">EUR</span>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async () => {
+        const baseUrl = "{{ baseUrl }}";
+        const pfuId = "{{ pfu.id_pfu }}";
+
+        console.log('Pneumatici Tyres24', baseUrl, pfuId);
+        
+        const divDimensions = document.getElementById("product_shipping_dimensions");
+        const template = document.getElementById("template-pfu");
+        const fragment = template.cloneNode(true);
+        divDimensions.appendChild(fragment);
+    });
+</script>

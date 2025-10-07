@@ -1,13 +1,13 @@
 class ImportJsonCatalog {
     endpoint = null;
-    action="importCatalogAction";
+    action = "importCatalogAction";
 
     constructor(endpoint) {
         this.endpoint = endpoint;
     }
 
     async import() {
-        const self= this;
+        const self = this;
         if (!confirm("Sei sicuro di voler importare il catalogo?")) {
             return false;
         }
@@ -35,7 +35,7 @@ class ImportJsonCatalog {
                 const response = await fetch(url, { signal: abortController.signal });
                 const data = await response.json();
 
-                console.clear();
+                //console.clear();
                 console.log(data);
 
                 if (data.status == "DONE") {
@@ -82,4 +82,3 @@ class ImportJsonCatalog {
         }
     }
 }
-

@@ -1,3 +1,7 @@
+<link rel="stylesheet" href="../modules/mpapityres/views/assets/components/select2/select2.bs4-theme.min.css">
+<script src="../modules/mpapityres/views/assets/components/select2/select2.min.js"></script>
+
+
 <h3 class="card-title d-flex align-items-center">
 	<i class="material-icons mr-2">settings</i>
 	<span>Impostazioni</span>
@@ -37,7 +41,7 @@
 					<div class="form-group">
 						<label for="cron-pause">Pausa nuova ricerca</label>
 						<div class="input-group fixed-width-lg">
-							<input type="text" name="{{ configValues.MPAPITYRES_CRON_TIME_BETWEEN_UPDATES }}" id="cron-pause" class="form-control text-right" value="{{ configValues.MPAPITYRES_CRON_TIME_BETWEEN_UPDATES }}">
+							<input type="text" name="MPAPITYRES_CRON_TIME_BETWEEN_UPDATES" id="cron-pause" class="form-control text-right" value="{{ configValues.MPAPITYRES_CRON_TIME_BETWEEN_UPDATES }}">
 							<div class="input-group-addon">
 								<span class="input-group">minuti</span>
 							</div>
@@ -77,7 +81,7 @@
 							<div class="input-group-addon">
 								<span class="input-group"><i class="material-icons f-1rem">dns</i></span>
 							</div>
-							<input type="text" name="{{ configValues.MPAPITYRES_API_ENDPOINT }}" id="host-api" class="form-control" value="{{ configValues.MPAPITYRES_API_ENDPOINT }}">
+							<input type="text" name="MPAPITYRES_API_ENDPOINT" id="host-api" class="form-control" value="{{ configValues.MPAPITYRES_API_ENDPOINT }}">
 						</div>
 					</div>
 
@@ -87,7 +91,7 @@
 							<div class="input-group-addon">
 								<span class="input-group"><i class="material-icons f-1rem">vpn_key</i></span>
 							</div>
-							<textarea name="{{ configValues.MPAPITYRES_API_TOKEN }}" id="token-api" class="form-control" rows="5">{{ configValues.MPAPITYRES_API_TOKEN }}</textarea>
+							<textarea name="MPAPITYRES_API_TOKEN" id="token-api" class="form-control" rows="5">{{ configValues.MPAPITYRES_API_TOKEN }}</textarea>
 						</div>
 					</div>
 				</div>
@@ -273,7 +277,7 @@
 										<td>C1</td>
 										<td>
 											<div class="input-group fixed-width-lg">
-												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_C1 }}" id="ricarico-c1" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C1 }}">
+												<input type="text" name="MPAPITYRES_RICARICO_C1" id="ricarico-c1" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C1 }}">
 												<div class="input-group-addon">
 													<span class="input-group">%</span>
 												</div>
@@ -284,7 +288,7 @@
 										<td>C2</td>
 										<td>
 											<div class="input-group fixed-width-lg">
-												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_C2 }}" id="ricarico-c2" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C2 }}">
+												<input type="text" name="MPAPITYRES_RICARICO_C2" id="ricarico-c2" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C2 }}">
 												<div class="input-group-addon">
 													<span class="input-group">%</span>
 												</div>
@@ -295,7 +299,7 @@
 										<td>C3</td>
 										<td>
 											<div class="input-group fixed-width-lg">
-												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_C3 }}" id="ricarico-c3" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C3 }}">
+												<input type="text" name="MPAPITYRES_RICARICO_C3" id="ricarico-c3" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C3 }}">
 												<div class="input-group-addon">
 													<span class="input-group">%</span>
 												</div>
@@ -306,7 +310,7 @@
 										<td>Default</td>
 										<td>
 											<div class="input-group fixed-width-lg">
-												<input type="text" name="{{ configValues.MPAPITYRES_RICARICO_DEFAULT }}" id="ricarico-default" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_DEFAULT }}">
+												<input type="text" name="MPAPITYRES_RICARICO_DEFAULT" id="ricarico-default" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_DEFAULT }}">
 												<div class="input-group-addon">
 													<span class="input-group">%</span>
 												</div>

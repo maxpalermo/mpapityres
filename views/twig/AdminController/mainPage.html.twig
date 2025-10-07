@@ -17,6 +17,10 @@
         margin-bottom: 1.5rem !important;
     }
 
+    .mt-2 {
+        margin-top: 1rem !important;
+    }
+
     .progress-bar-striped {
     background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
     background-size: 1rem 1rem;
@@ -26,7 +30,32 @@
         -webkit-animation: progress-bar-stripes 1s linear infinite;
         animation: progress-bar-stripes 1s linear infinite;
     }
+
+    .col-6 {
+        float: left;
+        min-width: 0 !important;
+        max-width: 50% !important;
+    }
+
+    .align-items-end {
+        align-items: end !important;
+    }
+
+    label.label-line {
+        display: block;
+        float: none;
+        width: auto;
+        text-align: left;
+    }
 </style>
+
+<script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/DownloadCatalogCSV.js"></script>
+<script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/DownloadCatalogAPI.js"></script>
+<script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/UpdateCatalogAPI.js"></script>
+
+<link rel="stylesheet" href="../modules/mpapityres/views/assets/components/select2/select2.bs4-theme.min.css">
+<script src="../modules/mpapityres/views/assets/components/select2/select2.min.js"></script>
+
 
 <!-- Template progress bar download -->
 <template id="template-download-container">
@@ -221,6 +250,89 @@
                     </div>
                     <div class="mt-2">
                         <span id="update-inserted-result" class="text-success" style="display:none"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sezione Inserimento PFU -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bootstrap panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title d-flex align-items-center">
+                        <i class="material-icons mr-2">refresh</i>
+                        Crea prodotti PFU
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-6 mr-2">
+                            <div class="form-group">
+                                <label class="label-line" for="pfu-price-list">Inserisci la lista dei prezzi</label>
+                                <textarea class="form-control" id="pfu-price-list" rows="10"></textarea>
+                                <p>
+                                    <code>Inserisci il peso iniziale e finale in grammi separati da un trattino e poi dopo il punto e virgola inserisci il prezzo</code>
+                                </p>
+                                <p>
+                                    <code>ES:    0-2000;1.00 =>  da zero a 2 kg applica 1 Eur di contributo PFU</code>
+                                </p>
+                            </div>
+                            <div class="form-group fixed-width-lg">
+                                <label class="label-line" for="pfu-id-start">Inserisci l'id di partenza</label>
+                                <input type="number" class="form-control" id="pfu-id-start" value="1">
+                            </div>
+                            <div class="form-group fixed-width-xl">
+                                <label class="label-line" for="pfu-tax-rule-group">Seleziona l'aliquota IVA</label>
+                                <select class="form-control" id="pfu-tax-rule-group">
+                                    {% for tax_rule in taxRulesGroups %}
+                                        <option value="{{ tax_rule.id_tax_rules_group }}">{{ tax_rule.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group mt-2">
+                                <button type="button" class="btn btn-secondary pull-right mr-2" id="btn-produtc-pfu">
+                                    <i class="material-icons mr-2">linear_scale</i>
+                                    Associa i prodotti a PFU
+                                </button>
+
+                                <button type="button" class="btn btn-primary pull-right mr-2" id="btn-create-pfu">
+                                    <i class="material-icons mr-2">play_arrow</i>
+                                    Crea prodotti PFU
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label>Elenco prodotti PFU in archivio</label>
+                            <table class="table table-condensed table-bordered" style="margin: 16px: auto;" id="table-pfu">
+                                <thead>
+                                    <tr>
+                                        <th colspan="5" style="text-align: center;">Elenco prodotti PFU in archivio</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Riferimento</th>
+                                        <th>Prodotto</th>
+                                        <th>Prezzo</th>
+                                        <th>Prodotti associati</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <span id="create-pfu-progress-text">
+                            <div class="alert alert-info">
+                                <p>In attesa…</p>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <span id="create-pfu-inserted-result" class="text-success" style="display:none"></span>
                     </div>
                 </div>
             </div>

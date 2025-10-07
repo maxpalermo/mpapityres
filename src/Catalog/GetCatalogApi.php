@@ -130,6 +130,16 @@ class GetCatalogApi extends CurlManager
         $tyre['csv_label_url'] = $json_csv['tyrelabel_link'];
         $tyre['csv_label_url'] = preg_replace('/w\d\d\d/', 'w800', $tyre['csv_label_url']);
         $tyre['csv_label_url'] = preg_replace('/h\d\d\d/', 'h800', $tyre['csv_label_url']);
+        $tyre['price_1'] = $json_csv['price_1'] ?? 0;
+        $tyre['price_4'] = $json_csv['price_4'] ?? 0;
+        $tyre['availability'] = $json_csv['availability'] ?? 0;
+        $tyre['delivery_date'] = $json_csv['expected_delivery_date'] ?? '';
+        $tyre['height'] = $json_csv['height'] ?? 0;
+        $tyre['width'] = $json_csv['width'] ?? 0;
+        $tyre['depth'] = $json_csv['inner_diameter'] ?? 0;
+        $tyre['tyre_type'] = $json_csv['tyre_type'] ?? 0;
+        $tyre['usage'] = $json_csv['usage'] ?? '';
+        $tyre['ms'] = $json_csv['ms'] ?? '';
 
         $values = [
             'id_t24' => $tyre['idT24'],
@@ -138,6 +148,18 @@ class GetCatalogApi extends CurlManager
             'content' => pSQL(json_encode($tyre)),
             'date_add' => date('Y-m-d H:i:s'),
         ];
+
+        if ($tyre['availability'] == 0) {
+            return false;
+        }
+
+        if ($tyre['delivery_date'] == '') {
+            return false;
+        }
+
+        if ($tyre['price_1'] == 0) {
+            return false;
+        }
 
         try {
             $result = $this->db->insert(

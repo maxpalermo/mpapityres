@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const btnReloadImages = document.getElementById("btn-reload-images");
         const btnDeleteProducts = document.getElementById("btn-delete-products");
         const btnCreatePfu = document.getElementById("btn-create-pfu");
+        const btnSetProductPfu = document.getElementById("btn-produtc-pfu");
         const btnDownloadApi = document.getElementById("btn-api-download");
         const btnDownloadStopApi = document.getElementById("btn-api-stop-download");
 
@@ -47,6 +48,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         btnCreatePfu.addEventListener("click", async () => {
             const createPfu = new CreatePfu(CronControllerURL);
             await createPfu.create();
+        });
+
+        btnSetProductPfu.addEventListener("click", async () => {
+            const createPfu = new CreatePfu(CronControllerURL);
+            await createPfu.setProductsPfu();
         });
 
         btnDownloadApi.addEventListener("click", async () => {
@@ -78,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const response = await fetch(url, { signal: ApiAbortController.signal });
                     const data = await response.json();
 
-                    console.clear();
+                    //console.clear();
                     console.log(data);
 
                     if (data.status == "DONE") {
