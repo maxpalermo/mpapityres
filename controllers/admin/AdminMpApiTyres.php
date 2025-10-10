@@ -21,12 +21,14 @@
 use MpSoft\MpApiTyres\Configuration\ConfigValues;
 use MpSoft\MpApiTyres\Const\Constants;
 use MpSoft\MpApiTyres\Import\CreatePfu;
-
+use MpSoft\MpApiTyres\Models\ModelProductTyre;
+use MpSoft\MpApiTyres\Traits\ResponseTrait;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 
 
 class AdminMpApiTyresController extends ModuleAdminController
 {
+    use ResponseTrait;
     private $id_lang;
     private $configValues;
     private $message;
@@ -292,15 +294,15 @@ class AdminMpApiTyresController extends ModuleAdminController
 
     protected function getPfuList()
     {
-        $id_lang = (int)Context::getContext()->language->id;
+        $id_lang = (int) Context::getContext()->language->id;
         $db = Db::getInstance();
         $sql = new DbQuery();
         $sql->select('id_product, name')
             ->from('product_lang')
             ->where('name like \'PFU%\'')
-            ->where('id_lang='.(int)$id_lang)
+            ->where('id_lang=' . (int) $id_lang)
             ->orderBy('name');
-            
+
         return $db->executeS($sql);
     }
 
@@ -508,5 +510,48 @@ class AdminMpApiTyresController extends ModuleAdminController
         return [
             'success' => $result,
         ];
+    }
+
+    public function getDiffPriceProductsAction()
+    {
+        $list = ModelProductTyre::getPriceListDiff();
+
+
+        $this->response([
+            'rows' => $list,
+            'total' => count($list),
+            'totalNotFiltered' => count($list),
+        ], 200);
+    }
+
+    public function reloadPricesAction()
+    {
+        $id_lang = (int) Context::getContext()->language->id;
+        $rows = json_decode(Tools::getValue('rows'), true);
+        $total = count($rows);
+        $count = 0;
+
+        foreach ($rows as $row) {
+            $product = new Product($row['id_product'], false, $id_lang);
+            if (!Validate::isLoadedObject($product)) {
+                continue;
+            }
+
+            $product->price = $row['price_unit_loaded'];
+            $product->update();
+            $count++;
+        }
+
+        $message = "Applicato il ricarico su {$count} prodotti su un totale di {$total}";
+
+        $this->response([
+            'success' => true,
+            'alert' => "
+                <div class=\"alert alert-success\" role=\"alert\">
+					<strong>{$message}</strong> 
+				</div>
+            ",
+            'message' => $message,
+        ]);
     }
 }
