@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Cron per scaricamento file CSV
- * Eseguibile con: php download-csv.php
+ * Cron per download catalogo prodotti via API
+ * Eseguibile con: php download-api.php
  */
 
 // usa il bootstrap di prestashop
@@ -18,10 +18,8 @@ require_once _PS_MODULE_DIR_ . 'mpapityres/mpapityres.php';
 Context::getContext()->employee = new Employee(1);
 
 try {
-    ob_start();
-
     $start = microtime(true);
-    echo '[' . date('Y-m-d H:i:s') . "] Inizio scaricamento CSV\n";
+    echo '[' . date('Y-m-d H:i:s') . "] Inizio scaricamento API\n";
 
     // Usa le classi del tuo modulo
     /** @var MpApiTyres $module */
@@ -29,25 +27,13 @@ try {
 
     echo "\tMODULO CARICATO: {$module->name}\n";
 
-    $message = $module->cronDownloadCsv();
-    echo "\t$message";
+    echo PHP_EOL . "PROCEDO ALL'IMPORTAZIONE" . PHP_EOL;
+    $module->cronParseAPI();
 
     $end = microtime(true);
     $time = $end - $start;
     echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
     echo PHP_EOL . '-----------------------------' . PHP_EOL;
-    ob_end_flush();
-
-    ob_start();
-    $start = microtime(true);
-    echo PHP_EOL . 'PROCEDO AL PARSING DEL FILE CSV' . PHP_EOL;
-    $message = $module->cronParseCsv();
-    echo "\t$message";
-    $end = microtime(true);
-    $time = $end - $start;
-    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
-    echo PHP_EOL . '-----------------------------' . PHP_EOL;
-    ob_end_flush();
 
     exit(0);
 } catch (Exception $e) {

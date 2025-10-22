@@ -52,7 +52,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         try {
             $ajax = (int) Tools::getValue('ajax');
             $action = Tools::getValue('action');
-            
+
             if ($ajax && !preg_match('/Action$/', $action)) {
                 $action .= 'Action';
             }
@@ -120,8 +120,8 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         $reset = (int) Tools::getValue('reset');
 
         if ($reset) {
-            $this->configValues->MPAPITYRES_CRON_IMPORT_STATUS = "DONE";
-            $this->configValues->setValue('MPAPITYRES_CRON_IMPORT_STATUS', "DONE");
+            $this->configValues->MPAPITYRES_CRON_IMPORT_STATUS = 'DONE';
+            $this->configValues->setValue('MPAPITYRES_CRON_IMPORT_STATUS', 'DONE');
 
             $this->configValues->MPAPITYRES_CRON_IMPORT_UPDATED_DATE = false;
             $this->configValues->setValue('MPAPITYRES_CRON_IMPORT_UPDATED_DATE', false);
@@ -139,9 +139,9 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         if ($reset) {
             Configuration::updateValue(Constants::MPAPITYRES_CRON_RELOAD_IMAGES_OFFSET, 0);
             Configuration::updateValue(Constants::MPAPITYRES_CRON_RELOAD_IMAGES_UPDATED, 0);
-            Configuration::updateValue(Constants::MPAPITYRES_CRON_RELOAD_IMAGES_STATUS, "RESET");
+            Configuration::updateValue(Constants::MPAPITYRES_CRON_RELOAD_IMAGES_STATUS, 'RESET');
             Configuration::updateValue(Constants::MPAPITYRES_CRON_RELOAD_IMAGES_UPDATED_DATE, false);
-            Configuration::updateValue(Constants::MPAPITYRES_CRON_RELOAD_IMAGES_DELETED_IMAGES, "RESET");
+            Configuration::updateValue(Constants::MPAPITYRES_CRON_RELOAD_IMAGES_DELETED_IMAGES, 'RESET');
         }
 
         $reloadImages = new ReloadImages();
@@ -170,7 +170,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         $host = Configuration::get(Constants::MPAPITYRES_HOST_TYRES);
         $token = Configuration::get(Constants::MPAPITYRES_TOKEN_TYRES);
         $timeout = Configuration::get(Constants::MPAPITYRES_CRON_TIMEOUT);
-        $endpoint = "/search";
+        $endpoint = '/search';
 
         $getCatalogApi = new GetCatalogApi($host, $endpoint, $token, $timeout);
         $result = $getCatalogApi->run($offset, $limit, $minStock);
@@ -180,8 +180,8 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
     public function deleteProductsAction()
     {
-        $MAX_TIMEOUT = 60; //secondi
-        $id_lang = (int) Configuration::get("PS_LANG_DEFAULT");
+        $MAX_TIMEOUT = 60;  // secondi
+        $id_lang = (int) Configuration::get('PS_LANG_DEFAULT');
         $pfx = _DB_PREFIX_;
         $start = microtime(true);
         $category_default = pSQL(Configuration::get('MPAPITYRES_DEFAULT_CATEGORY'));
@@ -200,7 +200,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         $id_category_default = 2;
 
         if (!$id_category_default) {
-            $id_category_default = (int) Configuration::get("_PS_CATEGORY_DEFAULT_");
+            $id_category_default = (int) Configuration::get('_PS_CATEGORY_DEFAULT_');
         }
 
         $query = "
@@ -226,25 +226,25 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 'status' => 'DONE',
                 'offset' => 0,
                 'deleted' => $deleted,
-                'message' => "Nessun prodotto trovato.",
+                'message' => 'Nessun prodotto trovato.',
                 'elapsed' => 0,
                 'time' => '0',
             ];
         }
 
         foreach ($products as $product) {
-            //Calcolo il tempo trascorso dall'inizio della procedura ad adesso in secondi
-            $elapsed_time = microtime(true) - $start; //secondi
+            // Calcolo il tempo trascorso dall'inizio della procedura ad adesso in secondi
+            $elapsed_time = microtime(true) - $start;  // secondi
             $human_timing = $this->getHumanTiming($elapsed_time);
 
-            //COntrolla se il tempo trascorso è maggiore di $MAX_TIMEOUT
+            // COntrolla se il tempo trascorso è maggiore di $MAX_TIMEOUT
             if ($elapsed_time > $MAX_TIMEOUT) {
                 return [
                     'metodo' => 'DeleteProductsAction',
                     'status' => 'DELETING',
                     'offset' => 0,
                     'deleted' => $deleted,
-                    'message' => "Timeout raggiunto. Rilanciare il Cron.",
+                    'message' => 'Timeout raggiunto. Rilanciare il Cron.',
                     'elapsed' => $elapsed_time,
                     'time' => $human_timing,
                 ];
@@ -257,7 +257,6 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
         $stop = microtime(true);
         $elapsed = $stop - $start;
-
 
         return [
             'time' => $this->getHumanTiming($elapsed),
@@ -295,7 +294,6 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 $error = $pfu->getError();
                 $this->errors[] = $error;
             }
-
         }
 
         return [
@@ -473,7 +471,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
             if ($clearRows) {
                 $db = \Db::getInstance();
                 try {
-                    $db->execute("COMMIT");
+                    $db->execute('COMMIT');
                 } catch (\Throwable $th) {
                     // nothing
                 }
@@ -597,12 +595,10 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 $id_t24 = isset($assoc['id']) ? (string) $assoc['id'] : '';
                 $matchcode = isset($assoc['matchcode']) ? (string) $assoc['matchcode'] : '';
 
-
                 $content = json_encode($assoc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 $values = "('" . pSQL($id_t24) . "','CSV','" . pSQL($matchcode) . "','" . pSQL($content) . "',1,'{$nowTs}',NULL)";
                 $batch[] = $values;
                 $rowsTotal++;
-
 
                 if (count($batch) >= $batchSize) {
                     $sql = "INSERT INTO {$pfx}product_tyre (id_t24, type, matchcode, content, active, date_add, date_upd) VALUES " . implode(',', $batch);
@@ -752,7 +748,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
             $count = 0;
             $batch = [];
-            $batchSize = 500; // dimensione batch
+            $batchSize = 500;  // dimensione batch
             $now = date('Y-m-d H:i:s');
 
             foreach ($parseCsv->parseCSV($csvPath, $delimiter, $progressId) as $row) {
@@ -785,7 +781,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
     public function disableProductsAction()
     {
-        $category_name = Configuration::get("MPAPITYRES_CATEGORY_DEFAULT");
+        $category_name = Configuration::get('MPAPITYRES_CATEGORY_DEFAULT');
         $id_category_default = $this->getIdCategoryFromName($category_name);
         $db = Db::getInstance();
         $db->update(
@@ -829,14 +825,13 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         $db->execute("TRUNCATE TABLE {$pfx}stock_mvt");
 
         $img_folder = _PS_PROD_IMG_DIR_;
-        //Elimino tutte le sottocartelle da 1 a 9, devono essere eliminate anche se non sono vuote
+        // Elimino tutte le sottocartelle da 1 a 9, devono essere eliminate anche se non sono vuote
 
         $this->deleteAllSubfolders($img_folder);
 
         return [
             'success' => 1
         ];
-
     }
 
     /**
@@ -895,10 +890,11 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         $id_category = (int) GetCategoryIdByName::get(GetCategoryIdByName::getDefaultTyreCategoryName());
 
         $sql = new DbQuery();
-        $sql->select("id_product")
-            ->from("product")
+        $sql
+            ->select('id_product')
+            ->from('product')
             ->where('id_category_default=' . (int) $id_category)
-            ->orderBy("id_product ASC");
+            ->orderBy('id_product ASC');
 
         $products = $db->executeS($sql);
 
@@ -933,6 +929,9 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         $pfx = _DB_PREFIX_;
         $id_lang = (int) Context::getContext()->language->id;
 
+        $id_feature_size = $this->getIdFeature('grandezza');
+        $id_feature_season = $this->getIdFeature('uso');
+
         $sql = "
             SELECT
                 distinct p.id_product,
@@ -941,64 +940,53 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 pl.name, 
                 pfu.id_pfu, 
                 ppfu.reference AS ppfu_reference, 
-                ppful.name AS pfu_name
+                ppful.name AS pfu_name,
+                p.id_category_default,
+                cl.name as category_name,
+                fvl1.value as tyre_size,
+                fvl2.value as tyre_season
             FROM
                 {$pfx}product p
             INNER JOIN
                 {$pfx}product_lang pl ON (p.id_product = pl.id_product AND pl.id_lang = {$id_lang})
+            INNER JOIN
+                {$pfx}category_lang cl ON (p.id_category_default = cl.id_category AND cl.id_lang = {$id_lang})
             LEFT JOIN
                 {$pfx}product_pfu pfu ON (p.id_product = pfu.id_product)
             LEFT JOIN
                 {$pfx}product ppfu ON (pfu.id_pfu = ppfu.id_product)
             LEFT JOIN
                 {$pfx}product_lang ppful ON (ppfu.id_product = ppful.id_product AND ppful.id_lang = {$id_lang})
+            LEFT JOIN
+                {$pfx}feature_product fp1 ON (fp1.id_product = p.id_product and fp1.id_feature={$id_feature_size})
+            LEFT JOIN
+                {$pfx}feature_value fv1 ON (fv1.id_feature={$id_feature_size} and fv1.id_feature_value=fp1.id_feature_value)
+            LEFT JOIN 
+                {$pfx}feature_value_lang fvl1 ON (fvl1.id_feature_value=fv1.id_feature_value and fvl1.id_lang={$id_lang})
+            LEFT JOIN 
+                {$pfx}feature_product fp2 ON (fp2.id_product = p.id_product and fp2.id_feature={$id_feature_season})
+            LEFT JOIN
+                {$pfx}feature_value fv2 ON (fv2.id_feature={$id_feature_season} and fv2.id_feature_value=fp2.id_feature_value)
+            LEFT JOIN 
+                {$pfx}feature_value_lang fvl2 ON (fvl2.id_feature_value=fv2.id_feature_value and fvl2.id_lang={$id_lang})
+
         ";
 
         if ($search) {
             $search = pSQL(trim(str_replace("'", "''", $search)));
 
-            $sql_feature = "
-                SELECT
-                    f.id_feature
-                FROM
-                    {$pfx}feature_lang f
-                WHERE
-                    f.name = 'grandezza'
-                    AND f.id_lang = {$id_lang}
-            ";
+            $sql .= "
 
-            $id_feature = $db->getValue($sql_feature);
-
-            $sql_feature_value = "
-                SELECT
-                    fv.id_feature_value
-                FROM
-                    {$pfx}feature_value fv
-                INNER JOIN
-                    {$pfx}feature_value_lang fvl ON (fv.id_feature_value = fvl.id_feature_value AND fvl.id_lang = {$id_lang})
-                WHERE
-                    fv.id_feature = {$id_feature}
-                    AND fvl.value LIKE '{$search}'
-            ";
-
-            $id_feature_value = $db->getValue($sql_feature_value);
-
-            if ($id_feature_value) {
-                $sql .= "\n
-                    LEFT JOIN
-                    {$pfx}feature_product fp ON (fp.id_product = p.id_product)
-                ";
-            }
-
-            $sql .= "\n
                 WHERE 
-                pl.name != 'PFU%'
+                pl.name NOT LIKE 'PFU%'
                 AND 
                 (
                     p.reference like '%{$search}%' OR
                     p.ean13 like '%{$search}%' OR
                     pl.name like '%{$search}%' OR
-                    fp.id_feature_value = {$id_feature_value}
+                    cl.name like '%{$search}%' OR
+                    fvl1.value like '%{$search}%' OR
+                    fvl2.value like '%{$search}%'
                 )
             ";
         } else {
@@ -1008,6 +996,13 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         if (!$order) {
             $sql .= "\nORDER BY p.reference ASC";
         } else {
+            $order = pSQL(trim(str_replace("'", "''", $order)));
+            $sort = pSQL(trim(str_replace("'", "''", $sort)));
+
+            if ($order == 'reference') {
+                $order = 'p.reference';
+            }
+
             $sql .= "\nORDER BY {$order} {$sort}";
         }
 
@@ -1019,14 +1014,21 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
             $sql .= "\n LIMIT {$limit}";
         }
 
+        $total = 0;
+
         try {
             $list = $db->executeS($sql);
+            // Modifico la query per avere il conteggio
+            $sql = preg_replace('/SELECT\s+.*?\s+FROM/is', 'SELECT COUNT(*) FROM', $sql);
+            $sql = preg_replace('/\s*LIMIT\s+.*$/is', '', $sql);
+            $total = (int) $db->getValue($sql);
         } catch (\Throwable $th) {
             return [
                 'sql' => $sql,
                 'error' => $th->getMessage(),
             ];
         }
+
         if ($list) {
             foreach ($list as &$item) {
                 $product = new Product($item['id_product']);
@@ -1037,15 +1039,31 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 }
             }
 
+            $totalNotFiltered = $db->getValue("SELECT COUNT(*) FROM {$pfx}product WHERE reference NOT LIKE 'PFU%'");
+
             return [
                 'rows' => $list,
-                'total' => $db->getValue("SELECT COUNT(*) FROM {$pfx}product"),
-                'totalNotFiltered' => $db->getValue("SELECT COUNT(*) FROM {$pfx}product"),
+                'total' => $total,
+                'totalNotFiltered' => $totalNotFiltered,
                 'sql' => $sql,
             ];
         }
 
         return [];
+    }
+
+    protected function getIdFeature($name)
+    {
+        $id_lang = (int) Context::getContext()->language->id;
+        $db = Db::getInstance();
+        $sql = new DbQuery();
+        $sql
+            ->select('id_feature')
+            ->from('feature_lang')
+            ->where("name = '{$name}'")
+            ->where("id_lang={$id_lang}");
+
+        return (int) $db->getValue($sql);
     }
 
     public function associatePfuAction()

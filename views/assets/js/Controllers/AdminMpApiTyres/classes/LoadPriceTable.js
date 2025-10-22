@@ -1,31 +1,3 @@
-async function doFetchPost($url, $params) {
-    let response;
-
-    $params.ajax = 1;
-
-    try {
-        response = await fetch($url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams($params),
-        });
-    } catch (error) {
-        fetchResponseCode = 500;
-        return error;
-    }
-
-    fetchResponseCode = response.status;
-    if (fetchResponseCode != 200) {
-        return response;
-    }
-
-    const data = await response.json();
-
-    return data;
-}
-
 class loadPriceTableClass {
     constructor($tableId) {
         this.table = document.getElementById($tableId);
@@ -315,4 +287,59 @@ class loadPriceTableClass {
             alert("Errore nella comunicazione con il server durante l'importazione");
         }
     }
+}
+
+/**
+ * Formatter per le immagini nella tabella
+ */
+function imageFormatter(value, row, index) {
+    if (!value) {
+        return '<img src="' + baseUrl + 'img/404.gif" class="img-thumbnail" style="max-width: 72px;">';
+    }
+
+    //Divido l'id immagine in cifre
+    const pathImageArray = String(value).split("").map(Number);
+    //Creo il percorso unendo le cifre con /
+    const pathImage = "img/p/" + pathImageArray.join("/") + "/" + value + "-small_default.jpg";
+
+    const img = document.createElement("img");
+    img.src = baseUrl + pathImage;
+    img.className = "img-thumbnail";
+    img.style.maxWidth = "72px";
+
+    return img.outerHTML;
+}
+
+/**
+ * Formatter per i prezzi
+ *
+ */
+function priceFormatter(value, row, index) {
+    if (value == 0) {
+        return "--";
+    }
+
+    return (
+        parseFloat(value).toLocaleString("it-IT", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }) + " EUR"
+    );
+}
+
+/**
+ * Formatter per le percentuali
+ *
+ */
+function percFormatter(value, row, index) {
+    if (value == 0) {
+        return "--";
+    }
+
+    return (
+        parseFloat(value).toLocaleString("it-IT", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }) + " %"
+    );
 }

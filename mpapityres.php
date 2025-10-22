@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -17,13 +18,14 @@
  * @copyright Since 2016 Massimiliano Palermo
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-
+use MpSoft\MpApiTyres\Helpers\DownloadAPI;
+use MpSoft\MpApiTyres\Helpers\DownloadCsv;
 use MpSoft\MpApiTyres\Helpers\ExecuteSqlHelper;
+use MpSoft\MpApiTyres\Helpers\LoadPriceHelper;
 use MpSoft\MpApiTyres\Helpers\TwigHelper;
 use MpSoft\MpApiTyres\Models\ModelProductPfu;
 use MpSoft\MpApiTyres\Models\ProductTyreDistributorModel;
@@ -37,7 +39,7 @@ class MpApiTyres extends Module implements WidgetInterface
     {
         $this->name = 'mpapityres';
         $this->tab = 'administration';
-        $this->version = '0.8.1';
+        $this->version = '1.0.1.1332';
         $this->author = 'Massimiliano Palermo';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
@@ -72,7 +74,7 @@ class MpApiTyres extends Module implements WidgetInterface
         $tab->class_name = 'AdminMpApiTyres';
         $tab->module = $this->name;
         foreach ($languages as $language) {
-            $tab->name[$language['id_lang']] = "Tyre 24 API";
+            $tab->name[$language['id_lang']] = 'Tyre 24 API';
         }
         $add = $tab->add();
 
@@ -97,13 +99,10 @@ class MpApiTyres extends Module implements WidgetInterface
 
     public function getContent()
     {
-        $dotenv = new Dotenv();
-        $dotenv->load(_PS_MODULE_DIR_ . 'mpapityres/.env');
-
-        $apiTyres14Token = $_ENV['API_REST_TYRES14_TOKEN'];
-        $apiProductsToken = $_ENV['API_REST_PRODUCTS_TOKEN'];
-        $apiAlloysToken = $_ENV['API_REST_ALLOYS_TOKEN'];
-        $apiWearPartsToken = $_ENV['API_REST_WEARPARTS_TOKEN'];
+        $apiTyres14Token = Configuration::get('API_REST_TYRES14_TOKEN');
+        $apiProductsToken = Configuration::get('API_REST_PRODUCTS_TOKEN');
+        $apiAlloysToken = Configuration::get('API_REST_ALLOYS_TOKEN');
+        $apiWearPartsToken = Configuration::get('API_REST_WEARPARTS_TOKEN');
 
         $filters = file_get_contents(_PS_MODULE_DIR_ . 'mpapityres/views/assets/js/Tyre/filters.json');
         $sorters = file_get_contents(_PS_MODULE_DIR_ . 'mpapityres/views/assets/js/Tyre/sorters.json');
@@ -113,6 +112,7 @@ class MpApiTyres extends Module implements WidgetInterface
             '@Modules/mpapityres/views/twig/getContent.html.twig',
             [
                 'baseUrl' => $this->context->link->getBaseLink(),
+                'adminMpApiTyres' => $this->context->link->getAdminLink('AdminMpApiTyres'),
                 'filters' => $filters,
                 'sorters' => $sorters,
                 'apiTyres14Token' => $apiTyres14Token,
@@ -180,5 +180,43 @@ class MpApiTyres extends Module implements WidgetInterface
                 }
         }
         return '';
+    }
+
+    public function cronReloadPrices()
+    {
+        require_once dirname(__FILE__) . '/vendor/autoload.php';
+
+        $diff = LoadPriceHelper::getDiffPrices();
+        $message = LoadPriceHelper::reloadPrices($diff, Context::getContext()->language->id);
+
+        return $message;
+    }
+
+    public function cronDownloadCsv()
+    {
+        require_once dirname(__FILE__) . '/vendor/autoload.php';
+
+        DownloadCsv::getZipAndExtract();
+    }
+
+    public function cronParseCsv()
+    {
+        require_once dirname(__FILE__) . '/vendor/autoload.php';
+
+        DownloadCsv::parseCsvTotal();
+    }
+
+    public function cronDownloadAPI()
+    {
+        require_once dirname(__FILE__) . '/vendor/autoload.php';
+
+        DownloadAPI::doPostDownload();
+    }
+
+    public function cronParseAPI()
+    {
+        require_once dirname(__FILE__) . '/vendor/autoload.php';
+
+        DownloadAPI::parseCatalogTotal();
     }
 }

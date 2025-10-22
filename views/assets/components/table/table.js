@@ -13,6 +13,7 @@ async function associatePfu(ids, idPfu) {
             action: "associatePfuAction",
             ids: ids,
             idPfu: idPfu,
+            token: cronToken,
         }),
     });
 
@@ -37,6 +38,7 @@ async function dissociatePfu(ids) {
             ajax: 1,
             action: "dissociatePfuAction",
             ids: ids,
+            token: cronToken,
         }),
     });
 
@@ -124,13 +126,25 @@ function initTable(table) {
             },
             {
                 title: "Grandezza",
-                field: "grandezza",
+                field: "tyre_size",
+                align: "left",
+                sortable: true,
+            },
+            {
+                title: "Stagione",
+                field: "tyre_season",
                 align: "left",
                 sortable: true,
             },
             {
                 title: "PFU",
                 field: "pfu_name",
+                align: "left",
+                sortable: true,
+            },
+            {
+                title: "Categoria",
+                field: "category_name",
                 align: "left",
                 sortable: true,
             },

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,15 +21,16 @@
 
 use MpSoft\MpApiTyres\Configuration\ConfigValues;
 use MpSoft\MpApiTyres\Const\Constants;
+use MpSoft\MpApiTyres\Helpers\LoadPriceHelper;
 use MpSoft\MpApiTyres\Import\CreatePfu;
 use MpSoft\MpApiTyres\Models\ModelProductTyre;
 use MpSoft\MpApiTyres\Traits\ResponseTrait;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 
-
 class AdminMpApiTyresController extends ModuleAdminController
 {
     use ResponseTrait;
+
     private $id_lang;
     private $configValues;
     private $message;
@@ -62,6 +64,7 @@ class AdminMpApiTyresController extends ModuleAdminController
         $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/classes/CreatePfu.js');
 
         $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/mainPage.js');
+        $this->addJS($this->module->getLocalPath() . 'views/assets/js/Controllers/AdminMpApiTyres/nobootstrap-remove.js');
     }
 
     public function initContent()
@@ -72,12 +75,12 @@ class AdminMpApiTyresController extends ModuleAdminController
             return $this->$action();
         }
 
-        $disableJqueryMigrateLog = "
+        $disableJqueryMigrateLog = '
             <script>
                 jQuery.migrateMute = true;
                 jQuery.migrateTrace = false;
             </script>
-        ";
+        ';
 
         switch ($action) {
             case 'showSettings':
@@ -89,7 +92,6 @@ class AdminMpApiTyresController extends ModuleAdminController
             case 'default':
             default:
                 $this->content = $disableJqueryMigrateLog . $this->showMainPage();
-
         }
 
         return parent::initContent();
@@ -115,12 +117,10 @@ class AdminMpApiTyresController extends ModuleAdminController
         if ($action == 'showSettings') {
             $this->getToolbarBtn('settings');
             $this->getToolbarBtn('pfu');
-
         }
         if ($action == 'showPfu') {
             $this->getToolbarBtn('default');
             $this->getToolbarBtn('settings');
-
         }
 
         unset($this->page_header_toolbar_btn['new']);
@@ -166,49 +166,52 @@ class AdminMpApiTyresController extends ModuleAdminController
             ->generate($controllerRouterName);
     }
 
+    protected function getSmartyPath($path)
+    {
+        return $this->module->getLocalPath() . 'views/smarty/' . $path;
+    }
+
+    protected function getTwigPath($path)
+    {
+        return $this->module->getLocalPath() . 'views/twig/' . $path;
+    }
+
     protected function showSettingsPage()
     {
-        $path = 'AdminController/settings.html.twig';
+        $path = '@twig/AdminController/settings.html.twig';
         $params = $this->getSettingsPageTplVars();
         return $this->setTpl($path, $params);
     }
 
     protected function showPfuPage()
     {
-        $path = 'AdminController/pfu.html.twig';
+        $path = '@twig/AdminController/pfu.html.twig';
         $params = $this->getPfuPageTplVars();
         return $this->setTpl($path, $params);
     }
 
     protected function showMainPage()
     {
-        $path = 'AdminController/mainPage.html.twig';
+        $path = '@twig/AdminController/mainPage.html.twig';
         $params = $this->getMainPageTplVars();
         return $this->setTpl($path, $params);
     }
 
     protected function setTpl($path, $params = [])
     {
-        $baseViews = $this->module->getLocalPath() . 'views/twig/';
-        $template = "{$baseViews}{$path}";
-        if (!file_exists($template)) {
-            return '<div class="alert alert-danger">Template not found: ' . $template . '</div>';
-        }
-
         try {
             /** @var \Twig\Environment $twig */
             $twig = $this->module->get('twig');
 
-            // Aggiungiamo un loader per il percorso specifico dei nostri template
             $loader = new \Twig\Loader\FilesystemLoader($this->module->getLocalPath() . 'views/twig/');
-            $newTwig = new \Twig\Environment($loader);
+            $loader->addPath($this->module->getLocalPath() . 'views/twig/', 'twig');
+            $loader->addPath(_PS_MODULE_DIR_, 'Modules');
+            $twig->setLoader($loader);
 
-            // Estraiamo il nome del file dal percorso completo
-            $relativePath = str_replace($this->module->getLocalPath() . 'views/twig/', '', $template);
-
-            return $newTwig->render($relativePath, $params);
+            return $twig->render($path, $params);
         } catch (\Exception $e) {
-            return '<div class="alert alert-danger">Error rendering template: ' . $e->getMessage() . '</div>';
+            throw $e;
+            // return '<div class="alert alert-danger">Error rendering template: ' . $e->getMessage() . '</div>';
         }
     }
 
@@ -221,6 +224,7 @@ class AdminMpApiTyresController extends ModuleAdminController
             'baseUrl' => $this->context->link->getBaseLink(),
             'adminControllerUrl' => $adminController,
             'cronControllerUrl' => $cronControllerUrl,
+            'cronImportProducts' => _PS_ROOT_DIR_ . 'modules/mpapityres/Cron/full-import-tyres.php',
             'manufacturers' => $this->getManufacturers(),
             'totalManufacturers' => $this->getTotalManufacturers(),
             'totalTyres' => $this->getTotalTyres(),
@@ -265,10 +269,15 @@ class AdminMpApiTyresController extends ModuleAdminController
             'baseUrl' => $this->context->link->getBaseLink(),
             'adminControllerUrl' => $adminController,
             'cronControllerUrl' => $cronControllerUrl,
+            'downloadCatalogActionUrl' => $this->context->link->getModuleLink($this->module->name, 'DownloadCatalog'),
+            'importCatalogActionUrl' => $this->context->link->getModuleLink($this->module->name, 'ImportCatalog'),
+            'reloadImagesActionUrl' => $this->context->link->getModuleLink($this->module->name, 'ReloadImages'),
+            'deleteProductsActionUrl' => $this->context->link->getModuleLink($this->module->name, 'DeleteProducts'),
             'taxRulesGroups' => $this->configValues->getTaxRulesGroups(),
             'idTaxRulesGroup' => $this->configValues->MPAPITYRES_ID_TAX_RULES_GROUP,
             'idTaxRulesGroupPfu' => $this->configValues->MPAPITYRES_ID_TAX_RULES_GROUP_PFU,
             'csvEndpointUrl' => $this->configValues->getCsvEndpointUrl(),
+            'pfuList' => $this->getPfuList(),
             'summary' => $this->getSummary(),
         ];
     }
@@ -287,8 +296,15 @@ class AdminMpApiTyresController extends ModuleAdminController
             'idTaxRulesGroupPfu' => $this->configValues->MPAPITYRES_ID_TAX_RULES_GROUP_PFU,
             'csvEndpointUrl' => $this->configValues->getCsvEndpointUrl(),
             'profiles' => $this->getProfiles(),
+            'seasons' => $this->getSeasons(),
             'summary' => $this->getSummary(),
             'pfuList' => $this->getPfuList(),
+            'treeCategories' => $this->getCategoryTreeHtml(),
+            'downloadCatalogActionUrl' => $adminController . '&action=downloadCatalogAction',
+            'importCatalogActionUrl' => $adminController . '&action=importCatalogAction',
+            'reloadImagesActionUrl' => $adminController . '&action=reloadImagesAction',
+            'deleteProductsActionUrl' => $adminController . '&action=deleteProductsAction',
+            'cronToken' => md5('MpFrontLogin'),
         ];
     }
 
@@ -297,13 +313,31 @@ class AdminMpApiTyresController extends ModuleAdminController
         $id_lang = (int) Context::getContext()->language->id;
         $db = Db::getInstance();
         $sql = new DbQuery();
-        $sql->select('id_product, name')
-            ->from('product_lang')
-            ->where('name like \'PFU%\'')
-            ->where('id_lang=' . (int) $id_lang)
-            ->orderBy('name');
+        $sql
+            ->select('p.id_product, p.reference, p.price, pl.name, count(pfu.id_product) as products')
+            ->from('product', 'p')
+            ->innerJoin('product_lang', 'pl', 'p.id_product = pl.id_product and pl.id_lang=' . (int) $id_lang)
+            ->leftJoin('product_pfu', 'pfu', 'p.id_product = pfu.id_pfu')
+            ->where("pl.name like 'PFU%'")
+            ->groupBy('p.id_product')
+            ->orderBy('pl.name');
 
         return $db->executeS($sql);
+    }
+
+    protected function getIdFeatureByName($name)
+    {
+        $name = pSQL($name);
+        $id_lang = (int) Context::getContext()->language->id;
+        $db = Db::getInstance();
+        $sql = new DbQuery();
+        $sql
+            ->select('id_feature')
+            ->from('feature_lang')
+            ->where("name ='{$name}'")
+            ->where("id_lang={$id_lang}");
+
+        return (int) $db->getValue($sql);
     }
 
     protected function getProfiles()
@@ -315,30 +349,44 @@ class AdminMpApiTyresController extends ModuleAdminController
         return $profiles;
     }
 
+    protected function getSeasons()
+    {
+        $id_feature = $this->getIdFeatureByName('USO');
+
+        if (!$id_feature) {
+            return [];
+        }
+
+        $id_lang = (int) Context::getContext()->language->id;
+        $seasons = FeatureValue::getFeatureValuesWithLang($id_lang, $id_feature);
+
+        return $seasons;
+    }
+
     protected function getSummary()
     {
         $id_lang = (int) \Context::getContext()->language->id;
         $db = \Db::getInstance();
         $pfx = _DB_PREFIX_;
-        //Prodotti totali
+        // Prodotti totali
         $queryTotalProducts = "SELECT COUNT(*) as product FROM {$pfx}product";
         $totalProducts = $db->getValue($queryTotalProducts);
-        //Prodotti disattivati
+        // Prodotti disattivati
         $queryDisabledProducts = "SELECT COUNT(*) as disabled FROM {$pfx}product WHERE active = 0";
         $disabledProducts = $db->getValue($queryDisabledProducts);
-        //Product Tyre
+        // Product Tyre
         $queryProductTyre = "SELECT COUNT(*) as product_tyre FROM {$pfx}product_tyre";
         $productTyre = $db->getValue($queryProductTyre);
-        //Produttori
+        // Produttori
         $queryManufacturers = "SELECT COUNT(*) as manufacturer FROM {$pfx}manufacturer";
         $manufacturers = $db->getValue($queryManufacturers);
-        //Fornitori
+        // Fornitori
         $features = \Feature::getFeatures($id_lang);
-        //Ultimo fetch download
+        // Ultimo fetch download
         $lastDateDownload = $this->configValues->MPAPITYRES_CRON_DOWNLOAD_UPDATED_DATE;
-        //Ultimo fetch import
+        // Ultimo fetch import
         $lastDateImport = $this->configValues->MPAPITYRES_CRON_IMPORT_UPDATED_DATE;
-        //Ultimo fetch reload images
+        // Ultimo fetch reload images
         $lastDateReloadImages = $this->configValues->MPAPITYRES_CRON_RELOAD_IMAGES_UPDATED_DATE;
 
         return [
@@ -362,7 +410,6 @@ class AdminMpApiTyresController extends ModuleAdminController
     {
         return \Manufacturer::getManufacturers();
     }
-
 
     private function getTotalManufacturers()
     {
@@ -433,13 +480,28 @@ class AdminMpApiTyresController extends ModuleAdminController
         if (isset($params['form-action']) && $params['form-action'] == 'saveSettings') {
             $this->saveSettingsApi($params);
             $this->saveSettingFilters($params);
-            $this->saveSettingProducts($params);
+            $loadPriceCount = $this->saveSettingProducts($params);
 
-            $message = "
-                <div class=\"alert alert-success\">
+            $message = '
+                <div class="alert alert-success">
                     <p>Impostazioni salvate</p>
                 </div>
-            ";
+            ';
+
+            if ($loadPriceCount) {
+                $message .= "
+                    <div class=\"alert alert-success\">
+                        <p>Sono stati aggiornati {$loadPriceCount} prodotti.</p>
+                        <p>Riapplicare i prezzi ai prodotti.</p>
+                    </div>
+                ";
+            } else {
+                $message .= '
+                    <div class="alert alert-success">
+                        <p>Nessun prodotto aggiornato.</p>
+                    </div>
+                ';
+            }
         }
 
         $this->message = $message;
@@ -483,7 +545,9 @@ class AdminMpApiTyresController extends ModuleAdminController
         $config->setValue('MPAPITYRES_RICARICO_C3', $ricaricoC3);
         $config->setValue('MPAPITYRES_RICARICO_DEFAULT', $ricaricoDefault);
 
-        return true;
+        $loadPriceCount = LoadPriceHelper::updateLoadPrices();
+
+        return $loadPriceCount;
     }
 
     private function saveSettingFilters($params)
@@ -516,7 +580,6 @@ class AdminMpApiTyresController extends ModuleAdminController
     {
         $list = ModelProductTyre::getPriceListDiff();
 
-
         $this->response([
             'rows' => $list,
             'total' => count($list),
@@ -528,28 +591,15 @@ class AdminMpApiTyresController extends ModuleAdminController
     {
         $id_lang = (int) Context::getContext()->language->id;
         $rows = json_decode(Tools::getValue('rows'), true);
-        $total = count($rows);
-        $count = 0;
 
-        foreach ($rows as $row) {
-            $product = new Product($row['id_product'], false, $id_lang);
-            if (!Validate::isLoadedObject($product)) {
-                continue;
-            }
-
-            $product->price = $row['price_unit_loaded'];
-            $product->update();
-            $count++;
-        }
-
-        $message = "Applicato il ricarico su {$count} prodotti su un totale di {$total}";
+        $message = LoadPriceHelper::reloadPrices($rows, $id_lang);
 
         $this->response([
             'success' => true,
             'alert' => "
                 <div class=\"alert alert-success\" role=\"alert\">
-					<strong>{$message}</strong> 
-				</div>
+\t\t\t\t\t<strong>{$message}</strong> 
+\t\t\t\t</div>
             ",
             'message' => $message,
         ]);

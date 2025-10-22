@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -26,17 +27,17 @@ class ModelProductTyre extends \ObjectModel
         UPDATE {pfx}product_tyre 
         SET 
             price_unit = CASE 
-                WHEN JSON_EXTRACT(content, '$.price_1') IS NOT NULL 
-                AND JSON_UNQUOTE(JSON_EXTRACT(content, '$.price_1')) != ''
-                AND JSON_UNQUOTE(JSON_EXTRACT(content, '$.price_1')) REGEXP '^-?[0-9]+(\\.[0-9]+)?$'
-                THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(content, '$.price_1')) AS DECIMAL(20,6))
+                WHEN JSON_EXTRACT(content, '\$.price_1') IS NOT NULL 
+                AND JSON_UNQUOTE(JSON_EXTRACT(content, '\$.price_1')) != ''
+                AND JSON_UNQUOTE(JSON_EXTRACT(content, '\$.price_1')) REGEXP '^-?[0-9]+(\.[0-9]+)?\$'
+                THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(content, '\$.price_1')) AS DECIMAL(20,6))
                 ELSE 0 
             END,
             price_set = CASE 
-                WHEN JSON_EXTRACT(content, '$.price_4') IS NOT NULL 
-                AND JSON_UNQUOTE(JSON_EXTRACT(content, '$.price_4')) != ''
-                AND JSON_UNQUOTE(JSON_EXTRACT(content, '$.price_4')) REGEXP '^-?[0-9]+(\\.[0-9]+)?$'
-                THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(content, '$.price_4')) AS DECIMAL(20,6))
+                WHEN JSON_EXTRACT(content, '\$.price_4') IS NOT NULL 
+                AND JSON_UNQUOTE(JSON_EXTRACT(content, '\$.price_4')) != ''
+                AND JSON_UNQUOTE(JSON_EXTRACT(content, '\$.price_4')) REGEXP '^-?[0-9]+(\.[0-9]+)?\$'
+                THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(content, '\$.price_4')) AS DECIMAL(20,6))
                 ELSE 0 
             END
         WHERE 
@@ -44,20 +45,21 @@ class ModelProductTyre extends \ObjectModel
             AND JSON_VALID(content);
     ";
 
-    public const QUERY_UPDATE_LOAD_PRICE_PERC = "
+    public const QUERY_UPDATE_LOAD_PRICE_PERC = '
         UPDATE `{pfx}product_tyre` SET `price_unit_loaded` = `price_unit` * (100 + `load_perc`) / 100;
         UPDATE `{pfx}product_tyre` SET `price_set_loaded` = `price_set` * (100 + `load_perc`) / 100;
-    ";
+    ';
 
-    public const QUERY_UPDATE_LOAD_PRICE_AMOUNT = "
+    public const QUERY_UPDATE_LOAD_PRICE_AMOUNT = '
         UPDATE `{pfx}product_tyre` SET `price_unit_loaded` = `price_unit` + `load_amount`;
         UPDATE `{pfx}product_tyre` SET `price_set_loaded` = `price_set` + `load_amount`;
-    ";
+    ';
 
     public const QUERY_SELECT_PRICE_DIFF = "
-        SELECT p.id_product, p.reference, p.price, pt.load_amount, pt.load_perc, pt.price_unit_loaded
+        SELECT i.id_image, p.id_product, p.reference, p.price, pt.load_amount, pt.load_perc, pt.price_unit_loaded
         FROM {pfx}product p
         INNER JOIN {pfx}product_tyre pt ON (pt.id_t24=p.id_product and pt.type='API')
+        LEFT JOIN {pfx}image i ON (i.id_product = p.id_product and i.cover = 1)
         WHERE p.price != pt.price_unit_loaded
         ORDER BY p.reference;
     ";
@@ -120,9 +122,6 @@ class ModelProductTyre extends \ObjectModel
         return parent::update($null_values);
     }
 
-    /**
-     * 
-     */
     public function reloadPrice()
     {
         $product = new \Product($this->id);
@@ -155,7 +154,7 @@ class ModelProductTyre extends \ObjectModel
     public static function getPriceListDiff()
     {
         $pfx = _DB_PREFIX_;
-        $query = str_replace("{pfx}", $pfx, self::QUERY_SELECT_PRICE_DIFF);
+        $query = str_replace('{pfx}', $pfx, self::QUERY_SELECT_PRICE_DIFF);
         $db = \Db::getInstance();
         $list = $db->executeS($query);
 
@@ -165,5 +164,4 @@ class ModelProductTyre extends \ObjectModel
 
         return [];
     }
-
 }

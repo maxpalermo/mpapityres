@@ -7,8 +7,10 @@ CREATE TABLE IF NOT EXISTS `{pfx}product_tyre` (
   `price_set` decimal(20,6) NOT NULL COMMENT 'Prezzo per set (4 unità)',
   `load_amount` decimal(20,6) NOT NULL DEFAULT 0.000000 COMMENT 'Ricarico fisso',
   `load_perc` float NOT NULL DEFAULT 0 COMMENT 'Ricarico percentuale',
+  `price_unit_loaded` decimal(20,6) NOT NULL,
+  `price_set_loaded` decimal(20,6) NOT NULL,
   `active` tinyint(1) NOT NULL,
   `date_add` datetime NOT NULL,
-  `date_upd` datetime DEFAULT NULL,
+  `date_upd` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id_t24`,`type`) USING BTREE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB

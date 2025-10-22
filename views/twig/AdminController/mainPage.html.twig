@@ -22,8 +22,8 @@
     }
 
     .progress-bar-striped {
-    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-    background-size: 1rem 1rem;
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-size: 1rem 1rem;
     }
 
     .progress-bar-animated {
@@ -53,16 +53,15 @@
 <script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/DownloadCatalogAPI.js"></script>
 <script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/UpdateCatalogAPI.js"></script>
 
-<link rel="stylesheet" href="../modules/mpapityres/views/assets/components/select2/select2.bs4-theme.min.css">
+<link rel="stylesheet" href="../modules/mpapityres/views/assets/components/select2/select2.bs4-theme.min.css" />
 <script src="../modules/mpapityres/views/assets/components/select2/select2.min.js"></script>
-
 
 <!-- Template progress bar download -->
 <template id="template-download-container">
     <div class="download-container">
         <button id="start-download" onclick="startDownload()">Scarica Catalogo</button>
-        
-        <div class="progress-container" style="display: none;">
+
+        <div class="progress-container" style="display: none">
             <div class="progress">
                 <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
             </div>
@@ -76,10 +75,10 @@
 </template>
 
 <!-- Pagina principale -->
-<div class="bootstrap">
+<div class="settings-page">
     <div class="row mb-4">
         <div class="col-12">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="d-flex align-items-center">
                         <i class="material-icons mr-2 text-info">info</i>
@@ -100,22 +99,22 @@
     <!-- Sezione Download ZIP con progresso -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">cloud_download</i>
-                        Download Catalogo ZIP (con progresso)
-                    </h3>
+                        Download Catalogo ZIP
+                    </p>
                 </div>
                 <div class="panel-body">
                     <div class="form-inline mb-3" style="gap: 1rem">
-                        <input type="text" id="zip-endpoint" class="form-control" style="width: 60%" placeholder="Incolla qui l'endpoint ZIP da scaricare" value="{{ csvEndpointUrl }}">
+                        <input type="text" id="zip-endpoint" class="form-control" style="width: 60%" placeholder="Incolla qui l'endpoint ZIP da scaricare" value="{{ csvEndpointUrl }}" />
                         <button type="button" class="btn btn-primary" id="btn-download-zip">
                             <i class="material-icons mr-2">cloud_download</i>
                             Avvia Download ZIP
                         </button>
                     </div>
-                    <div class="progress" style="height: 24px; margin-top: 1rem;">
+                    <div class="progress" style="height: 24px; margin-top: 1rem">
                         <div id="zip-progress-bar" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
                     </div>
                     <div class="mt-2">
@@ -133,16 +132,16 @@
     <!-- Sezione Parsing CSV con progresso -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">article</i>
-                        Parsing CSV (con progresso)
-                    </h3>
+                        Parsing CSV
+                    </p>
                 </div>
                 <div class="panel-body">
                     <div class="form-inline mb-3" style="gap: 1rem">
-                        <input type="text" id="csv-path" class="form-control" style="width: 60%" placeholder="Percorso CSV (relativo a modules/mpapityres/ o assoluto)">
+                        <input type="text" id="csv-path" class="form-control" style="width: 60%" placeholder="Percorso CSV (relativo a modules/mpapityres/ o assoluto)" />
                         <button type="button" class="btn btn-secondary" id="btn-fill-latest-csv">
                             <i class="material-icons mr-2">history</i>
                             Usa ultimo CSV
@@ -160,7 +159,7 @@
                             Reset parsing
                         </button>
                     </div>
-                    <div class="progress" style="height: 24px;">
+                    <div class="progress" style="height: 24px">
                         <div id="csv-progress-bar" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
                     </div>
                     <div class="mt-2">
@@ -171,25 +170,25 @@
                         </span>
                     </div>
                     <div class="mt-2">
-                        <span id="csv-inserted-result" class="text-success" style="display:none"></span>
+                        <span id="csv-inserted-result" class="text-success" style="display: none"></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Sezione Download Catalogo APi con progresso -->
+    <!-- Sezione Download Catalogo API con progresso -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">download</i>
                         Download Catalogo Tyre tramite API
-                    </h3>
+                    </p>
                 </div>
                 <div class="panel-body">
-                    <div class="form-inline mb-3" style="gap: 1rem">                        
+                    <div class="form-inline mb-3" style="gap: 1rem">
                         <button type="button" class="btn btn-primary" id="btn-api-download">
                             <i class="material-icons mr-2">play_arrow</i>
                             Avvia Download API
@@ -199,7 +198,7 @@
                             Stop
                         </button>
                     </div>
-                    <div class="progress" style="height: 24px;">
+                    <div class="progress" style="height: 24px">
                         <div id="api-progress-bar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%"></div>
                     </div>
                     <div class="mt-2">
@@ -210,7 +209,7 @@
                         </span>
                     </div>
                     <div class="mt-2">
-                        <span id="api-inserted-result" class="text-success" style="display:none"></span>
+                        <span id="api-inserted-result" class="text-success" style="display: none"></span>
                     </div>
                 </div>
             </div>
@@ -220,15 +219,15 @@
     <!-- Sezione Inserimento Catalogo in Prestashop -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">refresh</i>
                         Aggiorna Catalogo Prestashop
-                    </h3>
+                    </p>
                 </div>
                 <div class="panel-body">
-                    <div class="form-inline mb-3" style="gap: 1rem">                        
+                    <div class="form-inline mb-3" style="gap: 1rem">
                         <button type="button" class="btn btn-primary" id="btn-api-update">
                             <i class="material-icons mr-2">play_arrow</i>
                             Aggiorna catalogo Prestashop
@@ -238,7 +237,7 @@
                             Stop
                         </button>
                     </div>
-                    <div class="progress" style="height: 24px;">
+                    <div class="progress" style="height: 24px">
                         <div id="update-progress-bar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%"></div>
                     </div>
                     <div class="mt-2">
@@ -249,7 +248,7 @@
                         </span>
                     </div>
                     <div class="mt-2">
-                        <span id="update-inserted-result" class="text-success" style="display:none"></span>
+                        <span id="update-inserted-result" class="text-success" style="display: none"></span>
                     </div>
                 </div>
             </div>
@@ -259,12 +258,12 @@
     <!-- Sezione Inserimento PFU -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">refresh</i>
                         Crea prodotti PFU
-                    </h3>
+                    </p>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -276,18 +275,18 @@
                                     <code>Inserisci il peso iniziale e finale in grammi separati da un trattino e poi dopo il punto e virgola inserisci il prezzo</code>
                                 </p>
                                 <p>
-                                    <code>ES:    0-2000;1.00 =>  da zero a 2 kg applica 1 Eur di contributo PFU</code>
+                                    <code>ES: 0-2000;1.00 => da zero a 2 kg applica 1 Eur di contributo PFU</code>
                                 </p>
                             </div>
                             <div class="form-group fixed-width-lg">
                                 <label class="label-line" for="pfu-id-start">Inserisci l'id di partenza</label>
-                                <input type="number" class="form-control" id="pfu-id-start" value="1">
+                                <input type="number" class="form-control" id="pfu-id-start" value="1" />
                             </div>
                             <div class="form-group fixed-width-xl">
                                 <label class="label-line" for="pfu-tax-rule-group">Seleziona l'aliquota IVA</label>
                                 <select class="form-control" id="pfu-tax-rule-group">
                                     {% for tax_rule in taxRulesGroups %}
-                                        <option value="{{ tax_rule.id_tax_rules_group }}">{{ tax_rule.name }}</option>
+                                    <option value="{{ tax_rule.id_tax_rules_group }}">{{ tax_rule.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -308,7 +307,7 @@
                             <table class="table table-condensed table-bordered" style="margin: 16px: auto;" id="table-pfu">
                                 <thead>
                                     <tr>
-                                        <th colspan="5" style="text-align: center;">Elenco prodotti PFU in archivio</th>
+                                        <th colspan="5" style="text-align: center">Elenco prodotti PFU in archivio</th>
                                     </tr>
                                     <tr>
                                         <th>Id</th>
@@ -319,7 +318,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    {% for pfu in pfuList %}
+                                    <tr>
+                                        <td>{{ pfu.id_product }}</td>
+                                        <td>{{ pfu.reference }}</td>
+                                        <td>{{ pfu.name }}</td>
+                                        <td class="text-right">{{ pfu.price | number_format(2, ",", ".") }} EUR</td>
+                                        <td class="text-right">
+                                            {% if pfu.products > 0 %}
+                                            <span class="badge badge-info">{{ pfu.products }}</span>
+                                            {% else %}
+                                            <span class="badge badge-danger">0</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -332,7 +345,7 @@
                         </span>
                     </div>
                     <div class="mt-2">
-                        <span id="create-pfu-inserted-result" class="text-success" style="display:none"></span>
+                        <span id="create-pfu-inserted-result" class="text-success" style="display: none"></span>
                     </div>
                 </div>
             </div>
@@ -341,7 +354,7 @@
 
     <div class="row mb-4">
         <div class="col-12">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="d-flex justify-content-center align-items-center">
                         <div class="btn-group">
@@ -373,22 +386,22 @@
 
         <template id="template-modal-pfu">
             <dialog class="bootstrap" id="modal-pfu">
-                <div class="bootstrap panel">
+                <div class="panel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Crea i prodotti PFU</h3>
+                        <p class="">Crea i prodotti PFU</p>
                     </div>
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Totale Prodotti da creare</label>
-                                    <input class="form-control" type="number" value="1" id="pfu-total-products">
+                                    <input class="form-control" type="number" value="1" id="pfu-total-products" />
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Codice ID da cui partire</label>
-                                    <input class="form-control" type="number" value="10000000" id="pfu-id-start">
+                                    <input class="form-control" type="number" value="10000000" id="pfu-id-start" />
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -396,7 +409,7 @@
                                     <label>Aliquota IVA</label>
                                     <select class="form-control" id="pfu-tax-rules-group">
                                         {% for taxRulesGroup in taxRulesGroups %}
-                                            <option value="{{ taxRulesGroup.id_tax_rules_group }}">{{ taxRulesGroup.name }}</option>
+                                        <option value="{{ taxRulesGroup.id_tax_rules_group }}">{{ taxRulesGroup.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -416,15 +429,14 @@
                 </div>
             </dialog>
         </template>
-
     </div>
 
     <!-- Sezione dei panel informativi in stile dashboard -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="bootstrap panel panel-info h-100">
+            <div class="panel panel-info h-100">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Prodotti Totali</h3>
+                    <p class="">Prodotti Totali</p>
                 </div>
                 <div class="panel-body d-flex align-items-center">
                     <i class="material-icons mr-3" style="font-size: 2.5rem">inventory_2</i>
@@ -439,9 +451,9 @@
         </div>
 
         <div class="col-md-3">
-            <div class="bootstrap panel panel-success h-100">
+            <div class="panel panel-success h-100">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Pneumatici Tyre</h3>
+                    <p class="">Pneumatici Tyre</p>
                 </div>
                 <div class="panel-body d-flex align-items-center">
                     <i class="material-icons mr-3" style="font-size: 2.5rem">euro_symbol</i>
@@ -456,9 +468,9 @@
         </div>
 
         <div class="col-md-3">
-            <div class="bootstrap panel panel-warning h-100">
+            <div class="panel panel-warning h-100">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Produttori</h3>
+                    <p class="">Produttori</p>
                 </div>
                 <div class="panel-body d-flex align-items-center">
                     <i class="material-icons mr-3" style="font-size: 2.5rem">warning</i>
@@ -473,9 +485,9 @@
         </div>
 
         <div class="col-md-3">
-            <div class="bootstrap panel panel-danger h-100">
+            <div class="panel panel-danger h-100">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Prodotti Disattivati</h3>
+                    <p class="">Prodotti Disattivati</p>
                 </div>
                 <div class="panel-body d-flex align-items-center">
                     <i class="material-icons mr-3" style="font-size: 2.5rem">block</i>
@@ -493,15 +505,15 @@
     <!-- Sezione con informazioni CRON -->
     <div class="row mb-4">
         <div class="col-md-4">
-            <div class="bootstrap panel panel-primary h-100">
+            <div class="panel panel-primary h-100">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Ultimo CRON - Download Tyre</h3>
+                    <p class="">Ultimo CRON - Download Tyre</p>
                 </div>
                 <div class="panel-body">
                     <div class="d-flex align-items-center justify-content-center h-100">
                         <div class="text-center">
                             <i class="material-icons mb-3" style="font-size: 3rem">schedule</i>
-                            <h3 id="last-fetch-download">{% if summary.last_fetch_download is defined and summary.last_fetch_download %} {{ summary.last_fetch_download|date("d/m/Y H:i") }} {% else %} Mai eseguito {% endif %}</h3>
+                            <p id="last-fetch-download">{% if summary.last_fetch_download is defined and summary.last_fetch_download %} {{ summary.last_fetch_download|date("d/m/Y H:i") }} {% else %} Mai eseguito {% endif %}</p>
                         </div>
                     </div>
                 </div>
@@ -509,15 +521,15 @@
         </div>
 
         <div class="col-md-4">
-            <div class="bootstrap panel panel-primary h-100">
+            <div class="panel panel-primary h-100">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Ultimo CRON - Import Catalogo</h3>
+                    <p class="">Ultimo CRON - Import Catalogo</p>
                 </div>
                 <div class="panel-body">
                     <div class="d-flex align-items-center justify-content-center h-100">
                         <div class="text-center">
                             <i class="material-icons mb-3" style="font-size: 3rem">schedule</i>
-                            <h3 id="last-fetch-import">{% if summary.last_fetch_import is defined and summary.last_fetch_import %} {{ summary.last_fetch_import|date("d/m/Y H:i") }} {% else %} Mai eseguito {% endif %}</h3>
+                            <p id="last-fetch-import">{% if summary.last_fetch_import is defined and summary.last_fetch_import %} {{ summary.last_fetch_import|date("d/m/Y H:i") }} {% else %} Mai eseguito {% endif %}</p>
                         </div>
                     </div>
                 </div>
@@ -525,15 +537,15 @@
         </div>
 
         <div class="col-md-4">
-            <div class="bootstrap panel panel-primary h-100">
+            <div class="panel panel-primary h-100">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Ultimo CRON - Reload Immagini</h3>
+                    <p class="">Ultimo CRON - Reload Immagini</p>
                 </div>
                 <div class="panel-body">
                     <div class="d-flex align-items-center justify-content-center h-100">
                         <div class="text-center">
                             <i class="material-icons mb-3" style="font-size: 3rem">schedule</i>
-                            <h3 id="last-reload-images">{% if summary.last_fetch_reload_images is defined and summary.last_fetch_reload_images %} {{ summary.last_fetch_reload_images|date("d/m/Y H:i") }} {% else %} Mai eseguito {% endif %}</h3>
+                            <p id="last-reload-images">{% if summary.last_fetch_reload_images is defined and summary.last_fetch_reload_images %} {{ summary.last_fetch_reload_images|date("d/m/Y H:i") }} {% else %} Mai eseguito {% endif %}</p>
                         </div>
                     </div>
                 </div>
@@ -545,12 +557,12 @@
     <div class="row mb-4">
         <!-- Grafico andamento importazioni -->
         <div class="col-md-8">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">trending_up</i>
                         Andamento Importazioni (Ultimi 12 mesi)
-                    </h3>
+                    </p>
                 </div>
                 <div class="panel-body">
                     <canvas id="importChart" height="250"></canvas>
@@ -560,12 +572,12 @@
 
         <!-- Grafico distribuzione categorie -->
         <div class="col-md-4">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">pie_chart</i>
                         Distribuzione Categorie
-                    </h3>
+                    </p>
                 </div>
                 <div class="panel-body">
                     <canvas id="categoryChart" height="250"></canvas>
@@ -578,12 +590,12 @@
     <div class="row mb-4">
         <!-- Tabella prodotti più venduti -->
         <div class="col-md-6">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">star</i>
                         Prodotti Più Popolari
-                    </h3>
+                    </p>
                 </div>
                 <div class="panel-body p-0">
                     <div class="table-responsive">
@@ -618,12 +630,12 @@
 
         <!-- Tabella produttori top -->
         <div class="col-md-6">
-            <div class="bootstrap panel panel-default">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title d-flex align-items-center">
+                    <p class="d-flex align-items-center">
                         <i class="material-icons mr-2">business</i>
                         Produttori Top
-                    </h3>
+                    </p>
                 </div>
                 <div class="panel-body p-0">
                     <div class="table-responsive">
@@ -661,7 +673,7 @@
     <script type="text/javascript">
         // URL per le azioni AJAX
         const baseUrl = "{{ baseUrl | raw }}";
-        const CronControllerURL = "{{ cronControllerUrl | raw }}"; 
+        const CronControllerURL = "{{ cronControllerUrl | raw }}";
         const AdminControllerUrl = "{{ adminControllerUrl | raw }}";
         const DownloadCatalogActionUrl = "{{ downloadCatalogActionUrl | raw }}";
         const ImportCatalogActionUrl = "{{ importCatalogActionUrl | raw }}";

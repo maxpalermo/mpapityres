@@ -9,30 +9,33 @@
         </div>
 
         <div class="wrap-form-body">
-			<h3 class="mb-2 pb-2">
-				<img src="{{ baseUrl }}{{ asset('modules/mpapityres/views/assets/img/api_128.png') }}" alt="api" class="img-thumbnail mr-2" style="width: 48px;">
-				<span class="title">CRON</span>
-			</h3>
-			<div class="form-group">
-				<label for="cronGetCatalog">URL CRON DOWNLOAD CATALOGO VIA API</label>
-				<input id="cronGetCatalog" name="cronGetCatalog" class="form-control btn-url pointer" type="text" readonly value="{{ cronGetCatalog }}">
-			</div>
+            <h3 class="mb-2 pb-2">
+                <img src="{{ baseUrl }}{{ asset('modules/mpapityres/views/assets/img/api_128.png') }}" alt="api" class="img-thumbnail mr-2" style="width: 48px" />
+                <span class="title">CRON</span>
+            </h3>
             <div class="form-group">
-				<label for="cronImportCatalog">URL CRON IMPORTAZIONE CATALOGO SU PRESTASHOP</label>
-				<input id="cronImportCatalog" name="cronImportCatalog" class="form-control btn-url pointer" type="text" readonly value="{{ cronImportCatalog }}">
-			</div>
+                <label for="cronGetCatalog">URL CRON DOWNLOAD CATALOGO VIA API</label>
+                <input id="cronGetCatalog" name="cronGetCatalog" class="form-control btn-url pointer" type="text" readonly value="{{ cronGetCatalog }}" />
+            </div>
+            <div class="form-group">
+                <label for="cronImportCatalog">URL CRON IMPORTAZIONE CATALOGO SU PRESTASHOP</label>
+                <input id="cronImportCatalog" name="cronImportCatalog" class="form-control btn-url pointer" type="text" readonly value="{{ cronImportCatalog }}" />
+            </div>
             <script>
-                document.querySelectorAll('.btn-url').forEach((btn) => {
-                    btn.addEventListener('click', function() {
-                        navigator.clipboard.writeText(btn.value).then(function() {
-                            alert('URL copiato negli appunti.');
-                        }, function() {
-                            alert('Impossibile copiare negli appunti.');
-                        });
+                document.querySelectorAll(".btn-url").forEach((btn) => {
+                    btn.addEventListener("click", function () {
+                        navigator.clipboard.writeText(btn.value).then(
+                            function () {
+                                alert("URL copiato negli appunti.");
+                            },
+                            function () {
+                                alert("Impossibile copiare negli appunti.");
+                            }
+                        );
                     });
                 });
             </script>
-		</div>
+        </div>
 
         <div class="wrap-form-body">
             <h3 class="mb-2 pb-2">
@@ -85,7 +88,7 @@
 </div>
 
 <script type="text/javascript">
-    const AdminControllerUrl = "{{ path('mpapityres_admin_get_filters_json') }}";
+    const AdminControllerUrl = "{{ adminMpApiTyres }}";
     document.addEventListener("DOMContentLoaded", async () => {
         console.log(AdminControllerUrl);
         const response = await fetch(AdminControllerUrl);
@@ -159,7 +162,8 @@
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
-                    const response = await fetch("{{ path('mpapityres_admin_chunk_csv_to_json') }}");
+                    //mpapityres_admin_chunk_csv_to_json
+                    const response = await fetch("{{ adminMpApiTyres }}");
                     const data = await response.json();
                     alert(`Creati ${data.chunks_created} chunk, in ${data.time}, Totale righe: ${data.total_rows}`);
                 });
@@ -176,4 +180,3 @@
 <link rel="stylesheet" href="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/select2/select2.min.css') }}" />
 <link rel="stylesheet" href="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/select2/select2.bs4.min.css') }}" />
 <link rel="stylesheet" href="{{ baseUrl }}{{ asset('../modules/mpapityres/views/assets/components/sweetalert/sweetalert2.min.css') }}" />
-

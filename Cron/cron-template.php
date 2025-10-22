@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Script CLI per PrestaShop 8
  * Eseguibile con: php nome_script.php
  */
 
 // Definisci che siamo in modalità CLI
-define('_PS_MODE_DEV_', true);
+define('_PS_MODE_DEV_', false);
 
 ini_set('memory_limit', '2G');
 
@@ -18,4 +19,4 @@ if (php_sapi_name() !== 'cli') {
 }
 
 // Inizializza il contesto
-Context::getContext()->employee = new Employee(1); // Usa un employee valido
+Context::getContext()->employee = new Employee(1);  // Usa un employee valido

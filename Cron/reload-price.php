@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Cron per scaricamento file CSV
- * Eseguibile con: php download-csv.php
+ * Cron per aggiornamento prezzo
+ * Eseguibile con: php reload-price.php
  */
 
 // usa il bootstrap di prestashop
@@ -21,7 +21,7 @@ try {
     ob_start();
 
     $start = microtime(true);
-    echo '[' . date('Y-m-d H:i:s') . "] Inizio scaricamento CSV\n";
+    echo '[' . date('Y-m-d H:i:s') . "] Inizio aggiornamento prezzi\n";
 
     // Usa le classi del tuo modulo
     /** @var MpApiTyres $module */
@@ -29,26 +29,14 @@ try {
 
     echo "\tMODULO CARICATO: {$module->name}\n";
 
-    $message = $module->cronDownloadCsv();
+    $message = $module->cronReloadPrices();
     echo "\t$message";
 
     $end = microtime(true);
     $time = $end - $start;
     echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
-    echo PHP_EOL . '-----------------------------' . PHP_EOL;
-    ob_end_flush();
 
-    ob_start();
-    $start = microtime(true);
-    echo PHP_EOL . 'PROCEDO AL PARSING DEL FILE CSV' . PHP_EOL;
-    $message = $module->cronParseCsv();
-    echo "\t$message";
-    $end = microtime(true);
-    $time = $end - $start;
-    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
-    echo PHP_EOL . '-----------------------------' . PHP_EOL;
     ob_end_flush();
-
     exit(0);
 } catch (Exception $e) {
     echo '[ERROR] ' . $e->getMessage() . "\n";

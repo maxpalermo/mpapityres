@@ -1,11 +1,17 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/reset-min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/algolia-min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hover.css@2.3.2/css/hover.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.2/dist/bootstrap-table.min.css">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/reset-min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/algolia-min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hover.css@2.3.2/css/hover.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.2/dist/bootstrap-table.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" />
 <style>
+    .wrapper-bootstrap {
+        min-width: 1200px;
+        padding: 110px 30px 100px;
+        padding-left: 230px;
+        background-color: #fff;
+    }
     .form-inline {
         display: flex !important;
         justify-content: start !important;
@@ -37,8 +43,8 @@
     }
 
     .progress-bar-striped {
-    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-    background-size: 1rem 1rem;
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+        background-size: 1rem 1rem;
     }
 
     .progress-bar-animated {
@@ -72,9 +78,9 @@
         top: auto;
         bottom: 100%;
         margin-top: 0;
-        margin-bottom: .125rem;
+        margin-bottom: 0.125rem;
     }
-    
+
     .bootstrap .dropdown-menu {
         position: absolute;
         top: 100%;
@@ -89,10 +95,10 @@
         font-size: 12px;
         background-color: #fff;
         border: 1px solid #ccc;
-        border: 1px solid rgba(0,0,0,.15);
+        border: 1px solid rgba(0, 0, 0, 0.15);
         border-radius: 4px;
-        -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
-        box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
         background-clip: padding-box;
         text-align: left;
     }
@@ -100,7 +106,7 @@
     .dropdown-item {
         display: block;
         width: 100%;
-        padding: .25rem 1.5rem;
+        padding: 0.25rem 1.5rem;
         clear: both;
         font-weight: 400;
         color: #212529;
@@ -112,10 +118,11 @@
     }
 
     .dropdown-item:hover {
-        background-color: #DFDFDF;
+        background-color: #dfdfdf;
     }
 
-    .dropdown-item.active, .dropdown-item:active {
+    .dropdown-item.active,
+    .dropdown-item:active {
         color: #fff;
         text-decoration: none;
         background-color: #007bff;
@@ -126,8 +133,8 @@
 <template id="template-download-container">
     <div class="download-container">
         <button id="start-download" onclick="startDownload()">Scarica Catalogo</button>
-        
-        <div class="progress-container" style="display: none;">
+
+        <div class="progress-container" style="display: none">
             <div class="progress">
                 <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
             </div>
@@ -141,7 +148,7 @@
 </template>
 
 <!-- Pagina principale -->
-<div class="bootstrap">
+<section class="bootstrap wrapper">
     <div class="row mb-4">
         <div class="col-12">
             <div class="bootstrap panel panel-default">
@@ -164,64 +171,22 @@
 
     <!-- Sezione Filtri prodotti -->
     <div class="d-flex justify-content-start align-items-start gap-2">
-        <div class="bootstrap panel panel-info">
-            <div class="panel-heading">
-            <h3 class="panel-title d-flex align-items-center">
-                <i class="material-icons mr-2">cloud_download</i>
-                    Filtra i prodotti
-                </h3>
-            </div>
-            <div class="panel-body">
-                <div class="form-group">
-                    <label class="label-line">Misure</label>
-                    <input type="text" name="tyre_measures" class="form-control" placeholder="205/55 R16">
-                </div>
-                <div class="form-group">
-                    <label class="label-line">Tipo pneumatico</label>
-                    <select id="tyre-profile-list" class="select2" name="tyre-profile-list" />
-                        <option value="">Seleziona</option>
-                        {% for profile in profiles %}
-                            <option value="{{ profile.id_feature_value }}">{{ profile.value }}</option>
-                        {% endfor %}
-                    </select>
-                    
-                    <script type="text/javascript">
-                        document.addEventListener("DOMContentLoaded", async () => {
-                            $("#tyre-profile-list").chosen({
-                                width: "100%",
-                            });
-                        });
-                    </script>
-                </div>
-            </div>
-            <div class="panel-footer">
-                <div class="d-flex justify-content-center align-items-center">
-                    <button class="btn btn-default" type="button">
-                        <span class="process-icon-ok"></span>
-                        <span>Cerca</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="bootstrap panel panel-default flex-1">            
+        <div class="bootstrap panel panel-default flex-1">
             <div class="panel-heading">
                 <h3 class="panel-title d-flex align-items-center">
                     <i class="material-icons mr-2">article</i>
                     Associa
                 </h3>
             </div>
-            
-            <div class="panel-body">
-                {% include './Table/Bootstrap/table.html.twig' with { tableId: 'table-pfu' } %}
-            </div>
+
+            <div class="panel-body">{% include '@Modules/mpapityres/views/twig/Table/Bootstrap/table.html.twig' with { tableId: 'table-pfu' } %}</div>
         </div>
     </div>
 
     <!-- Dati per JavaScript -->
 
     <script>
-        $.browser = {}
+        $.browser = {};
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-hashchange@2.0.0/jquery.ba-hashchange.min.js"></script>
@@ -234,15 +199,26 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.2/dist/extensions/export/bootstrap-table-export.min.js"></script>
 
     <script src="{{ baseUrl }}modules/mpapityres/views/assets/components/table/table.js"></script>
+    <script src="{{ baseUrl }}modules/mpapityres/views/assets/js/remove-tree-buttons.js"></script>
 
     <script type="text/javascript">
         // URL per le azioni AJAX
         const baseUrl = "{{ baseUrl | raw }}";
-        const CronControllerURL = "{{ cronControllerUrl | raw }}"; 
+        const CronControllerURL = "{{ cronControllerUrl | raw }}";
         const AdminControllerUrl = "{{ adminControllerUrl | raw }}";
         const DownloadCatalogActionUrl = "{{ downloadCatalogActionUrl | raw }}";
         const ImportCatalogActionUrl = "{{ importCatalogActionUrl | raw }}";
         const ReloadImagesActionUrl = "{{ reloadImagesActionUrl | raw }}";
         const DeleteProductsActionUrl = "{{ deleteProductsActionUrl | raw }}";
+        const cronToken = "{{ cronToken }}";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const divContent = document.getElementById("content");
+            if (divContent) {
+                divContent.classList.remove("nobootstrap");
+                divContent.classList.add("wrapper-bootstrap");
+                console.log("Nobootstrap rimosso");
+            }
+        });
     </script>
-</div>
+</section>
