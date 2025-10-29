@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -60,7 +61,7 @@ class CreatePFU
         $product->id = $this->id_start;
         $product->id_supplier = 0;
         $product->id_manufacturer = 0;
-        $product->id_category_default = \Configuration::get("PS_HOME_CATEGORY");
+        $product->id_category_default = \Configuration::get('PS_HOME_CATEGORY');
         $product->id_shop_default = 1;
         $product->id_tax_rules_group = $this->id_tax_rules_group;
         $product->on_sale = 0;
@@ -80,7 +81,7 @@ class CreatePFU
         $product->unit_price = 0;
         $product->unit_price_ratio = 0;
         $product->additional_shipping_cost = 0;
-        $product->reference = "PFU-" . $this->start . "-" . $this->end . "-" . $this->price;
+        $product->reference = 'PFU-' . $this->start . '-' . $this->end . '-' . $this->price;
         $product->supplier_reference = '';
         $product->location = '';
         $product->width = 0;
@@ -111,7 +112,7 @@ class CreatePFU
         $product->pack_stock_type = 3;
         $product->state = 1;
 
-        //Descrizione prodotto
+        // Descrizione prodotto
         $languages = \Language::getLanguages(false);
         foreach ($languages as $language) {
             $startKg = number_format($this->start / 1000, 2);
@@ -134,7 +135,7 @@ class CreatePFU
         $add = $product->add();
 
         if ($add) {
-            //Aggiungo l'immagine
+            // Aggiungo l'immagine
             $sourceImgPath = _PS_MODULE_DIR_ . 'mpapityres/views/assets/img/tyre.png';
             $image = new \Image();
             $image->id_product = $product->id;
@@ -196,6 +197,8 @@ class CreatePFU
 
     public function setProductToPfu($id_product)
     {
+        GetLastError::clear();
+
         $id_lang = (int) \Context::getContext()->language->id;
         $PFU = $this->getPfu();
         $product = new \Product($id_product, false, $id_lang);
@@ -223,25 +226,54 @@ class CreatePFU
             'id_product=' . (int) $id_product
         );
 
-
         foreach ($PFU as $item) {
             if ($item['weightStart'] / 1000 <= $tyreWeight && $tyreWeight <= $item['weightEnd'] / 1000) {
                 $id_pfu = $item['id_product'];
-                $pfx = _DB_PREFIX_;
 
                 $productId = (int) $id_product;
                 $pfuId = (int) $id_pfu;
                 $price = (float) $item['price'];
+                $now = date('Y-m-d H:i:s');
 
-                $query = "
-                    REPLACE INTO {$pfx}product_pfu
-                        (id_product, id_pfu, price, active)
-                    VALUES
-                        ({$productId}, {$pfuId}, {$price}, 1)
-                ";
+                $dbQuery = new \DbQuery();
+                $dbQuery
+                    ->select('p.id_product')
+                    ->from('product', 'p')
+                    ->innerJoin('product_pfu', 'pp', 'p.id_product = pp.id_product')
+                    ->where("pp.id_product = {$productId}")
+                    ->where("p.reference NOT LIKE 'PFU%'");
+
+                $exists = $db->getValue($dbQuery);
 
                 try {
-                    $save = $db->execute($query);
+                    if ($exists) {
+                        $result = $db->update(
+                            'product_pfu',
+                            [
+                                'id_pfu' => $pfuId,
+                                'price' => $price,
+                                'active' => 1,
+                                'date_upd' => $now,
+                            ],
+                            "id_product = {$productId}"
+                        );
+                    } else {
+                        $result = $db->insert(
+                            'product_pfu',
+                            [
+                                'id_product' => $productId,
+                                'id_pfu' => $pfuId,
+                                'price' => $price,
+                                'active' => 1,
+                                'date_add' => $now,
+                                'date_upd' => $now,
+                            ],
+                            true,
+                            false,
+                            \DbCore::REPLACE,
+                            true
+                        );
+                    }
                 } catch (\Throwable $th) {
                     return [
                         'success' => false,
@@ -250,17 +282,23 @@ class CreatePFU
                     ];
                 }
 
+                $error = GetLastError::get();
 
-                if (!$save) {
-                    $error = GetLastError::get();
+                if (!$result) {
                     $id_pfu = 0;
                 } else {
                     $id_pfu = $pfuId;
                 }
 
+                $errorType = $error['type'] ?? 0;
+                $errorCode = $error['code'] ?? 0;
+                $errorMessage = $error['message'] ?? 'N/A';
+                $errorFile = $error['file'] ?? 'N/A';
+                $errorLine = $error['line'] ?? 'N/A';
+
                 return [
-                    'success' => $save,
-                    'errors' => "({$error['code']}) {$error['message']} - {$error['line']}",
+                    'success' => $result,
+                    'errors' => "({$errorType}) ({$errorCode}) {$errorMessage} - {$errorFile} - {$errorLine}",
                     'id_pfu' => $id_pfu,
                 ];
             }
@@ -283,5 +321,4 @@ class CreatePFU
 
         return $this->pfu;
     }
-
 }

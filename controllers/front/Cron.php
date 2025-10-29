@@ -92,6 +92,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
     public function getCatalogAction()
     {
+        return;
         $reset = (int) Tools::getValue('reset');
         $configValues = ConfigValues::getInstance();
 
@@ -1113,7 +1114,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                         ],
                         false,
                         true,
-                        Db::INSERT_IGNORE
+                        DbCore::INSERT_IGNORE
                     );
 
                     if (!$result) {

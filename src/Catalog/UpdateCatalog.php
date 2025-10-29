@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,6 +20,7 @@
  */
 
 namespace MpSoft\MpApiTyres\Catalog;
+
 use MpSoft\MpApiTyres\Traits\DownloadImageFromUrlTrait;
 use MpSoft\MpApiTyres\Traits\GetCategoryIdFromNameTrait;
 
@@ -49,7 +51,7 @@ class UpdateCatalog
 
     /**
      * Crea un array multilingua per i campi di un prodotto
-     * 
+     *
      * @param string $value Valore da inserire per tutte le lingue
      * @return array Array multilingua
      */
@@ -68,7 +70,7 @@ class UpdateCatalog
 
     /**
      * Aggiorna o crea un prodotto in PrestaShop
-     * 
+     *
      * @param array $product Dati del prodotto
      * @return array{success: bool, errors: array} Risultato dell'operazione
      */
@@ -80,7 +82,7 @@ class UpdateCatalog
             $id_product = (int) $product['idT24'];
             $id_category_default = (int) self::getIdCategoryFromName(\Configuration::get('MPAPITYRES_DEFAULT_CATEGORY'));
             if (!$id_category_default) {
-                $id_category_default = (int) \Configuration::get("PS_HOME_CATEGORY");
+                $id_category_default = (int) \Configuration::get('PS_HOME_CATEGORY');
             }
 
             // Verifica se il prodotto esiste già o se l'EAN è corretto
@@ -111,9 +113,9 @@ class UpdateCatalog
             $id_product = (int) $product['idT24'];
             $prestashopProduct = new \Product($id_product);
 
-            //Se il prodotto esiste non faccio niente
+            // Se il prodotto esiste aggiorno solo alcuni dati
             if (\Validate::isLoadedObject($prestashopProduct)) {
-                //Controllo se il prodotto contiene immagini
+                // Controllo se il prodotto contiene immagini
                 $id_cover = \Image::getCover($prestashopProduct->id);
                 if (!$id_cover || self::FORCE_UPLOAD_IMAGES) {
                     self::addProductImageStatic($prestashopProduct->id, $product['csv_image_url']);
@@ -133,7 +135,7 @@ class UpdateCatalog
             $prestashopProduct->reference = $reference;
             $prestashopProduct->name = $this->createMultiLangField($product['description'] ?? '');
             $prestashopProduct->description_short = $this->createDescription($product);
-            //$prestashopProduct->description = $this->createMultiLangField($product['description'] ?? '');
+            // $prestashopProduct->description = $this->createMultiLangField($product['description'] ?? '');
             $prestashopProduct->link_rewrite = $this->createMultiLangField(
                 \Tools::str2url($product['description'] ?? 'product-' . $reference)
             );
@@ -152,7 +154,7 @@ class UpdateCatalog
 
             // Stato e visibilità
             $prestashopProduct->active = (bool) ($product['active'] ?? true);
-            $prestashopProduct->visibility = $product['visibility'] ?? 'both'; // both, catalog, search, none
+            $prestashopProduct->visibility = $product['visibility'] ?? 'both';  // both, catalog, search, none
             $prestashopProduct->available_for_order = (bool) ($product['available_for_order'] ?? true);
             $prestashopProduct->show_price = (bool) ($product['show_price'] ?? true);
 
@@ -164,7 +166,7 @@ class UpdateCatalog
             // Categorie
             $prestashopProduct->id_category_default = $id_category_default;
 
-            //Creo o Restituisco il produttore
+            // Creo o Restituisco il produttore
             $manufacturer = [
                 'name' => $product['manufacturerName'],
                 'description' => $product['manufacturerDescription'],
@@ -301,13 +303,12 @@ class UpdateCatalog
                 self::addProductImageStatic($id_product, $product['csv_label_url']);
             }
 
-
             // Aggiorno la quantità di stock
             if (isset($product['availability'])) {
                 \StockAvailable::setQuantity($id_product, 0, (int) $product['availability']);
             }
 
-            //Imposto lo specific price per 4 pneumatici
+            // Imposto lo specific price per 4 pneumatici
             if ($product['price_4'] > 0 && $product['price_1'] != $product['price_4']) {
                 $this->addQuantityPrice($id_product, 4, $product['price_4']);
             }
@@ -317,9 +318,8 @@ class UpdateCatalog
                 'id_product' => $id_product,
                 'reference' => $prestashopProduct->reference
             ];
-
         } catch (\Exception $e) {
-            $errors[] = 'Errore durante l\'aggiornamento del prodotto: ' . $e->getMessage();
+            $errors[] = "Errore durante l'aggiornamento del prodotto: " . $e->getMessage();
             return [
                 'success' => false,
                 'errors' => $errors
@@ -338,7 +338,7 @@ class UpdateCatalog
     {
         // Verifica se il prodotto esiste
         if (!\Product::existsInDatabase($id_product, 'product')) {
-            throw new \Exception("Prodotto non trovato");
+            throw new \Exception('Prodotto non trovato');
         }
 
         // Verifica se esiste già uno specific price per quantità >= 4
@@ -354,7 +354,7 @@ class UpdateCatalog
     ');
 
         if ($existingPrice) {
-            throw new \Exception("Esiste già uno sconto per quantità >= 4 per questo prodotto");
+            throw new \Exception('Esiste già uno sconto per quantità >= 4 per questo prodotto');
         }
 
         // Crea il nuovo specific price
@@ -471,7 +471,7 @@ class UpdateCatalog
 
     /**
      * Cerca o crea una caratteristica
-     * 
+     *
      * @param string $name Nome della caratteristica
      * @return int ID della caratteristica
      */
@@ -499,7 +499,7 @@ class UpdateCatalog
 
     /**
      * Cerca o crea un valore per una caratteristica
-     * 
+     *
      * @param int $id_feature ID della caratteristica
      * @param string $value Valore della caratteristica
      * @return int ID del valore della caratteristica

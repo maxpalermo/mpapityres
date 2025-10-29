@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -22,7 +23,6 @@ namespace MpSoft\MpApiTyres\Traits;
 
 trait DownloadImageFromUrlTrait
 {
-
     public static function checkImageHash($imageHash)
     {
         $defaultNoImageHash = \Configuration::get('MPAPITYRES_NO_IMAGE_HASH');
@@ -53,13 +53,12 @@ trait DownloadImageFromUrlTrait
         // Get the content of the downloaded image
         $imageContent = $response->getBody()->getContents();
 
-
         return $base64 ? base64_encode($imageContent) : $imageContent;
     }
 
     /**
      * Scarica più immagini in modo asincrono utilizzando GuzzleHttp
-     * 
+     *
      * @param array $urls Array di URL da scaricare
      * @param bool $base64 Se true, restituisce i contenuti in formato base64
      * @param int $concurrency Numero massimo di richieste simultanee (default: 5)
@@ -181,18 +180,18 @@ trait DownloadImageFromUrlTrait
         // Inizializza cURL per verificare l'header della risposta
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_NOBODY, true); // Non scaricare il corpo della risposta
+        curl_setopt($ch, CURLOPT_NOBODY, true);  // Non scaricare il corpo della risposta
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Timeout in secondi
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Ignora la verifica SSL se necessario
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);  // Timeout in secondi
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);  // Ignora la verifica SSL se necessario
 
         $result = curl_exec($ch);
 
         if ($result === false) {
             curl_close($ch);
             return [
-                'httpCode' => "NO RESULT",
-                'contentType' => "NO RESULT",
+                'httpCode' => 'NO RESULT',
+                'contentType' => 'NO RESULT',
                 'isValid' => false,
                 'url' => $url,
             ];
@@ -217,7 +216,7 @@ trait DownloadImageFromUrlTrait
 
     /**
      * Aggiunge un'immagine a un prodotto
-     * 
+     *
      * @param int $id_product ID del prodotto
      * @param string $image_url URL dell'immagine
      * @return array {status: string, id_product: int, url: string, httpCode: int, contentType: string, message: string}
@@ -227,7 +226,8 @@ trait DownloadImageFromUrlTrait
         $hasCover = (int) self::hasCover($id_product);
 
         // Scarico l'immagine dal web
-        //$imageCurl = self::downloadImageFromUrlStatic($image_url);
+        // $imageCurl = self::downloadImageFromUrlStatic($image_url);
+        error_clear_last();
         $imageContent = self::guzzleDownload($image_url);
 
         if ($imageContent === false) {
@@ -236,20 +236,20 @@ trait DownloadImageFromUrlTrait
                 'status' => 'ERROR',
                 'id_product' => $id_product,
                 'url' => $image_url,
-                'error' => $error['type'],
-                'error_message' => $error['message'],
-                'file' => $error['file'],
-                'line' => $error['line'],
+                'error' => $error['type'] ?? 'sconosciuto',
+                'error_message' => $error['message'] ?? 'errore inatteso',
+                'file' => $error['file'] ?? '--',
+                'line' => $error['line'] ?? '--',
                 'httpCode' => 500,
                 'contentType' => 'text/plain',
                 'message' => "Immagine non scaricata: {$image_url}",
             ];
         }
 
-        //Faccio l'hashing dell'immagine
+        // Faccio l'hashing dell'immagine
         $image_hash = md5($imageContent);
 
-        //Controllo se l'immagine esiste già
+        // Controllo se l'immagine esiste già
         if (self::checkImageHash($image_hash)) {
             $error = error_get_last();
             return [
@@ -261,7 +261,7 @@ trait DownloadImageFromUrlTrait
                 'file' => $error['file'],
                 'line' => $error['line'],
                 'httpCode' => 200,
-                'contentType' => "NO-IMAGE-CONTENT",
+                'contentType' => 'NO-IMAGE-CONTENT',
                 'message' => "Nessuna immagine trovata: {$image_url}",
             ];
         }
@@ -285,12 +285,12 @@ trait DownloadImageFromUrlTrait
                     'error_message' => \Db::getInstance()->getMsgError(),
                     'httpCode' => 500,
                     'contentType' => 'text/plain',
-                    'message' => "Classe Image->add() " . \Db::getInstance()->getMsgError(),
+                    'message' => 'Classe Image->add() ' . \Db::getInstance()->getMsgError(),
                 ];
             }
 
             if ($imageContent) {
-                //Salvo il contenuto dell'immagine nella cartella
+                // Salvo il contenuto dell'immagine nella cartella
                 $image_path = $image->getPathForCreation();
                 $imageContent = base64_decode($imageContent);
                 $destOriginalImage = "{$image_path}.jpg";
@@ -340,7 +340,7 @@ trait DownloadImageFromUrlTrait
                     'line' => '',
                     'httpCode' => 200,
                     'contentType' => 'text/plain',
-                    'message' => "Immagine salvata",
+                    'message' => 'Immagine salvata',
                 ];
             }
 
@@ -358,9 +358,8 @@ trait DownloadImageFromUrlTrait
                 'line' => $error['line'],
                 'httpCode' => 500,
                 'contentType' => 'text/plain',
-                'message' => "Immagine non salvata: " . $errorMessage,
+                'message' => 'Immagine non salvata: ' . $errorMessage,
             ];
-
         } catch (\Exception $e) {
             return [
                 'status' => 'ERROR',
@@ -372,7 +371,7 @@ trait DownloadImageFromUrlTrait
                 'line' => $e->getLine(),
                 'httpCode' => 500,
                 'contentType' => 'text/plain',
-                'message' => "Immagine non salvata: " . $e->getMessage(),
+                'message' => 'Immagine non salvata: ' . $e->getMessage(),
             ];
         }
     }
@@ -380,8 +379,8 @@ trait DownloadImageFromUrlTrait
     public static function createTyreUrl($idT24)
     {
         $baseUrl = 'https://media1.tyre-shopping.com/images_ts/tyre';
-        $encoded = "MzIwMzAx";
-        $size = "w800-h800";
+        $encoded = 'MzIwMzAx';
+        $size = 'w800-h800';
         $userCode = '24000320301';
         $url = "{$baseUrl}/{$idT24}-{$encoded}-{$size}-br1-{$userCode}.jpg";
 
@@ -401,20 +400,21 @@ trait DownloadImageFromUrlTrait
         $db = \Db::getInstance();
         $query = new \DbQuery();
 
-        $query->select("count(id_product)")
+        $query
+            ->select('count(id_product)')
             ->from('image')
             ->where('id_product=' . (int) $id_product);
 
         return (int) $db->getValue($query);
     }
 
-
     public static function hasCover($id_product)
     {
         $db = \Db::getInstance();
         $query = new \DbQuery();
 
-        $query->select("id_image")
+        $query
+            ->select('id_image')
             ->from('image')
             ->where('id_product=' . (int) $id_product)
             ->where('cover=1');

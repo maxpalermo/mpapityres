@@ -2,7 +2,7 @@
 <module>
     <name>mpapityres</name>
     <displayName><![CDATA[Pneumatici Tyres24]]></displayName>
-    <version><![CDATA[0.8.1]]></version>
+    <version><![CDATA[1.0.1.1332]]></version>
     <description><![CDATA[Modulo base per la gestione pneumatici Tyre24 via API.]]></description>
     <author><![CDATA[Massimiliano Palermo]]></author>
     <tab><![CDATA[administration]]></tab>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -39,5 +40,10 @@ class GetLastError
             ];
         }
         return $error;
+    }
+
+    public static function clear()
+    {
+        error_clear_last();
     }
 }

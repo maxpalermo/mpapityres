@@ -21,6 +21,7 @@
 
 namespace MpSoft\MpApiTyres\Helpers;
 
+use MpSoft\MpApiTyres\Catalog\CreatePFU;
 use MpSoft\MpApiTyres\Configuration\ConfigValues;
 use MpSoft\MpApiTyres\Traits\DownloadImageFromUrlTrait;
 use MpSoft\MpApiTyres\Traits\GetCategoryIdFromNameTrait;
@@ -35,6 +36,8 @@ class DownloadAPI
         $db = \Db::getInstance();
         $pfx = _DB_PREFIX_;
         $db->execute("UPDATE {$pfx}product_tyre SET active = '0' WHERE type='API'");
+        $db->execute("UPDATE {$pfx}product SET active = '0' WHERE id_product < 10000000");
+        $db->execute("UPDATE {$pfx}product_shop SET active = '0' WHERE id_product < 10000000");
 
         // Preparo i dati per il download via API
         $configValues = ConfigValues::getInstance();
@@ -312,6 +315,13 @@ class DownloadAPI
                 $parsed++;
             }
         }
+
+        $pfx = _DB_PREFIX_;
+        \Db::getInstance()->execute("UPDATE `{$pfx}product` SET active = 0 WHERE id_product IN (SELECT id_t24 from {$pfx}product_tyre where type='CSV' and active=0);");
+        \Db::getInstance()->execute("UPDATE `{$pfx}product_shop` SET active = 0 WHERE id_product IN (SELECT id_t24 from {$pfx}product_tyre where type='CSV' and active=0);");
+        \Db::getInstance()->execute("UPDATE `{$pfx}product` SET active = 0 WHERE id_product IN (SELECT id_product from {$pfx}product_lang where reference not like '00-%' and delivery_in_stock <= DATE_FORMAT(NOW(), '%Y-%m-%d'));");
+        \Db::getInstance()->execute("UPDATE `{$pfx}product_shop` SET active = 0 WHERE id_product IN (SELECT id_product from {$pfx}product_lang where reference not like '00-%' and delivery_in_stock <= DATE_FORMAT(NOW(), '%Y-%m-%d'));");
+
         echo "\n\t Importazione completata. Inseriti {$parsed} prodotti su un totale di {$totalRows}.";
     }
 
@@ -427,7 +437,7 @@ class DownloadAPI
                 $id_category_default = (int) \Configuration::get('PS_HOME_CATEGORY');
             }
 
-            // Verifica se il prodotto esiste già o se l'EAN è corretto
+            // Verifica se il prodotto esista già o se l'EAN non sia valido
             $db = \Db::getInstance();
             $pfx = _DB_PREFIX_;
             $ean = $product['ean'] ?? '';
@@ -449,7 +459,34 @@ class DownloadAPI
                     self::addQuantityPrice($id_product, 4, $price_4);
                 }
 
-                echo "\n\t Prodotto esistente {$existsProduct->ean13}. Aggiornati prezzi e quantità.";
+                // Aggiorno il PFU
+                $createPfu = new CreatePFU();
+                $createPfu->setProductToPfu($id_product);
+
+                // Controllo che non abbia immagini
+                $imageCover = \Image::getCover($id_product);
+                if (!$imageCover) {
+                    // Gestione delle immagini
+                    if (!empty($product['csv_image_url'])) {
+                        self::addProductImageStatic($id_product, $product['csv_image_url']);
+                    }
+
+                    // Gestione dell'immagine del label
+                    if (!empty($product['csv_label_url'])) {
+                        self::addProductImageStatic($id_product, $product['csv_label_url']);
+                    }
+                }
+
+                // Aggiorno la scadenza
+                $deliveryDate = $product['delivery_date'] ?? '';
+                $delay = self::getDeliveryDateDelay($deliveryDate);
+                if ($delay) {
+                    $upd = self::updateDeliveryDate($id_product, $delay);
+                } else {
+                    $upd = 0;
+                }
+
+                echo "\n\t Prodotto esistente {$existsProduct->ean13}. Aggiornati prezzi, immagini, PFU e quantità. \n\tData di spedizione ({$upd}) {$delay}";
 
                 return true;
             }
@@ -511,10 +548,12 @@ class DownloadAPI
             $prestashopProduct->weight = (float) ($product['weight'] ?? 0);
 
             // Meta informazioni per SEO
-            $prestashopProduct->delivery_in_stock = $product['delivery_date'] ?? '';
-            if ($prestashopProduct->delivery_in_stock) {
-                $prestashopProduct->additional_delivery_times = 2;
+            $deliveryDate = $product['delivery_date'] ?? '';
+            $delay = self::getDeliveryDateDelay($deliveryDate);
+            if (!$delay) {
+                return false;
             }
+            $prestashopProduct->delivery_in_stock = $delay;
             $prestashopProduct->meta_title = self::createMultiLangField($product['meta_title'] ?? '');
             $prestashopProduct->meta_description = self::createMultiLangField($product['meta_description'] ?? '');
             $prestashopProduct->meta_keywords = self::createMultiLangField($product['meta_keywords'] ?? '');
@@ -638,12 +677,40 @@ class DownloadAPI
                 self::addQuantityPrice($id_product, 4, $product['price_4']);
             }
 
+            // Aggiorno il PFU
+            $createPfu = new CreatePFU();
+            $createPfu->setProductToPfu($id_product);
+
             return true;
         } catch (\Exception $e) {
             echo "\n\t Errore durante l'aggiornamento del prodotto: " . $e->getMessage();
 
             return false;
         }
+    }
+
+    public static function getDeliveryDateDelay($delivery_date)
+    {
+        if (\Validate::isDate($delivery_date)) {
+            $delay = \Configuration::get('MPAPITYRES_DELIVERY_DELAY') ?: 2;
+            $date = date('Y-m-d', strtotime($delivery_date . ' +' . $delay . ' days'));
+
+            return $date;
+        }
+
+        return date('Y-m-d', strtotime($delivery_date . ' +5 days'));
+    }
+
+    public static function updateDeliveryDate($id_product, $delivery_date)
+    {
+        $db = \Db::getInstance();
+        return (int) $db->update(
+            'product_lang',
+            [
+                'delivery_in_stock' => $delivery_date,
+            ],
+            'id_product=' . (int) $id_product
+        );
     }
 
     public static function updateProductPrice($id_product, $price, $loadAmount = 0, $loadPerc = 0)
