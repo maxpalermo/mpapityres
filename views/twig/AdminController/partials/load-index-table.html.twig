@@ -1,0 +1,108 @@
+<div class="container-fluid mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0"><i class="fas fa-weight-hanging mr-2"></i>Indici di Carico Pneumatici (Load Index)</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>Indice di Carico (Load Index):</strong> Indica il carico massimo in kg che un pneumatico può sopportare alla velocità indicata dall'indice di velocità.
+            </div>
+            
+            <!-- Tabella Indici Singoli -->
+            <h5 class="mt-4">Indici di Carico Singoli (per ruote singole)</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Indice</th><th>Carico Max</th><th>Indice</th><th>Carico Max</th>
+                            <th>Indice</th><th>Carico Max</th><th>Indice</th><th>Carico Max</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>100</td><td>800 kg</td><td>105</td><td>925 kg</td><td>110</td><td>1060 kg</td><td>115</td><td>1215 kg</td></tr>
+                        <tr><td>101</td><td>825 kg</td><td>106</td><td>950 kg</td><td>111</td><td>1090 kg</td><td>116</td><td>1250 kg</td></tr>
+                        <tr><td>102</td><td>850 kg</td><td>107</td><td>975 kg</td><td>112</td><td>1120 kg</td><td>117</td><td>1285 kg</td></tr>
+                        <tr><td>103</td><td>875 kg</td><td>108</td><td>1000 kg</td><td>113</td><td>1150 kg</td><td>118</td><td>1320 kg</td></tr>
+                        <tr><td>104</td><td>900 kg</td><td>109</td><td>1030 kg</td><td>114</td><td>1180 kg</td><td>119</td><td>1360 kg</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Tabella Indici Doppi -->
+            <h5 class="mt-4">Indici di Carico Doppi (per ruote gemellate)</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Notazione</th><th>Interpretazione</th><th>Esempio nei tuoi dati</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>XXX/YYY</td><td>Indice singolo / Indice per ruote gemellate</td><td>100/97, 101/99, 102/100</td></tr>
+                        <tr><td>XXX+(Z)</td><td>Indice rinforzato con specifica velocità</td><td>102+(Z)</td></tr>
+                        <tr><td>XXX/YYYT</td><td>Indice doppio con specifica velocità</td><td>103/101T</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Esempi pratici -->
+            <h5 class="mt-4">Esempi Pratici di Decodifica</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>Esempio 1: <code>102/100</code></h6>
+                            <ul class="mb-0">
+                                <li><strong>102:</strong> 850 kg (ruota singola)</li>
+                                <li><strong>100:</strong> 800 kg (ruota gemellata)</li>
+                                <li><em>Per veicoli con ruote gemellate posteriori</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>Esempio 2: <code>113/125</code></h6>
+                            <ul class="mb-0">
+                                <li><strong>113:</strong> 1150 kg (singola)</li>
+                                <li><strong>125:</strong> 1650 kg (gemellata)</li>
+                                <li><em>Forte differenza per camion/van</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Codici Speciali -->
+            <h5 class="mt-4">Codici Speciali e Rinforzati</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead class="thead-light">
+                        <tr><th>Codice</th><th>Tipo</th><th>Significato Probabile</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>*, **, ***</td><td>Rinforzato</td><td>Livelli di rinforzo progressivi</td></tr>
+                        <tr><td>*/**</td><td>Rinforzato doppio</td><td>Indice per diverse configurazioni</td></tr>
+                        <tr><td>102+(Z)</td><td>Rinforzato con velocità</td><td>850 kg + velocità Z (240+ km/h)</td></tr>
+                        <tr><td>11, 113/99</td><td>Speciali</td><td>Codici specifici per applicazioni particolari</td></tr>
+                        <tr><td>1109019</td><td>Codice prodotto</td><td>Probabilmente dimensione o codice interno</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Note importanti -->
+            <div class="alert alert-warning mt-4">
+                <h5><i class="fas fa-exclamation-triangle mr-2"></i>Note Importanti</h5>
+                <ul class="mb-0">
+                    <li><strong>Indice Singolo:</strong> Per veicoli con ruote singole su tutti gli assi</li>
+                    <li><strong>Indice Doppio (es: 102/100):</strong> Per veicoli con ruote gemellate (primo = singola, secondo = gemellata)</li>
+                    <li><strong>XL / RF / REINF:</strong> Pneumatici rinforzati per carichi maggiori</li>
+                    <li><strong>C:</strong> Pneumatici commerciali (es: 103C)</li>
+                    <li>Il carico effettivo deve considerare anche pressione di gonfiaggio e velocità</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

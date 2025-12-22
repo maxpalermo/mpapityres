@@ -1,0 +1,17 @@
+{% for pfu in pfuList %}
+<tr>
+    <td>{{ pfu.id_product }}</td>
+    <td>{{ pfu.reference }}</td>
+    <td class="text-right text-nowrap">{{ pfu.pfu_weight_min }} Kg</td>
+    <td class="text-right text-nowrap">{{ pfu.pfu_weight_max }} Kg</td>
+    <td class="text-right text-nowrap">{{ pfu.price | number_format(2, ",", ".") }} EUR</td>
+    <td class="text-right text-nowrap">{{ pfu.tax_rate }} %</td>
+    <td class="text-center text-nowrap">
+        {% if pfu.associated > 0 %}
+            <span style="color: #var(--edition-blue);">{{ pfu.associated }}</span>
+        {% else %}
+            <span style="color: var(--edition-destructive-900);">0</span>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}

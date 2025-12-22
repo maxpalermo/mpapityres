@@ -1,0 +1,323 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script src="{{ asset('js/ToastClass.js') }}"></script>
+<script src="{{ asset('js/ConfirmClass.js') }}"></script>
+<script src="{{ asset('js/LoadingMessages.js') }}"></script>
+<script src="{{ asset('js/Fetch.js') }}"></script>
+
+<style>
+    .table-bordered td {
+        border: 1px solid #dcdcdc !important;
+    }
+</style>
+
+<div style="width: 100%">
+    <!-- TEMPLATE ASSOCIA PFU -->
+    {% include 'AdminController/pages/csv/pfu-association.html.twig' %}
+
+    <div class="d-flex justify-content-start align-items-start gap-2">
+        <!-- PANNELLO CSV -->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <i class="icon icon-cogs"></i>
+                <span>Elenco PFU da CSV</span>
+            </div>
+            <div class="panel-body">
+                <div class="alert alert-warning">
+                    <p>Questa sezione permette di creare l'elenco dei PFU</p>
+                    <p>standard <strong>ECOPNEUS</strong> letti dal file CSV</p>
+                </div>
+                <div class="form-group">
+                    <table class="table table-bordered table-striped table-condensed" id="table-pfu-csv">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Peso min</th>
+                                <th class="text-center">Peso max</th>
+                                <th class="text-center">Prezzo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pfu in pfuCsv %}
+                            <tr>
+                                <td class="text-right" data-min-weight="{{ pfu.min_weight }}">{{ pfu.min_weight }} Kg</td>
+                                <td class="text-right" data-max-weight="{{ pfu.max_weight }}">{{ pfu.max_weight }} Kg</td>
+                                <td class="text-right" data-price="{{ pfu.price }}">{{ pfu.price|number_format(2,',','.') }} €</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button class="btn btn-primary pull-right" onclick="generatePfuFromCsv()">Genera Lista PFU</button>
+            </div>
+        </div>
+
+        <!-- PANNELLO CONTENITORE -->
+        <div class="grow-1">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="icon icon-cogs"></i>
+                    <span>Crea prodotto PFU</span>
+                </div>
+                
+                <hr>
+                <div class="panel-body">
+                    <form action="" method="post" id="formPfu" class="d-flex justify-content-start align-items-start gap-2">
+                        <div class="form-group" style="border-right: 1px solid #dcdcdc; padding-right: 2rem;">
+                            <div class="form-group fixed-width-xl">
+                                <label class="label-line" for="pfu-tax-rule-group">Seleziona l'aliquota IVA</label>
+                                <select class="form-control" id="pfu-tax-rule-group">
+                                    {% for tax_rule in id_tax_rules_group_list %}
+                                    <option value="{{ tax_rule.id_tax_rules_group }}" {% if tax_rule.id_tax_rules_group == id_pfu_tax_rules_group %}selected{% endif %}>{{ tax_rule.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-primary mt-2 pull-right" id="btnSaveTaxRate">
+                                    <i class="material-icons">save</i>
+                                    Salva
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group fixed-width-xl">
+                            <label class="label-line" for="pfu-min-weight">Peso minimo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control text-right" id="pfu-min-weight" name="pfu-min-weight" value="0" required>
+                                <span class="input-group-addon">Kg</span>
+                            </div>
+                        </div>
+                        <div class="form-group fixed-width-xl">
+                            <label class="label-line" for="pfu-max-weight">Peso massimo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control text-right" id="pfu-max-weight" name="pfu-max-weight" value="0" required>
+                                <span class="input-group-addon">Kg</span>
+                            </div>
+                        </div>
+                        <div class="form-group fixed-width-xl">
+                            <label class="label-line" for="pfu-price">Prezzo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control text-right" id="pfu-price" name="pfu-price" value="0.00" required>
+                                <span class="input-group-addon">EUR</span>
+                            </div>
+                            <button type="submit" id="btnSavePfu" class="btn btn-primary mt-2 pull-right">
+                                <i class="material-icons">save</i>
+                                <span>Salva</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel panel-success grow-1">
+                <div class="panel-heading">
+                    <i class="icon icon-list"></i>
+                    <span>Elenco PFU in archivio</span>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover table-bordered" id="table-pfu">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Riferimento</th>
+                                <th>Peso min</th>
+                                <th>Peso max</th>
+                                <th>Prezzo</th>
+                                <th>IVA</th>
+                                <th>Prodotti associati</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ pfuListTbody | raw }}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="text-right">
+                        <ul class="list-group">
+                            <li class="list-group-item">Totale PFU: <strong>{{ pfuList|length }}</strong></li>
+                            <li class="list-group-item">Totale Prodotti: <strong>{{ totalProducts }}</strong></li>
+                            <li class="list-group-item">Prodotti associati: <strong>{{ totalPfuAssociated }}</strong></li>
+                        </ul>
+                    </td>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<!-- SEZIONE ELENCO PFU CSV -->
+<div class="d-flex justify-content-start align-items-start gap-2">
+    <div class="panel panel-success grow-1">
+        <div class="panel-heading">
+            <i class="icon icon-list"></i>
+            <span>Associa PFU ai prodotti</span>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover table-bordered" id="table-pfu-association">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Riferimento</th>
+                        <th>Peso min</th>
+                        <th>Peso max</th>
+                        <th>Prezzo</th>
+                        <th>IVA</th>
+                        <th>Prodotti associati</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pfu in pfuList %}
+                    <tr>
+                        <td>{{ pfu.id_product }}</td>
+                        <td>{{ pfu.reference }}</td>
+                        <td class="text-right">{{ pfu.weightStart }} Kg</td>
+                        <td class="text-right">{{ pfu.weightEnd }} Kg</td>
+                        <td class="text-right">{{ pfu.price | number_format(2, ",", ".") }} EUR</td>
+                        <td class="text-right">{{ pfu.tax_rate }} %</td>
+                        <td class="text-right">
+                            {% if pfu.associated > 0 %}
+                            <span class="badge badge-info">{{ pfu.associated }}</span>
+                            {% else %}
+                            <span class="badge badge-danger">0</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer">
+            <div class="text-right">
+                <ul class="list-group">
+                    <li class="list-group-item">Totale PFU: <strong>{{ pfuList|length }}</strong></li>
+                    <li class="list-group-item">Totale Prodotti: <strong>{{ totalProducts }}</strong></li>
+                    <li class="list-group-item">Prodotti associati: <strong>{{ totalPfuAssociated }}</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Dati per JavaScript -->
+
+<script>
+    $.browser = {};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-hashchange@2.0.0/jquery.ba-hashchange.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@3.32.0/dist/algoliasearchLite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@3.0.0/dist/instantsearch.production.min.js"></script>
+
+<link rel="stylesheet" href="{{ asset('components/bootstrap-table/bootstrap-table.min.css') }}">
+<link rel="stylesheet" href="{{ asset('components/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.min.css') }}">
+<script src="{{ asset('components/bootstrap-table/bootstrap-table.min.js') }}"></script>
+<script src="{{ asset('components/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.min.js') }}"></script>
+<script src="{{ asset('components/bootstrap-table/locale/bootstrap-table-it-IT.min.js') }}"></script>
+
+<script src="{{ baseUrl }}modules/mpapityres/views/assets/components/table/table.js"></script>
+<script src="{{ baseUrl }}modules/mpapityres/views/assets/js/remove-tree-buttons.js"></script>
+<script src="{{ asset('js/Controllers/AdminMpApiTyres/script/AdminPage.js') }}"></script>
+<script src="{{ asset('js/Controllers/AdminMpApiTyres/tables/table-pfu-association.js') }}"></script>
+
+<script type="text/javascript">
+    // URL per le azioni AJAX
+    const baseUrl = "{{ baseUrl | raw }}";
+    const CronControllerURL = "{{ cronControllerUrl | raw }}";
+    const AdminControllerUrl = "{{ adminControllerUrl | raw }}";
+    const DownloadCatalogActionUrl = "{{ downloadCatalogActionUrl | raw }}";
+    const ImportCatalogActionUrl = "{{ importCatalogActionUrl | raw }}";
+    const ReloadImagesActionUrl = "{{ reloadImagesActionUrl | raw }}";
+    const DeleteProductsActionUrl = "{{ deleteProductsActionUrl | raw }}";
+    const cronToken = "{{ cronToken }}";
+    const toast = new ToastClass();
+    const fetchClass = new Fetch(AdminControllerUrl, "mpapityres");
+    const tablePfuAssociations = new TablePfuAssociation(AdminControllerUrl);
+
+    async function generatePfuFromCsv()
+    {
+        try {
+            toast.showToastInfo("Attendere...", "Generazione lista PFU in corso...");
+            const data = await fetchClass.run("generatePfuFromCsv", {});
+            if (data.success) {
+                const tablePfu = document.getElementById("table-pfu");
+                tablePfu.querySelector("tbody").innerHTML=data.tbody;
+                toast.showToastSuccess("Operazione eseguita", "Lista PFU generata con successo!");
+            } else {
+                toast.showToastError("Errore", data.message || "Errore nella generazione della lista PFU");
+            }
+            
+        } catch (error) {
+            toast.showToastError("Attenzione", "Errore nella generazione della lista PFU: " + error.message);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const toast = new ToastClass("toast-mpapityres");
+        window.toast = toast;
+
+        const confirmation = new ConfirmClass("confirmation-mpapityres");
+        window.confirmation = confirmation;
+
+        $('.chosen').chosen(
+            {
+                placeholder: 'Seleziona',
+                allowClear: true,
+                width: '100%',
+                language: 'it',
+                theme: 'classic'
+            }
+        );
+        
+        const divContent = document.getElementById("content");
+        if (divContent) {
+            divContent.classList.remove("nobootstrap");
+            divContent.classList.add("wrapper-bootstrap");
+            console.log("Nobootstrap rimosso");
+        }
+
+        const btnSaveTaxRate = document.getElementById("btnSaveTaxRate");
+        btnSaveTaxRate.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            if(await confirmation.confirmYesNo(
+                "Richiesta",
+                "Sei sicuro di voler salvare l'aliquota IVA?"
+                )==false) {
+                return;
+            }
+
+            const idTaxRulesGroup = document.getElementById("pfu-tax-rule-group").value;
+            const formData = new FormData();
+            formData.append("idTaxRulesGroup", idTaxRulesGroup);
+            formData.append("action", "savePfuIdTaxRulesGroup");
+            formData.append("ajax", 1);
+            
+            const response = await fetch("{{ adminControllerUrl }}", {
+                method: "POST",
+                body: formData
+            });
+
+            const json = await response.json();
+            if (json.success) {
+                toast.showToastSuccess("Operazione eseguita",json.message);
+            } else {
+                toast.showToastError("Operazione fallita",json.message);
+            }
+            
+        });
+
+        const btnSavePfu = document.getElementById("btnSavePfu");
+        btnSavePfu.addEventListener("click", async (e) => {
+            e.preventDefault();
+            
+        });
+
+        tablePfuAssociations.createTable();
+    });
+</script>
+

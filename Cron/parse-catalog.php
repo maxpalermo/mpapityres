@@ -19,28 +19,18 @@ Context::getContext()->employee = new Employee(1);
 
 try {
     $start = microtime(true);
-    echo '[' . date('Y-m-d H:i:s') . "] Inizio scaricamento API\n";
+    echo '[' . date('Y-m-d H:i:s') . "] Inizio inserimento prodotti nel catalogo\n";
 
     // Usa le classi del tuo modulo
     /** @var MpApiTyres $module */
     $module = Module::getInstanceByName('mpapityres');
 
     echo "\tMODULO CARICATO: {$module->name}\n";
-    $module->cronDownloadAPI();
-
-    $end = microtime(true);
-    $time = $end - $start;
-    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
-    echo PHP_EOL . '-----------------------------' . PHP_EOL;
-
-    $start = microtime(true);
-
-    echo PHP_EOL . 'PROCEDO AL PARSING DEL FILE CSV' . PHP_EOL;
     $module->cronParseAPI();
 
     $end = microtime(true);
     $time = $end - $start;
-    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
+    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$module->humanReadableSeconds($time)} secondi\n";
     echo PHP_EOL . '-----------------------------' . PHP_EOL;
 
     exit(0);

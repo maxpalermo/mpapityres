@@ -1,0 +1,21 @@
+<div class="d-flex justify-content-between align-items-center">
+    {% if check_table == false %}
+        <div class="alert alert-warning">
+            <p>La tabella per salvare i dati CSV non è presente</p>
+            <p>Prima di continuare, creare la tabella</p>
+            <button type="button" id="btnImportCsv" class="btn btn-success btn-lg mt-4 pull-right" onclick="createTable()">
+                <i class="material-icons">add</i>
+                <span>Crea Tabella</span>
+            </button>
+        </div>
+    {% endif %}
+</div>
+<div class="alert alert-info">
+    <p>Per importare i dati dal file CSV usa il seguente CRON:</p>
+    <code>{{ cronDownloadCsv }}</code>
+    <p> Puoi usare due flag per personalizzare l'importazione:</p>
+    <ul>
+        <li><code> --skip-download-csv</code> salta il download del CSV</li>
+        <li><code> --only-update-catalog</code> aggiorna il catalogo con i dati già presenti nella tabella CSV</li>
+    </ul>
+</div>

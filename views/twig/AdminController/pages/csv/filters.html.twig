@@ -1,0 +1,95 @@
+<form id="filterForm">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <span class="material-icons mr-2">filter</span>
+            <span>Filtri di importazione</span>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover" style="width: auto;">
+                <thead>
+                    <tr>
+                        <th>FILTRO</th>
+                        <th>ABILITATO</th>
+                        <th>OBBLIGATORIO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>3PMFS</td>
+                        <td class="text-center"><input type="checkbox" name="filter_3pmfs" id="filter_3pmfs" class="form-check-input" {% if filter_3pmfs %}checked{% endif %}></td>
+                        <td class="text-center"><input type="checkbox" name="filter_3pmfs_mandatory" id="filter_3pmfs_mandatory" class="form-check-input" {% if filter_3pmfs_mandatory %}checked{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>MS</td>
+                        <td class="text-center"><input type="checkbox" name="filter_ms" id="filter_ms" class="form-check-input" {% if filter_ms %}checked{% endif %}></td>
+                        <td class="text-center"><input type="checkbox" name="filter_ms_mandatory" id="filter_ms_mandatory" class="form-check-input" {% if filter_ms_mandatory %}checked{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>RUNFLAT</td>
+                        <td class="text-center"><input type="checkbox" name="filter_runflat" id="filter_runflat" class="form-check-input" {% if filter_runflat %}checked{% endif %}></td>
+                        <td class="text-center"><input type="checkbox" name="filter_runflat_mandatory" id="filter_runflat_mandatory" class="form-check-input" {% if filter_runflat_mandatory %}checked{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>DA_DECKE</td>
+                        <td class="text-center"><input type="checkbox" name="filter_da_decke" id="filter_da_decke" class="form-check-input" {% if filter_da_decke %}checked{% endif %}></td>
+                        <td class="text-center"><input type="checkbox" name="filter_da_decke_mandatory" id="filter_da_decke_mandatory" class="form-check-input" {% if filter_da_decke_mandatory %}checked{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>DEMO</td>
+                        <td class="text-center"><input type="checkbox" name="filter_demo" id="filter_demo" class="form-check-input" {% if filter_demo %}checked{% endif %}></td>
+                        <td class="text-center"><input type="checkbox" name="filter_demo_mandatory" id="filter_demo_mandatory" class="form-check-input" {% if filter_demo_mandatory %}checked{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>DOT</td>
+                        <td class="text-center"><input type="checkbox" name="filter_dot" id="filter_dot" class="form-check-input" {% if filter_dot %}checked{% endif %}></td>
+                        <td class="text-center"><input type="checkbox" name="filter_dot_mandatory" id="filter_dot_mandatory" class="form-check-input" {% if filter_dot_mandatory %}checked{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>QUANTITÀ MINIMA</td>
+                        <td class="text-center"><input type="number" name="filter_quantity_min" id="filter_quantity_min" class="form-control fixed-width-sm text-right" min="1" step="1" {% if (filter_quantity_min is defined and filter_quantity_min > 0) %}value="{{ filter_quantity_min }}"{% else %}value="1"{% endif %}></td>
+                        <td class="text-center"><input type="checkbox" name="filter_quantity_min_mandatory" id="filter_quantity_min_mandatory" class="form-check-input" {% if filter_quantity_min_mandatory %}checked{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>GIORNI CONSEGNA</td>
+                        <td class="text-center"><input type="number" name="delivery_delay_days" id="delivery_delay_days" class="form-control fixed-width-sm text-right" min="0" step="1" {% if (delivery_delay_days is defined and delivery_delay_days > 0) %}value="{{ delivery_delay_days }}"{% else %}value="0"{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>RICARICO EURO</td>
+                        <td class="text-center"><input type="number" name="load_amount" id="load_amount" class="form-control fixed-width-sm text-right" min="0" step="0.01" {% if (load_amount is defined and load_amount > 0) %}value="{{ load_amount }}"{% else %}value="0"{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>RICARICO PERC</td>
+                        <td class="text-center"><input type="number" name="load_percentage" id="load_percentage" class="form-control fixed-width-sm text-right" min="0" step="0.01" {% if (load_percentage is defined and load_percentage > 0) %}value="{{ load_percentage }}"{% else %}value="0"{% endif %}></td>
+                    </tr>
+                    <tr>
+                        <td>Aliquota IVA</td>
+                        <td class="text-center" colspan="2">
+                            <select name="id_tax_rules_group" id="id_tax_rules_group" class="form-control chosen">
+                                <option value="0">Nessuno</option>
+                                {% for taxRulesGroup in taxRulesGroups %}
+                                    <option value="{{ taxRulesGroup.id_tax_rules_group }}" {% if taxRulesGroup.id_tax_rules_group == id_tax_rules_group %}selected{% endif %}>{{ taxRulesGroup.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="100%">
+                            <ul class="list-group">
+                                <li class="list-group-item">Totale prodotti: <span class="badge badge-info pull-right" id="totalProducts">{{ totalProducts }}</span></li>
+                                <li class="list-group-item">Totale filtrati: <span class="badge badge-info pull-right" id="filteredProducts">{{ totalFiltered }}</span></li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="panel-footer">
+            <button type="button" class="btn btn-primary pull-right" onclick="applyFilters()">
+                <span class="material-icons mr-2">filter</span>
+                Applica filtri
+            </button>
+        </div>
+    </div>
+</form>

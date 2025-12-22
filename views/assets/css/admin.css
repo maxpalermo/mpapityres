@@ -70,6 +70,10 @@
     display: flex !important;
 }
 
+.flex-column {
+    flex-direction: column !important;
+}
+
 .justify-content-between {
     justify-content: space-between !important;
 }
@@ -825,4 +829,88 @@ dialog .card {
 dialog .panel {
     padding: 1rem;
     margin: 0 auto;
+}
+
+a.toolbar_btn:has(i.active) {
+    color: #fcfcfc !important;
+    background-color: #4b8a19 !important;
+    border-color: #396812 !important;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5) !important;
+}
+
+.form-inline {
+    display: flex !important;
+    justify-content: start !important;
+    align-items: top !important;
+    gap: 0.5rem !important;
+}
+
+.btn {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.5rem;
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mt-2 {
+    margin-top: 1rem !important;
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+}
+
+.progress-bar-animated {
+    -webkit-animation: progress-bar-stripes 1s linear infinite;
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+.col-6 {
+    float: left;
+    min-width: 0 !important;
+    max-width: 50% !important;
+}
+
+.align-items-end {
+    align-items: end !important;
+}
+
+label.label-line {
+    display: block;
+    float: none;
+    width: auto;
+    text-align: left;
+}
+
+.gap-2 {
+    gap: 2rem !important;
+}
+
+.grow-1 {
+    flex-grow: 1 !important;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: start;
+    align-items: top;
+    gap: 2rem;
+    height: 100%;
+}
+
+.mb-2 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 2rem !important;
 }

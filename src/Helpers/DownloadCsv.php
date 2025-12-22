@@ -31,9 +31,13 @@ class DownloadCsv
         $configValues = ConfigValues::getInstance();
         $csvEndpointUrl = $configValues->getCsvEndpointUrl();
 
+        $token = \Configuration::get('MPAPITYRES_CSV_TOKEN');
+        $accountId = \Configuration::get('MPAPITYRES_ACCOUNT_ID');
+        $endpointCSV = "https://tyre24.alzura.com/it/it/export/download-via-token/token/{$token}/accountId/{$accountId}/t/1/c/35/";
+
         // Scarico il file ZIP tramite guzzleHTTP
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $csvEndpointUrl);
+        $response = $client->request('GET', $endpointCSV);
         $body = $response->getBody();
         $file = $body->getContents();
         $downloadFolder = _PS_ROOT_DIR_ . '/download/csv/';
@@ -236,7 +240,7 @@ class DownloadCsv
 
     public static function parseCsvTotal()
     {
-        $id_account = \Configuration::get('MPAPITYRES_CSV_ACCOUNT_ID');
+        $id_account = \Configuration::get('MPAPITYRES_ACCOUNT_ID');
         $parseCsv = new ParseCsv();
         $csvPath = _PS_ROOT_DIR_ . '/download/csv/';
         $csvFileName = "{$id_account}_it.csv";
@@ -326,10 +330,17 @@ class DownloadCsv
         $db = \Db::getInstance();
         $batch = [];
         $nowTs = date('Y-m-d H:i:s');
+        $active = 1;
+        $ids = [];
 
         foreach ($rows as $row) {
             $id_t24 = isset($row['id']) ? (string) $row['id'] : '';
             $matchcode = isset($row['matchcode']) ? (string) $row['matchcode'] : '';
+
+            if (!$id_t24 || !$matchcode) {
+                echo "\n\t id {$id_t24} o matchcode {$matchcode} non trovati. Saltato";
+                continue;
+            }
 
             $id_t24 = (int) $id_t24;
             $matchcode = pSQL((string) $matchcode);
@@ -340,8 +351,9 @@ class DownloadCsv
             $price_4 = (float) $row['price_4'];
             $loaded_price_1 = self::addPriceLoad($price_1, $loadAmount, $loadPerc);
             $loaded_price_4 = self::addPriceLoad($price_4, $loadAmount, $loadPerc);
-            $values = "({$id_t24}, 'CSV', '{$matchcode}', '{$content}', 1, {$price_1}, {$price_4}, {$loadAmount}, {$loadPerc}, {$loaded_price_1}, {$loaded_price_4}, '{$nowTs}', '{$nowTs}')";
+            $values = "({$id_t24}, 'CSV', '{$matchcode}', '{$content}', {$active}, {$price_1}, {$price_4}, {$loadAmount}, {$loadPerc}, {$loaded_price_1}, {$loaded_price_4}, '{$nowTs}', '{$nowTs}')";
             $batch[] = $values;
+            $ids[] = (int) $id_t24;
         }
         try {
             $sql = "INSERT INTO {$pfx}product_tyre (id_t24, type, matchcode, content, active, price_unit, price_set, load_amount, load_perc, price_unit_loaded, price_set_loaded, date_add, date_upd) VALUES " . implode(',', $batch);
@@ -350,6 +362,10 @@ class DownloadCsv
             $sql = "REPLACE INTO {$pfx}product_tyre (id_t24, type, matchcode, content, active, price_unit, price_set, load_amount, load_perc, price_unit_loaded, price_set_loaded, date_add, date_upd) VALUES " . implode(',', $batch);
             $result = $db->execute($sql);
         }
+
+        $ids = implode(',', $ids);
+        $db->execute("DELETE FROM {$pfx}product_tyre WHERE id_t24 IN ({$ids}) AND type='API'");
+        echo "\n\t Eliminati {$db->Affected_Rows()} record API dalla tabella product_tyre.";
 
         return $result;
     }

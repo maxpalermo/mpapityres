@@ -1,0 +1,118 @@
+<style>
+    .table-info {
+        background-color: #c0c0c0;
+        color: #fcfcfc;
+    }
+</style>
+
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Campo CSV</th>
+                <th>Descrizione</th>
+                <th>Tipo Dati</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Identificativi -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">IDENTIFICATIVI</td>
+            </tr>
+            <tr><td><code>id</code></td><td>ID unico pneumatico</td><td>Integer</td></tr>
+            <tr><td><code>matchcode</code></td><td>Codice articolo</td><td>String</td></tr>
+            <tr><td><code>manufacturer_number</code></td><td>Numero produttore</td><td>String</td></tr>
+            
+            <!-- Dimensioni -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">DIMENSIONI</td>
+            </tr>
+            <tr><td><code>outer_diameter</code></td><td>Diametro esterno (mm)</td><td>Float</td></tr>
+            <tr><td><code>height</code></td><td>Altezza (mm)</td><td>Float</td></tr>
+            <tr><td><code>width</code></td><td>Larghezza (mm)</td><td>Float</td></tr>
+            <tr><td><code>inner_diameter</code></td><td>Diametro interno (pollici)</td><td>Float</td></tr>
+            <tr><td><code>profile</code></td><td>Profilo</td><td>String</td></tr>
+            
+            <!-- Informazioni Prodotto -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">INFORMAZIONI PRODOTTO</td>
+            </tr>
+            <tr><td><code>brandname</code></td><td>Marca</td><td>String</td></tr>
+            <tr><td><code>articlename</code></td><td>Nome articolo</td><td>String</td></tr>
+            <tr><td><code>description</code></td><td>Descrizione</td><td>String</td></tr>
+            <tr><td><code>tyre_type</code></td><td>Tipo pneumatico</td><td>String</td></tr>
+            <tr><td><code>usage</code></td><td>Utilizzo</td><td>String</td></tr>
+            <tr><td><code>type</code></td><td>Tipo (S=estate, W=invernale)</td><td>String</td></tr>
+            
+            <!-- Specifiche Tecniche -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">SPECIFICHE TECNICHE</td>
+            </tr>
+            <tr><td><code>load_index</code></td><td>Indice di carico</td><td>String</td></tr>
+            <tr><td><code>speed_index</code></td><td>Indice di velocità</td><td>String</td></tr>
+            <tr><td><code>runflat</code></td><td>Runflat (1=sì, 0=no)</td><td>Integer</td></tr>
+            <tr><td><code>ms</code></td><td>M+S (1=sì, 0=no)</td><td>Integer</td></tr>
+            <tr><td><code>3pmfs</code></td><td>3PMFS (1=sì, 0=no)</td><td>Integer</td></tr>
+            <tr><td><code>ice_grip</code></td><td>Aderenza ghiaccio (1=sì, 0=no)</td><td>Integer</td></tr>
+            
+            <!-- Etichetta UE -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">ETICHETTA UE</td>
+            </tr>
+            <tr><td><code>energy_efficiency_index</code></td><td>Efficienza energetica (A-G)</td><td>String</td></tr>
+            <tr><td><code>wet_grip_index</code></td><td>Aderenza bagnato (A-F)</td><td>String</td></tr>
+            <tr><td><code>noise_index</code></td><td>Livello rumore (1-3 onde)</td><td>String</td></tr>
+            <tr><td><code>noise_decible</code></td><td>Rumore in dB</td><td>String</td></tr>
+            
+            <!-- Prezzi -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">PREZZI</td>
+            </tr>
+            <tr><td><code>price_1</code></td><td>Prezzo singolo pezzo</td><td>Float</td></tr>
+            <tr><td><code>price_4</code></td><td>Prezzo da 4 pezzi</td><td>Float</td></tr>
+            <tr><td><code>avg_price</code></td><td>Prezzo medio</td><td>Float</td></tr>
+            <tr><td><code>price_anonym</code></td><td>Prezzo anonimo medio</td><td>N/D</td></tr>
+            <tr><td><code>price_anonym_one</code></td><td>Prezzo anonimo singolo (solo su richiesta)</td><td>N/D</td></tr>
+            <tr><td><code>price_rvo</code></td><td>Prezzo RVO/Tyre.one (solo su richiesta)</td><td>Float</td></tr>
+            
+            <!-- Disponibilità e Logistica -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">DISPONIBILITÀ E LOGISTICA</td>
+            </tr>
+            <tr><td><code>availability</code></td><td>Disponibilità magazzino</td><td>Integer</td></tr>
+            <tr><td><code>expected_delivery_date</code></td><td>Data consegna prevista (Y-m-d)</td><td>String</td></tr>
+            
+            <!-- Link e Immagini -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">LINK E IMMAGINI</td>
+            </tr>
+            <tr><td><code>direct_link</code></td><td>Link diretto ALZURA T24</td><td>String</td></tr>
+            <tr><td><code>info</code></td><td>Link profilo articolo</td><td>String</td></tr>
+            <tr><td><code>image</code></td><td>URL immagine grande</td><td>String</td></tr>
+            <tr><td><code>image_tn</code></td><td>URL immagine small</td><td>String</td></tr>
+            <tr><td><code>tyrelabel_link</code></td><td>URL etichetta pneumatico</td><td>String</td></tr>
+            <tr><td><code>data_sheet</code></td><td>URL scheda tecnica</td><td>String</td></tr>
+            
+            <!-- Altro -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">ALTRO</td>
+            </tr>
+            <tr><td><code>vehicle_class</code></td><td>Classe veicolo</td><td>String</td></tr>
+            <tr><td><code>da_decke</code></td><td>Qualità degradata DA (1=sì, 0=no)</td><td>Integer</td></tr>
+            <tr><td><code>demo</code></td><td>Articolo demo (1=sì, 0=no)</td><td>Integer</td></tr>
+            <tr><td><code>dot</code></td><td>Marcatura DOT (1=sì, 0=no)</td><td>Integer</td></tr>
+            <tr><td><code>dot_year</code></td><td>Anno produzione DOT</td><td>Integer</td></tr>
+            <tr><td><code>manufacturer_description</code></td><td>Info sicurezza produttore</td><td>String</td></tr>
+
+            <!-- Premium user -->
+            <tr class="table-info">
+                <td colspan="3" class="font-weight-bold">CAMPI SU RICHIESTA (CON SOVRAPPREZZO)</td>
+            </tr>
+            <tr><td><code>EAN1</code></td><td>Codice EAN1</td><td>String</td></tr>
+            <tr><td><code>EAN2</code></td><td>Codice EAN2</td><td>String</td></tr>
+            <tr><td><code>EAN3</code></td><td>Codice EAN3</td><td>String</td></tr>
+            <tr><td><code>cheapest_20</code></td><td>Prezzo più basso da 20 pezzi</td><td>Float</td></tr>
+            <tr><td><code>manufacturer_price</code></td><td>Prezzo produttore</td><td>Float</td></tr>
+        </tbody>
+    </table>
+</div>

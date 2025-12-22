@@ -1,0 +1,151 @@
+<h2>Legenda pneumatici</h2>
+                
+<div class="panel-body">
+    <ul class="nav nav-tabs" id="csvTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active"
+            id="tyre-tab"
+            href="#nav-table-tyre"
+            role="tab"
+            data-toggle="tab"
+            aria-controls="nav-table-tyre"
+            aria-selected="true">
+                Tabella Pneumatici
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+            id="speed-index-tab"
+            href="#nav-table-speed-index"
+            role="tab"
+            data-toggle="tab"
+            aria-controls="nav-table-speed-index"
+            aria-selected="false">
+                Tabella Indici di Velocità
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+            id="load-index-tab"
+            href="#nav-table-load-index"
+            role="tab"
+            data-toggle="tab"
+            aria-controls="nav-table-load-index"
+            aria-selected="false">
+                Tabella Indici di Carico
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+            id="type-tab"
+            href="#nav-table-type"
+            role="tab"
+            data-toggle="tab"
+            aria-controls="nav-table-type"
+            aria-selected="false">
+                Tabella Applicazioni pneumatici
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+            id="type-tab"
+            href="#nav-table-energy-efficiency"
+            role="tab"
+            data-toggle="tab"
+            aria-controls="nav-table-energy-efficiency"
+            aria-selected="false">
+                Tabella Efficienza Energetica
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+            id="type-tab"
+            href="#nav-table-wet-grip"
+            role="tab"
+            data-toggle="tab"
+            aria-controls="nav-table-wet-grip"
+            aria-selected="false">
+                Tabella Indice aderenza bagnato
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+            id="csv-fields-tab"
+            href="#nav-table-csv-fields"
+            role="tab"
+            data-toggle="tab"
+            aria-controls="nav-table-csv-fields"
+            aria-selected="false">
+                Campi di importazione CSV
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="csvTabsContent">
+        <div class="tab-pane fade active in"
+            style="padding-top: 2rem;"
+            id="nav-table-tyre"
+            role="tabpanel"
+            aria-labelledby="tyre-tab">
+            {% include 'AdminController/partials/tyre-table.html.twig' %}
+        </div>
+
+        <div class="tab-pane fade "
+            style="padding-top: 2rem;"
+            id="nav-table-speed-index"
+            role="tabpanel"
+            aria-labelledby="speed-index-tab">
+            {% include 'AdminController/partials/speed-index-table.html.twig' %}
+        </div>
+
+        <div class="tab-pane fade"
+            style="padding-top: 2rem;"
+            id="nav-table-load-index"
+            role="tabpanel"
+            aria-labelledby="load-index-tab">
+            {% include 'AdminController/partials/load-index-table.html.twig' %}
+        </div>
+
+        <div class="tab-pane fade"
+            style="padding-top: 2rem;"
+            id="nav-table-type"
+            role="tabpanel"
+            aria-labelledby="type-tab">
+            {% include 'AdminController/partials/type-table.html.twig' %}
+        </div>
+
+        <div class="tab-pane fade"
+            style="padding-top: 2rem;"
+            id="nav-table-energy-efficiency"
+            role="tabpanel"
+            aria-labelledby="energy-efficiency-tab">
+            {% include 'AdminController/partials/energy-efficiency-table.html.twig' %}
+        </div>
+
+        <div class="tab-pane fade"
+            style="padding-top: 2rem;"
+            id="nav-table-wet-grip"
+            role="tabpanel"
+            aria-labelledby="wet-grip-tab">
+            {% include 'AdminController/partials/wet-grip-table.html.twig' %}
+        </div>
+
+        <div class="tab-pane fade"
+            style="padding-top: 2rem;"
+            id="nav-table-csv-fields"
+            role="tabpanel"
+            aria-labelledby="csv-fields-tab">
+            {% include 'AdminController/partials/csv-fields.html.twig' %}
+        </div>
+    </div>
+
+    <div class="justify-content-center align-items-center">
+        <div id="alertContainer"></div>
+    </div>
+</div>

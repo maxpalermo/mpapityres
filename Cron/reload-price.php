@@ -34,7 +34,7 @@ try {
 
     $end = microtime(true);
     $time = $end - $start;
-    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
+    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$module->humanReadableSeconds($time)} secondi\n";
 
     ob_end_flush();
     exit(0);

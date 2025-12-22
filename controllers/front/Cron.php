@@ -925,6 +925,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
         $search = (string) Tools::getValue('search');
         $order = (string) Tools::getValue('order', 'reference');
         $sort = (string) Tools::getValue('sort', 'asc');
+        $showNotAssociated = (int) Tools::getValue('show-not-associated', 0);
 
         $db = Db::getInstance();
         $pfx = _DB_PREFIX_;
@@ -982,6 +983,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 pl.name NOT LIKE 'PFU%'
                 AND 
                 (
+                    p.id_product = '{$search}' OR
                     p.reference like '%{$search}%' OR
                     p.ean13 like '%{$search}%' OR
                     pl.name like '%{$search}%' OR
@@ -991,7 +993,11 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
                 )
             ";
         } else {
-            $sql .= "\nWHERE pl.name != 'PFU%'";
+            $sql .= "\nWHERE p.reference NOT LIKE 'PFU%'";
+        }
+
+        if ($showNotAssociated) {
+            $sql .= "\nAND pfu.id_pfu IS NULL";
         }
 
         if (!$order) {
@@ -1091,31 +1097,63 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
             $db = Db::getInstance();
             $idsArray = explode(',', $ids);
+            $idsArrayList = implode(',', $idsArray);
 
             // Rimuovi associazioni esistenti
-            $db->delete(
+            $result = $db->delete(
                 'product_pfu',
-                "id_product IN ({$ids})"
+                "id_product IN ({$idsArrayList})"
             );
 
+            if (!$result) {
+                PrestaShopLogger::addLog(
+                    "Errore rimozione PFU per prodotti {$idsArrayList}",
+                    3
+                );
+            }
+            $affected = $db->Affected_Rows();
+            if ($affected > 0) {
+                PrestaShopLogger::addLog(
+                    "Rimossi {$affected} PFU per prodotti {$idsArrayList}",
+                    1
+                );
+            }
+
+            $inserted = 0;
             // Inserisci nuove associazioni
             foreach ($idsArray as $id) {
                 $id = (int) trim($id);
                 if ($id > 0) {
-                    $result = $db->insert(
-                        'product_pfu',
-                        [
-                            'id_product' => $id,
-                            'id_pfu' => $idPfu,
-                            'price' => (float) $pfus[$idPfu]['price'],
-                            'active' => 1,
-                            'date_add' => date('Y-m-d H:i:s'),
-                            'date_upd' => date('Y-m-d H:i:s'),
-                        ],
-                        false,
-                        true,
-                        DbCore::INSERT_IGNORE
-                    );
+                    try {
+                        $result = $db->insert(
+                            'product_pfu',
+                            [
+                                'id_product' => $id,
+                                'id_pfu' => $idPfu,
+                                'price' => (float) $pfus[$idPfu]['price'],
+                                'active' => 1,
+                                'date_add' => date('Y-m-d H:i:s'),
+                                'date_upd' => date('Y-m-d H:i:s'),
+                            ],
+                            false,
+                            true,
+                            DbCore::INSERT
+                        );
+                    } catch (\Throwable $th) {
+                        $result = $db->update(
+                            'product_pfu',
+                            [
+                                'active' => 1,
+                                'price' => (float) $pfus[$idPfu]['price'],
+                                'date_upd' => date('Y-m-d H:i:s'),
+                            ],
+                            "id_product = {$id} AND id_pfu = {$idPfu}"
+                        );
+                    }
+
+                    if ($result) {
+                        $inserted++;
+                    }
 
                     if (!$result) {
                         PrestaShopLogger::addLog(
@@ -1128,7 +1166,7 @@ class MpApiTyresCronModuleFrontController extends ModuleFrontController
 
             return [
                 'success' => 1,
-                'message' => 'PFU associato con successo a ' . count($idsArray) . ' prodotti',
+                'message' => "PFU associato con successo a {$inserted} prodotti",
             ];
         } catch (Exception $e) {
             PrestaShopLogger::addLog(

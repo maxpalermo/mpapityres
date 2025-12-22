@@ -90,10 +90,19 @@ function totalPriceFormatter(data) {
         }, 0)}`;
 }
 
+function refreshTable() {
+    table.bootstrapTable("refresh");
+}
+
 function initTable(table) {
     table.bootstrapTable("destroy").bootstrapTable({
         height: "100%",
         locale: "it-IT",
+        queryParams: function (params) {
+            const val = $("input[name=show-not-associated]:checked").val();
+            params["show-not-associated"] = val;
+            return params;
+        },
         columns: [
             {
                 field: "state",
@@ -176,36 +185,47 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const btnAssociate = document.getElementById("btn-associate");
     const btnDissociate = document.getElementById("btn-dissociate");
+    const btnNoPfu = document.querySelectorAll("input[name=show-not-associated]");
 
-    btnAssociate.addEventListener("click", () => {
-        const ids = getIdSelections();
-        const idPfu = document.getElementById("pfu-list").value;
+    if (btnAssociate) {
+        btnAssociate.addEventListener("click", () => {
+            const ids = getIdSelections();
+            const idPfu = document.getElementById("pfu-list").value;
 
-        console.log(ids);
-        console.log(idPfu);
+            console.log(ids);
+            console.log(idPfu);
 
-        if (idPfu == "Seleziona") {
-            alert("Seleziona un PFU");
-            return;
-        }
+            if (idPfu == "Seleziona") {
+                alert("Seleziona un PFU");
+                return;
+            }
 
-        if (!ids.length) {
-            alert("Seleziona almeno un prodotto");
-            return;
-        }
+            if (!ids.length) {
+                alert("Seleziona almeno un prodotto");
+                return;
+            }
 
-        associatePfu(ids, idPfu);
-    });
+            associatePfu(ids, idPfu);
+        });
+    }
 
-    btnDissociate.addEventListener("click", () => {
-        const ids = getIdSelections();
+    if (btnDissociate) {
+        btnDissociate.addEventListener("click", () => {
+            const ids = getIdSelections();
 
-        if (!ids.length) {
-            alert("Seleziona almeno un prodotto");
-            return;
-        }
+            if (!ids.length) {
+                alert("Seleziona almeno un prodotto");
+                return;
+            }
 
-        dissociatePfu(ids);
+            dissociatePfu(ids);
+        });
+    }
+
+    btnNoPfu.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            refreshTable();
+        });
     });
 
     let selections = [];

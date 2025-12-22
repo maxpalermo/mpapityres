@@ -1,483 +1,611 @@
-<link rel="stylesheet" href="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/bootstrap-table.min.css">
-<link rel="stylesheet" href="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/themes/bootstrap-table/bootstrap-table.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/DownloadCatalogCSV.js"></script>
+<script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/DownloadCatalogAPI.js"></script>
+<script src="../modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/UpdateCatalogAPI.js"></script>
 
-<style>
-	.label {
-		display: block !important;
-		margin-bottom: 0.5rem !important;
-		text-align: left !important;
-		color: #505050 !important;
-	}
+<link rel="stylesheet" href="../modules/mpapityres/views/assets/components/select2/select2.bs4-theme.min.css" />
+<script src="../modules/mpapityres/views/assets/components/select2/select2.min.js"></script>
 
-	.gap-2 {
-		gap: 1rem;
-	}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-	.flex-1 {
-		flex: 1;
-	}
 
-	#reloadPricesTable tbody tr td:nth-child(1) {
-		max-width: 48px !important;
-	}
+<!-- Template progress bar download -->
+<template id="template-alert">
+    <div class="alert">
+        <span></span>
+    </div>
+</template>
 
-	#reloadPricesTable tbody tr td.nowrap {
-		white-space: nowrap !important;
-	}
-</style>
+<!-- Pagina principale -->
+<section class="settings-page">
+    <div class="flex-container">
+        <div class="panel-container">
+            <div class="panel panel-default grow-1">
+                <div class="panel-heading">
+                    <p class="panel-title">Automazioni</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group mb-2">
+                        <label for="cron-download">Cron Importazione Catalogo da Tyre</label>
+                        <div class="input-group col-md-6">
+                            <input type="text" name="cron-download-csv" id="cron-download-csv" class="form-control clipboard pointer" value="{{ cronImportProducts }}" readonly>
+                            <div class="input-group-addon">
+                                <span class="input-group"><i class="material-icons f-1rem">schedule</i></span>
+                            </div>
+                        </div>
+                        <small class="text-info" style="margin-top: 0.5rem; display: block;"><code>Fai click sulla casella per copiare il contenuto</code></small>
+                    </div>
+                    <hr>
+                    <div class="form-group mb-2">
+                        <h4>Per creare un cron job su Linux, segui questi passaggi:</h4>
+                        <p>
+                            <ul>
+                                <li>Apri il terminale</li>
+                                <li>Digita <code>crontab -e</code></li>
+                                <li>Aggiungi la riga <code>0 */4 * * * /usr/bin/php <i>{{ cronImportProducts }}</i></code></li>
+                                <li>Questo cron job eseguirà il processo ogni 4 ore</li>
+                            </ul>
+                        </p>
+                    </div>
 
-<p class="card-title d-flex align-items-center">
-	<i class="material-icons mr-2">settings</i>
-	<span>Impostazioni</span>
-</p>
+                    <script>
+                        document.querySelectorAll('.clipboard').forEach(input => {
+                            input.addEventListener('click', () => {
+                                input.select();
+                                document.execCommand('copy');
+                                alert('Copiato: ' + input.value);
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
 
-<form action="" method="post" class="bootstrap">
-	<input type="hidden" name="form-action" value="saveSettings">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<p class="panel-title">Automazioni</p>
-		</div>
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group">
-						<label for="cron-download">Cron Importazione Catalogo da Tyre</label>
-						<div class="input-group col-md-6">
-							<input type="text" name="cron-download-csv" id="cron-download-csv" class="form-control clipboard pointer" value="{{ cronImportProducts }}" readonly>
-							<div class="input-group-addon">
-								<span class="input-group"><i class="material-icons f-1rem">schedule</i></span>
-							</div>
-						</div>
-						<small class="text-info" style="margin-left: 16rem; margin-top: 0.5rem; display: block;"><code>Fai click sulla casella per copiare il contenuto</code></small>
-					</div>
+            <div class="panel">
+                <div class="panel-heading">
+                    <p class="panel-title">Account</p>
+                </div>
+                <div class="panel-body">
+                    <form id="form-save-account" class="form-container grow-1" method="post" action="{{ adminControllerUrl }}">
+                        <div class="form-group mb-2">
+                            <label for="accountId">Account ID</label>
+                            <div class="input-group col-md-6">
+                                <input type="text" name="accountId" id="accountId" class="form-control clipboard pointer" value="{{ accountId }}">
+                                <div class="input-group-addon">
+                                    <span class="input-group"><i class="material-icons f-1rem">person</i></span>
+                                </div>
+                            </div>
+                            <small class="text-info" style="margin-top: 0.5rem; display: block;"><code>Inserisci l'id del tuo account</code></small>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="password">Password</label>
+                            <div class="input-group col-md-6">
+                                <input type="password" name="password" id="password" class="form-control clipboard pointer" value="{{ password }}">
+                                <div class="input-group-addon">
+                                    <span class="input-group"><i class="material-icons f-1rem">key</i></span>
+                                </div>
+                            </div>
+                            <small class="text-info" style="margin-top: 0.5rem; display: block;"><code>Inserisci la password del tuo account</code></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="csvToken">Token CSV</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="input-group"><i class="fa-solid fa-key"></i></span>
+                                </div>
+                                <textarea name="csvToken" id="csvToken" class="form-control" rows="5">{{ csvToken }}</textarea>
+                            </div>
+                            <small class="text-info" style="margin-top: 0.5rem; display: block;"><code>Inserisci il token CSV (Alzura Article Export)</code></small>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <div class="button-container d-flex justify-content-center align-items-center">
+                        <button type="button" class="btn btn-primary" id="submitSaveAccount">
+                            <i class="material-icons f-1rem">save</i>
+                            Salva
+                        </button>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const submitSaveAccount = document.getElementById("submitSaveAccount");
+                        if (submitSaveAccount) {
+                            submitSaveAccount.addEventListener("click", async (e) =>{
+                                e.preventDefault();
+                                const btn = e.currentTarget;
+                                btn.disabled = true;
+                                
+                                const formData = new FormData(document.getElementById("form-save-account"));
 
-					<div>
-						<p>
-							Per creare un cron job su Linux, segui questi passaggi:
-							<ul>
-								<li>Apri il terminale</li>
-								<li>Digita <code>crontab -e</code></li>
-								<li>Aggiungi la riga <code>0 */4 * * * /usr/bin/php <i>{{ cronImportProducts }}</i></code></li>
-								<li>Questo cron job eseguirà il processo ogni 4 ore</li>
-							</ul>
-						</p>
-					</div>
+                                formData.append("action", "saveAccount");
+                                formData.append("ajax", "1");
 
-					<script>
-						document.querySelectorAll('.clipboard').forEach(input => {
-							input.addEventListener('click', () => {
-								input.select();
-								document.execCommand('copy');
-								alert('Copiato: ' + input.value);
-							});
-						});
-					</script>
-				</div>
-			</div>
-		</div>
-	</div>
+                                //Trasformo il formdata in json
+                                const json = Object.fromEntries(formData.entries());
+                                
+                                const response = await doFetchPost("{{ adminControllerUrl | raw }}", json);
+                                
+                                showAlert(response, btn);
+                                
+                                return false;
+                            });
+                        }
+                    });
+                </script>
+            </div>
+        </div>
 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<p class="panel-title">Impostazioni API</p>
-		</div>
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group">
-						<label for="host-api">Host API</label>
-						<div class="input-group col-md-6">
-							<div class="input-group-addon">
-								<span class="input-group"><i class="material-icons f-1rem">dns</i></span>
-							</div>
-							<input type="text" name="MPAPITYRES_API_ENDPOINT" id="host-api" class="form-control" value="{{ configValues.MPAPITYRES_API_ENDPOINT }}">
-						</div>
-					</div>
+        <div class="panel panel-default grow-1">
+            <form id="form-import-parameters" method="post" action="{{ adminControllerUrl }}">
+                <div class="panel-heading">
+                    <p class="panel-title">Parametri di importazione</p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group mb-2">
+                        <label class="label">Seleziona la categoria dei pneumatici</label>
+                        <div class="select-wrapper" style="width: 100%">
+                            {{categoryTree | raw}}
+                        </div>
+                    </div>
 
-					<div class="form-group">
-						<label for="token-api">Token API</label>
-						<div class="input-group col-md-6">
-							<div class="input-group-addon">
-								<span class="input-group"><i class="material-icons f-1rem">vpn_key</i></span>
-							</div>
-							<textarea name="MPAPITYRES_API_TOKEN" id="token-api" class="form-control" rows="5">{{ configValues.MPAPITYRES_API_TOKEN }}</textarea>
-						</div>
-					</div>
+                    <div class="form-group">
+                        <label for="id_tax_rules_group">Seleziona l'aliquota IVA</label>
+                        <div class="select-wrapper">
+                            <select name="id_tax_rules_group" id="id_tax_rules_group" class="form-control chosen">
+                                <option value="">Seleziona</option>
+                                {% for ruleGroup in taxRulesGroups %}
+                                <option value="{{ ruleGroup.id_tax_rules_group }}" {% if ruleGroup.id_tax_rules_group == configValues.MPAPITYRES_ID_TAX_RULES_GROUP %} selected {% endif %}>{{ ruleGroup.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group fixed-width-xxl">
+                        <label for="ricarico-prezzo">Ricarico prezzo</label>
+                        <div class="input-group mb-2">
+                            <div class="input-group-addon">
+                                <span class="input-group">Ricarico percentuale</span>
+                            </div>
+                            <input type="text" name="ricarico-prezzo-perc" id="ricarico-prezzo-perc" class="form-control text-right" value="{{ defaultReloadPerc}}">
+                            <div class="input-group-addon">
+                                <span class="input-group">%</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="input-group">Ricarico importo</span>
+                            </div>
+                            <input type="text" name="ricarico-prezzo-amount" id="ricarico-prezzo-amount" class="form-control text-right" value="{{ defaultReloadAmount }}">
+                            <div class="input-group-addon">
+                                <span class="input-group">EUR</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer d-flex justify-content-center align-items-center">
+                    <button id="submitImportParameters" type="button" class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
+                        <span class="material-icons" style="font-size: 1.3rem;">save</span>
+                        <span>Salva</span>
+                    </button>
+                </div>
+            </form>
+            <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function () {
+                    const submitImportParameters = document.getElementById("submitImportParameters");
+                    if (submitImportParameters) {
+                        submitImportParameters.addEventListener("click", async (e) =>{
+                            e.preventDefault();
+                            const btn = e.currentTarget;
+                            btn.disabled = true;
+                            
+                            const formData = new FormData(document.getElementById("form-import-parameters"));
 
-					<div class="form-group">
-						<label for="token-api">Tempo di pausa tra un aggiornamento e l'altro</label>
-						<div class="input-group fixed-width-xxl">
-							<div class="input-group-addon">
-								<i class="material-icons f-1rem">timer</i>
-							</div>
-							<input type="text" name="MPAPITYRES_CRON_TIME_BETWEEN_UPDATES" id="cron-time-update" class="form-control text-right" value="{{ configValues.MPAPITYRES_CRON_TIME_BETWEEN_UPDATES }}">
-							<div class="input-group-addon">
-								minuti
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="panel-footer d-flex justify-content-center align-items-center">
-			<button type="submit" class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
-				<span class="material-icons" style="font-size: 1.3rem;">save</span>
-				<span>Salva</span>
-			</button>
-		</div>
-	</div>
-					
+                            formData.append("action", "saveImportParameters");
+                            formData.append("ajax", "1");
 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<p class="panel-title">Filtri di ricerca</p>
-		</div>
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group" data-filter-id="0">
-						<label for="filter-0">Tipo di pneumatico</label>
-						<div style="width: 50%;">
-							<select id="filter-0" name="filter-0[]" class="form-control chosen" multiple>
-								<option value="all" {% if filters['filter-0'] is defined and 'all' in filters['filter-0'] %} selected {% endif %}>Tutti</option>
-								<option value="E" {% if filters['filter-0'] is defined and 'e' in filters['filter-0'] %} selected {% endif %}>Estivi</option>
-								<option value="I" {% if filters['filter-0'] is defined and 'i' in filters['filter-0'] %} selected {% endif %}>Invernali</option>
-								<option value="Q" {% if filters['filter-0'] is defined and 'q' in filters['filter-0'] %} selected {% endif %}>pneumatici 4 stagioni</option>
-								<option value="O" {% if filters['filter-0'] is defined and 'o' in filters['filter-0'] %} selected {% endif %}>Pneumatici offroad</option>
-								<option value="R" {% if filters['filter-0'] is defined and 'r' in filters['filter-0'] %} selected {% endif %}>Pneumatici con scanalature</option>
-								<option value="M" {% if filters['filter-0'] is defined and 'm' in filters['filter-0'] %} selected {% endif %}>Pneumatici Moto</option>
-							</select>
-						</div>
-						<div>
-							<code class="text-info ml-2">Seleziona uno o più filtri</code>
-						</div>
-					</div>
-				</div>
-			</div>
+                            //Trasformo il formdata in json
+                            const json = Object.fromEntries(formData.entries());
+                            
+                            const response = await doFetchPost("{{ adminControllerUrl | raw }}", json);
+                            
+                            showAlert(response, btn);
+                            
+                            return false;
+                        });
+                    }
+                });
+            </script>
+        </div>
+    </div>
 
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group" data-filter-id="1">
-						<label for="filter-1">Produttori</label>
-						<div style="width: 50%;">
-							<select id="filter-1" name="filter-1[]" class="form-control chosen" multiple>
-								<option value="all" {% if filters['filter-1'] is defined and 'all' in filters['filter-1'] %} selected {% endif %}>Tutti</option>
-								{% for manufacturer in manufacturers %}
-								<option value="{{ manufacturer.id_manufacturer }}" {% if filters['filter-1'] is defined and manufacturer.id_manufacturer in filters['filter-1'] %} selected {% endif %}>{{ manufacturer.name }}</option>
-								{% endfor %}
-							</select>
-						</div>
-						<div>
-							<code class="text-info ml-2">Seleziona uno o più filtri</code>
-						</div>
-					</div>
-				</div>
-			</div>
+    <!-- Pannello impostazioni Prodotti -->
+    <div class="flex-container">
+        <div class="productSettings grow-1">
+            <div class="panel panel-default">
+                <form id="form-product-settings" method="post" action="{{ adminControllerUrl | raw }}">
+                    <div class="panel-heading">
+                        <p class="d-flex align-items-center">
+                            <i class="fa-solid fa-gear mr-2"></i>
+                            Impostazioni Prodotti
+                        </p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>Mostra prezzo con IVA</label>
+                            <div class="form-input">
+                                <span class="switch prestashop-switch fixed-width-lg">
+                                <input type="radio" name="showPriceTax" id="showPriceTaxTrue" value="1" {% if defaultShowPriceTax==1 %}checked{% endif %}>
+                                <label for="showPriceTaxTrue"><i class="icon icon-2x icon-check text-success"></i></label>
+                                <input type="radio" name="showPriceTax" id="showPriceTaxFalse" value="0" {% if defaultShowPriceTax==0 %}checked{% endif %}>
+                                <label for="_off"><i class="icon icon-2x icon-times text-danger"></i></label>
+                                <a class="slide-button btn"></a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="delayDays">Giorni di consegna</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <input type="number" id="delayDays" name="delayDays" class="form-control text-right" title="Inserisci il numero di giorni di consegna da aggiungere alla data di consegna" 
+                                    value="{{ defaultDelayDays }}"
+                                />
+                                <div class="input-group-addon">
+                                    giorni
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-primary" id="submitProductSettings">
+                            <span class="fa-solid fa-save mr-2"></span>
+                            <span>Salva</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group" data-filter-id="2">
-						<label for="filter-2">Categorie di pneumatico</label>
-						<div style="width: 50%;">
-							<select id="filter-2" name="filter-2" class="form-control chosen">
-								<option value="all" {% if filters['filter-2'] is defined and filters['filter-2'] == 'all' %} selected {% endif %}>Tutti</option>
-								<option value="high" {% if filters['filter-2'] is defined and filters['filter-2'] == 'high' %} selected {% endif %}>Marche premium</option>
-								<option value="middle" {% if filters['filter-2'] is defined and filters['filter-2'] == 'middle' %} selected {% endif %}>Marche di qualità</option>
-								<option value="low" {% if filters['filter-2'] is defined and filters['filter-2'] == 'low' %} selected {% endif %}>Prodotti di qualità economici</option>
-								<option value="recommendation" {% if filters['filter-2'] is defined and filters['filter-2'] == 'recommendation' %} selected {% endif %}>La nostra raccomandazione</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
+            <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function () {
+                    const submitProductSettings = document.getElementById("submitProductSettings");
+                    if (submitProductSettings) {
+                        submitProductSettings.addEventListener("click", async (e) =>{
+                            e.preventDefault();
+                            const btn = e.currentTarget;
+                            btn.disabled = true;
+                            
+                            const formData = new FormData(document.getElementById("form-product-settings"));
 
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group" data-filter-id="4">
-						<label for="filter-4">Velocità massima</label>
-						<div style="width: 50%;">
-							<select id="filter-4" name="filter-4" class="form-control chosen">
-								<option value="all" {% if filters['filter-4'] is defined and filters['filter-4'] == 'all' %} selected {% endif %}>Tutti</option>
-								<option value="t" {% if filters['filter-4'] is defined and filters['filter-4'] == 't' %} selected {% endif %}>T fino a 190 km/h</option>
-								<option value="h" {% if filters['filter-4'] is defined and filters['filter-4'] == 'h' %} selected {% endif %}>H fino a 210 km/h</option>
-								<option value="v" {% if filters['filter-4'] is defined and filters['filter-4'] == 'v' %} selected {% endif %}>V fino a 240 km/h</option>
-								<option value="z" {% if filters['filter-4'] is defined and filters['filter-4'] == 'z' %} selected {% endif %}>ZR, Y, W</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
+                            formData.append("action", "saveProductSettings");
+                            formData.append("ajax", "1");
 
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group" data-filter-id="5">
-						<label for="filter-5">Tipo di ricerca</label>
-						<div style="width: 50%;">
-							<select id="filter-5" name="filter-5[]" class="form-control chosen" multiple>
-								<option value="all" {% if filters['filter-5'] is defined and 'all' in filters['filter-5'] %} selected {% endif %}>Tutti</option>
-								<option value="runflat" {% if filters['filter-5'] is defined and 'runflat' in filters['filter-5'] %} selected {% endif %}>Pneumatici Runflat</option>
-								<option value="hideDot" {% if filters['filter-5'] is defined and 'hideDot' in filters['filter-5'] %} selected {% endif %}>Nascondi DOT>36 mesi</option>
-								<option value="hideDiscontinued" {% if filters['filter-5'] is defined and 'hideDiscontinued' in filters['filter-5'] %} selected {% endif %}>Nascondi modelli di fine serie</option>
-								<option value="hideDemo" {% if filters['filter-5'] is defined and 'hideDemo' in filters['filter-5'] %} selected {% endif %}>Nascondi DEMO</option>
-							</select>
-						</div>
-						<div>
-							<code class="text-info ml-2">Seleziona uno o più filtri</code>
-						</div>
-					</div>
-				</div>
-			</div>
+                            //Trasformo il formdata in json
+                            const json = Object.fromEntries(formData.entries());
+                            
+                            const response = await doFetchPost("{{ adminControllerUrl | raw }}", json);
+                            
+                            showAlert(response, btn);
 
-			<div class="row">
-				<div class="col-6">
-					<div class="form-group" data-filter-id="6">
-						<label for="filter-6">Consegna espressa</label>
-						<div style="width: 50%;">
-							<select id="filter-6" name="filter-6" class="form-control chosen">
-								<option value="">Seleziona</option>
-								<option value="all" {% if filters['filter-6'] is defined and filters['filter-6'] == 'all' %} selected {% endif %}>Tutti</option>
-								<option value="today" {% if filters['filter-6'] is defined and filters['filter-6'] == 'today' %} selected {% endif %}>Consegna espressa oggi</option>
-								<option value="tomorrow" {% if filters['filter-6'] is defined and filters['filter-6'] == 'tomorrow' %} selected {% endif %}>Consegna espressa domani</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="panel-footer d-flex justify-content-center align-items-center">
-			<button type="submit" class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
-				<span class="material-icons" style="font-size: 1.3rem;">save</span>
-				<span>Salva</span>
-			</button>
-		</div>
-	</div>
+                            return false;
+                        });
+                    }
+                });
+            </script>
+        </div>
 
-	<div class="d-flex justify-content-start align-items-top gap-2">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<p class="panel-title">Parametri di importazione</p>
-			</div>
-			<div class="panel-body">
-				<div class="form-group">
-					<label class="label">Seleziona la categoria dei pneumatici</label>
-					<div class="select-wrapper" style="width: 100%">
-						{{categoryTree | raw}}
-					</div>
-				</div>
+        <div class="apiSettings grow-1">
+            <div class="panel panel-default">
+                <form id="form-api-settings" method="post" action="{{ adminControllerUrl }}">
+                    <div class="panel-heading">
+                        <p class="d-flex align-items-center">
+                            <span class="fa-solid fa-globe mr-2"></span>
+                            <span>Impostazioni API</span>
+                        </p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="host-api">Host API</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="input-group"><i class="fa-solid fa-link"></i></span>
+                                </div>
+                                <input type="text" name="MPAPITYRES_API_ENDPOINT" id="host-api" class="form-control" value="{{ configValues.MPAPITYRES_API_ENDPOINT }}">
+                            </div>
+                        </div>
 
-				<div class="form-group">
-					<label class="label">Seleziona l'aliquota IVA</label>
-					<div class="select-wrapper">
-						<select name="id_tax_rules_group" id="id_tax_rules_group" class="form-control chosen">
-							<option value="">Seleziona</option>
-							{% for ruleGroup in taxRulesGroups %}
-							<option value="{{ ruleGroup.id_tax_rules_group }}" {% if ruleGroup.id_tax_rules_group == configValues.MPAPITYRES_ID_TAX_RULES_GROUP %} selected {% endif %}>{{ ruleGroup.name }}</option>
-							{% endfor %}
-						</select>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="label">Ricarico prezzo</label>
-					<div class="d-flex justify-content-start align-items-top">
-						<table class="table table-condensed flex-1">
-							<thead>
-								<tr>
-									<th>Classe Veicolo</th>
-									<th>Ricarico</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr style="display: none;">
-									<td>C1</td>
-									<td>
-										<div class="input-group fixed-width-lg">
-											<input type="text" name="MPAPITYRES_RICARICO_C1" id="ricarico-c1" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C1 }}">
-											<div class="input-group-addon">
-												<span class="input-group">%</span>
-											</div>
-										</div>
-									</td>
-								</tr>
-								<tr style="display: none;">
-									<td>C2</td>
-									<td>
-										<div class="input-group fixed-width-lg">
-											<input type="text" name="MPAPITYRES_RICARICO_C2" id="ricarico-c2" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C2 }}">
-											<div class="input-group-addon">
-												<span class="input-group">%</span>
-											</div>
-										</div>
-									</td>
-								</tr>
-								<tr style="display: none;">
-									<td>C3</td>
-									<td>
-										<div class="input-group fixed-width-lg">
-											<input type="text" name="MPAPITYRES_RICARICO_C3" id="ricarico-c3" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_C3 }}">
-											<div class="input-group-addon">
-												<span class="input-group">%</span>
-											</div>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Default</td>
-									<td>
-										<div class="input-group fixed-width-lg">
-											<input type="text" name="MPAPITYRES_RICARICO_DEFAULT" id="ricarico-default" class="form-control text-right" value="{{ configValues.MPAPITYRES_RICARICO_DEFAULT }}">
-											<div class="input-group-addon">
-												<span class="input-group">%</span>
-											</div>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="2">
-										<code>
-											Inserisci -1 per disattivare il tipo di ricarico
-										</code>
-									</td>
-								</tr>
-							</tfoot>
-						</table>
-					</div>
-				</div>
-			</div>
-			<div class="panel-footer d-flex justify-content-center align-items-center">
-				<button type="submit" class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
-					<span class="material-icons" style="font-size: 1.3rem;">save</span>
-					<span>Salva</span>
-				</button>
-			</div>
-		</div>
+                        <div class="form-group">
+                            <label for="token-api">Token API</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="input-group"><i class="fa-solid fa-key"></i></span>
+                                </div>
+                                <textarea name="MPAPITYRES_API_TOKEN" id="token-api" class="form-control" rows="5">{{ configValues.MPAPITYRES_API_TOKEN }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer d-flex justify-content-center align-items-center">
+                        <button id="submitApiSettings" type="submit" class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
+                            <span class="fa-solid fa-save" style="font-size: 1.3rem;"></span>
+                            <span>Salva</span>
+                        </button>
+                    </div>
+                </form>
 
-		<div class="panel panel-success flex-1">
-			<div class="panel-heading">
-				<i class="icon icon-cogs"></i>
-				<span>Prodotti da aggiornare</span>
-			</div>
-			<div class="panel-body">
-				<div class="alert-wrapper" id="alert-wrapper">
-					
-				</div>
-				<div class="button-group" id="toolbarRPT">
-					<button class="btn btn-default" type="button" id="reloadPriceSelected">
-						<i class="fa fa-refresh"></i>
-						<span>Ricarica i selezionati</span>
-					</button>
-					<button class="btn btn-default" type="button" id="reloadPriceAll">
-						<i class="fa fa-refresh"></i>
-						<span>Ricarica tutto</span>
-					</button>
-				</div>
-				<table id="reloadPricesTable" data-toolbar="#toolbarRPT">
-					<thead>
-						<tr>
-							<th data-field="checked" data-checkbox="true" data-align="center" data-valign="middle" class="fixed-width-sm"></th>
-							<th data-field="id_image" data-formatter="imageFormatter" class="text-center">IMG</th>
-							<th data-field="id_product" data-sortable="true">id</th>
-							<th data-field="reference">riferimento</th>
-							<th data-field="price" data-formatter="priceFormatter" class="text-right nowrap">Prezzo attuale</th>
-							<th data-field="load_amount" data-formatter="priceFormatter" class="text-right nowrap">Ricarico EUR</th>
-							<th data-field="load_perc" data-formatter="percFormatter" class="text-right nowrap">Ricarico %</th>
-							<th data-field="price_unit_loaded" data-formatter="priceFormatter" class="text-right nowrap">Prezzo da aggiornare</th>
-						</tr>
-					</thead>
-				</table>
-			</div>
-			<div class="panel-footer">
-			
-			</div>
-		</div>
-	</div>
-</form>
+                <script type="text/javascript">
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const submitApiSettings = document.getElementById("submitApiSettings");
+                        if (submitApiSettings) {
+                            submitApiSettings.addEventListener("click", async (e) =>{
+                                e.preventDefault();
+                                const btn = e.currentTarget;
+                                btn.disabled = true;
+                                
+                                const formData = new FormData(document.getElementById("form-api-settings"));
 
-<script>
-	const baseUrl = "{{ baseUrl | raw }}";
-	const cronControllerURL = "{{ cronControllerUrl | raw }}";
-	const adminControllerURL = "{{ adminControllerUrl | raw }}";
-	// Istanza globale della tabella
-	let loadPriceTableInstance = null;
+                                formData.append("action", "saveApiSettings");
+                                formData.append("ajax", "1");
 
-	function setAlert(alert)
-	{
-		const alertWrapper = document.getElementById("alert-wrapper");
-		alertWrapper.innerHTML = alert;
-	}
+                                //Trasformo il formdata in json
+                                const json = Object.fromEntries(formData.entries());
+                                
+                                const response = await doFetchPost("{{ adminControllerUrl | raw }}", json);
+                                
+                                showAlert(response, btn);
+                                
+                                return false;
+                            });
+                        }
+                    });
+                </script>
+            </div>
+        </div>
 
-	document.addEventListener('DOMContentLoaded', function () {
-        $('.chosen').chosen(
-            {
-                placeholder: 'Seleziona',
-                allowClear: true,
-                width: '100%',
-                language: 'it',
-                theme: 'classic'
+        <div class="filterSettings grow-1">
+            <div class="panel panel-default">
+                <form id="form-search-filters" action="{{ adminControllerUrl | raw }}" method="post">
+                    <div class="panel-heading">
+                        <p class="d-flex align-items-center">
+                            <span class="fa-solid fa-filter mr-2"></span>
+                            <span>Filtri di ricerca</span>
+                        </p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group" data-filter-id="0">
+                            <label for="filter-0">Tipo di pneumatico</label>
+                            <div>
+                                <select id="filter-0" name="filter-0[]" class="form-control chosen" multiple>
+                                    <option value="all" {% if defaultFilter0 is defined and 'all' in defaultFilter0 %} selected {% endif %}>Tutti</option>
+                                    <option value="E" {% if defaultFilter0 is defined and 'e' in defaultFilter0 %} selected {% endif %}>Estivi</option>
+                                    <option value="I" {% if defaultFilter0 is defined and 'i' in defaultFilter0 %} selected {% endif %}>Invernali</option>
+                                    <option value="Q" {% if defaultFilter0 is defined and 'q' in defaultFilter0 %} selected {% endif %}>pneumatici 4 stagioni</option>
+                                    <option value="O" {% if defaultFilter0 is defined and 'o' in defaultFilter0 %} selected {% endif %}>Pneumatici offroad</option>
+                                    <option value="R" {% if defaultFilter0 is defined and 'r' in defaultFilter0 %} selected {% endif %}>Pneumatici con scanalature</option>
+                                    <option value="M" {% if defaultFilter0 is defined and 'm' in defaultFilter0 %} selected {% endif %}>Pneumatici Moto</option>
+                                </select>
+                            </div>
+                            <div>
+                                <code class="text-info ml-2">Seleziona uno o più filtri</code>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-filter-id="1">
+                            <label for="filter-1">Produttori</label>
+                            <div>
+                                <select id="filter-1" name="filter-1[]" class="form-control chosen" multiple>
+                                    <option value="all" {% if defaultFilter1 is defined and 'all' in defaultFilter1 %} selected {% endif %}>Tutti</option>
+                                    {% for manufacturer in manufacturers %}
+                                    <option value="{{ manufacturer.id_manufacturer }}" {% if defaultFilter1 is defined and manufacturer.id_manufacturer in defaultFilter1 %} selected {% endif %}>{{ manufacturer.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <code class="text-info ml-2">Seleziona uno o più filtri</code>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-filter-id="2">
+                            <label for="filter-2">Categorie di pneumatico</label>
+                            <div>
+                                <select id="filter-2" name="filter-2" class="form-control chosen">
+                                    <option value="all" {% if defaultFilter2 is defined and 'all' in defaultFilter2 %} selected {% endif %}>Tutti</option>
+                                    <option value="high" {% if defaultFilter2 is defined and 'high' in defaultFilter2 %} selected {% endif %}>Marche premium</option>
+                                    <option value="middle" {% if defaultFilter2 is defined and 'middle' in defaultFilter2 %} selected {% endif %}>Marche di qualità</option>
+                                    <option value="low" {% if defaultFilter2 is defined and 'low' in defaultFilter2 %} selected {% endif %}>Prodotti di qualità economici</option>
+                                    <option value="recommendation" {% if defaultFilter2 is defined and 'recommendation' in defaultFilter2 %} selected {% endif %}>La nostra raccomandazione</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-filter-id="4">
+                            <label for="filter-4">Velocità massima</label>
+                            <div>
+                                <select id="filter-4" name="filter-4" class="form-control chosen">
+                                    <option value="all" {% if defaultFilter4 is defined and 'all' in defaultFilter4 %} selected {% endif %}>Tutti</option>
+                                    <option value="t" {% if defaultFilter4 is defined and 't' in defaultFilter4 %} selected {% endif %}>T fino a 190 km/h</option>
+                                    <option value="h" {% if defaultFilter4 is defined and 'h' in defaultFilter4 %} selected {% endif %}>H fino a 210 km/h</option>
+                                    <option value="v" {% if defaultFilter4 is defined and 'v' in defaultFilter4 %} selected {% endif %}>V fino a 240 km/h</option>
+                                    <option value="z" {% if defaultFilter4 is defined and 'z' in defaultFilter4 %} selected {% endif %}>ZR, Y, W</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-filter-id="5">
+                            <label for="filter-5">Tipo di ricerca</label>
+                            <div>
+                                <select id="filter-5" name="filter-5[]" class="form-control chosen" multiple>
+                                    <option value="all" {% if defaultFilter5 is defined and 'all' in defaultFilter5 %} selected {% endif %}>Tutti</option>
+                                    <option value="runflat" {% if defaultFilter5 is defined and 'runflat' in defaultFilter5 %} selected {% endif %}>Pneumatici Runflat</option>
+                                    <option value="hideDot" {% if defaultFilter5 is defined and 'hideDot' in defaultFilter5 %} selected {% endif %}>Nascondi DOT>36 mesi</option>
+                                    <option value="hideDiscontinued" {% if defaultFilter5 is defined and 'hideDiscontinued' in defaultFilter5 %} selected {% endif %}>Nascondi modelli di fine serie</option>
+                                    <option value="hideDemo" {% if defaultFilter5 is defined and 'hideDemo' in defaultFilter5 %} selected {% endif %}>Nascondi DEMO</option>
+                                </select>
+                            </div>
+                            <div>
+                                <code class="text-info ml-2">Seleziona uno o più filtri</code>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-filter-id="6">
+                            <label for="filter-6">Consegna espressa</label>
+                            <div>
+                                <select id="filter-6" name="filter-6" class="form-control chosen">
+                                    <option value="all" {% if defaultFilter6 is defined and 'all' in defaultFilter6 %} selected {% endif %}>Tutti</option>
+                                    <option value="today" {% if defaultFilter6 is defined and 'today' in defaultFilter6 %} selected {% endif %}>Consegna espressa oggi</option>
+                                    <option value="tomorrow" {% if defaultFilter6 is defined and 'tomorrow' in defaultFilter6 %} selected {% endif %}>Consegna espressa domani</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer d-flex justify-content-center align-items-center">
+                        <button id="submitSearchFilters" type="button" class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
+                            <span class="material-icons" style="font-size: 1.3rem;">save</span>
+                            <span>Salva</span>
+                        </button>
+                    </div>
+                </form>
+                <script type="text/javascript">
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const submitSearchFilters = document.getElementById("submitSearchFilters");
+                        if (submitSearchFilters) {
+                            submitSearchFilters.addEventListener("click", async (e) =>{
+                                e.preventDefault();
+                                const btn = e.currentTarget;
+                                btn.disabled = true;
+                                
+                                const formData = new FormData(document.getElementById("form-search-filters"));
+
+                                formData.append("action", "saveSearchFilters");
+                                formData.append("ajax", "1");
+
+                                // Gestione corretta dei campi multipli
+                                const json = {};
+                            
+                                for (const [key, value] of formData.entries()) {
+                                    if (key.endsWith('[]')) {
+                                        // Per i campi multipli, usa getAll
+                                        const values = formData.getAll(key);
+                                        json[key] = String(values).split(',');
+                                    } else {
+                                        json[key] = [value];
+                                    }
+                                }
+                                
+                                console.log("JSON", json);
+                                
+                                const response = await doFetchPost("{{ adminControllerUrl | raw }}", json);
+                                
+                                showAlert(response, btn);
+                                
+                                return false;
+                            });
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-container">
+        <template id="template-modal-pfu">
+            <dialog class="bootstrap" id="modal-pfu">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <p class="">Crea i prodotti PFU</p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Totale Prodotti da creare</label>
+                                    <input class="form-control" type="number" value="1" id="pfu-total-products" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Codice ID da cui partire</label>
+                                    <input class="form-control" type="number" value="10000000" id="pfu-id-start" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Aliquota IVA</label>
+                                    <select class="form-control" id="pfu-tax-rules-group">
+                                        {% for taxRulesGroup in taxRulesGroups %}
+                                        <option value="{{ taxRulesGroup.id_tax_rules_group }}">{{ taxRulesGroup.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Elenco prezzi PFU</label>
+                                    <textarea class="form-control" id="pfu-price-list" rows="10"></textarea>
+                                    <small class="form-text text-muted">Inserisci un elenco di prezzi PFU, uno per riga.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer d-flex justify-content-center align-items-center">
+                        <button type="button" class="btn btn-primary" id="btn-create-pfu" onclick="createPFU();">Crea</button>
+                    </div>
+                </div>
+            </dialog>
+        </template>
+    </div>
+    
+    <!-- Dati per JavaScript -->
+    <script src="{{ baseUrl }}modules/mpapityres/views/assets/js/doFetchPost.js"></script>
+    <script type="text/javascript">
+        // URL per le azioni AJAX
+        const baseUrl = "{{ baseUrl | raw }}";
+        const CronControllerURL = "{{ cronControllerUrl | raw }}";
+        const AdminControllerUrl = "{{ adminControllerUrl | raw }}";
+        const DownloadCatalogActionUrl = "{{ downloadCatalogActionUrl | raw }}";
+        const ImportCatalogActionUrl = "{{ importCatalogActionUrl | raw }}";
+        const ReloadImagesActionUrl = "{{ reloadImagesActionUrl | raw }}";
+        const DeleteProductsActionUrl = "{{ deleteProductsActionUrl | raw }}";
+
+        function showAlert(response, btn) {
+            // Clona il template e crea l'alert
+            const templateAlert = document.getElementById("template-alert");
+            const alertWrapper = templateAlert.content.cloneNode(true).querySelector("div.alert");
+            
+            if (response.success) {
+                alertWrapper.classList.remove("alert-danger");
+                alertWrapper.classList.add("alert-success");
+                alertWrapper.querySelector("span:last-child").textContent = response.message;
+            } else {
+                alertWrapper.classList.remove("alert-success");
+                alertWrapper.classList.add("alert-danger");
+                alertWrapper.querySelector("span:last-child").textContent = response.message;
             }
-        );
+            
+            const panel = btn.closest(".panel");
 
-		loadPriceTableInstance = new loadPriceTableClass("reloadPricesTable");
-		console.log("Load Price Table initialized:", loadPriceTableInstance);
+            if (panel) {
+                const panelBody = panel.querySelector(".panel-body");
+                if (panelBody) {
+                    panelBody.insertAdjacentElement("afterbegin", alertWrapper);
+                }
+            }
 
-		// Bind del pulsante "Ricarica prezzi sezionati"
-		const reloadPriceSelected = document.getElementById("reloadPriceSelected");
-		if (reloadPriceSelected) {
-			reloadPriceSelected.addEventListener("click", async () => {
-				setAlert(
-					`
-					<div class='alert alert-info'>
-						<span class='icon icon-info'></span>
-						<span>Caricamento in corso...</span>
-					</div>
-					`
-				);
+            setTimeout(() => {
+                alertWrapper.remove();
+            }, 5000);
 
-				const selectedRows = loadPriceTableInstance.getSelection();
-				let alert = await loadPriceTableInstance.reloadPrices(selectedRows);
-				
-				if (alert) {
-					setAlert(alert);
-				} else {
-					setAlert("");
-				}
-			});
-		}
+            btn.disabled = false;
+        }
 
-		// Bind del pulsante "Ricarica tuttii prezzi"
-		const reloadPriceAll = document.getElementById("reloadPriceAll");
-		if (reloadPriceAll) {
-			reloadPriceAll.addEventListener("click", async () => {
-				setAlert(
-					`
-					<div class='alert alert-info'>
-						<span class='icon icon-info'></span>
-						<span>Caricamento in corso...</span>
-					</div>
-					`
-				);
-
-				const allData = $('#reloadPricesTable').bootstrapTable('getData');
-				let alert = await loadPriceTableInstance.reloadPrices(allData);
-
-				console.log(alert);
-				if (alert) {
-					setAlert(alert);
-				} else {
-					setAlert("");
-				}
-			});
-		}
-    });
-</script>
-
-<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/bootstrap-table.min.js"></script>
-<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/themes/bootstrap-table/bootstrap-table.min.js"></script>
-<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/locale/bootstrap-table-it-IT.js"></script>
-<script src="{{ baseUrl}}modules/mpapityres/views/assets/js/doFetchPost.js"></script>
-<script src="{{ baseUrl }}modules/mpapityres/views/assets/js/remove-tree-buttons.js"></script>
-<script src="{{ baseUrl }}modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/classes/LoadPriceTable.js"></script>
-
+        document.addEventListener('DOMContentLoaded', function () {
+            $('.chosen').chosen(
+                {
+                    placeholder: 'Seleziona',
+                    allowClear: true,
+                    width: '100%',
+                    language: 'it',
+                    theme: 'classic'
+                }
+            );
+        });
+    </script>
+</section>

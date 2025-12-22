@@ -210,9 +210,9 @@ class CreatePFU
             ];
         }
 
-        $width = $product->width;
-        $height = $product->height;
-        $diameter = $product->depth;
+        $width = (int) $product->width;
+        $height = (int) $product->height;
+        $diameter = (int) $product->depth;
         $tyre = "{$width}/{$height}/{$diameter}";
 
         $tyreWeight = TyreWeight::calcByCode($tyre);
@@ -226,8 +226,10 @@ class CreatePFU
             'id_product=' . (int) $id_product
         );
 
+        $weigthGr = $tyreWeight * 1000;
+
         foreach ($PFU as $item) {
-            if ($item['weightStart'] / 1000 <= $tyreWeight && $tyreWeight <= $item['weightEnd'] / 1000) {
+            if ($item['weightStart'] <= $weigthGr && $weigthGr <= $item['weightEnd']) {
                 $id_pfu = $item['id_product'];
 
                 $productId = (int) $id_product;
@@ -237,11 +239,10 @@ class CreatePFU
 
                 $dbQuery = new \DbQuery();
                 $dbQuery
-                    ->select('p.id_product')
-                    ->from('product', 'p')
-                    ->innerJoin('product_pfu', 'pp', 'p.id_product = pp.id_product')
-                    ->where("pp.id_product = {$productId}")
-                    ->where("p.reference NOT LIKE 'PFU%'");
+                    ->select('id_product')
+                    ->from('product_pfu')
+                    ->where("id_product = {$productId}")
+                    ->where("id_pfu = {$pfuId}");
 
                 $exists = $db->getValue($dbQuery);
 
@@ -257,6 +258,7 @@ class CreatePFU
                             ],
                             "id_product = {$productId}"
                         );
+                        echo "\tPFU aggiornato: {$productId}: {$pfuId} - {$price} - {$now}\n";
                     } else {
                         $result = $db->insert(
                             'product_pfu',
@@ -266,13 +268,11 @@ class CreatePFU
                                 'price' => $price,
                                 'active' => 1,
                                 'date_add' => $now,
-                                'date_upd' => $now,
+                                'date_upd' => null,
                             ],
-                            true,
-                            false,
-                            \DbCore::REPLACE,
                             true
                         );
+                        echo "\tPFU inserito: {$productId}: {$pfuId} - {$price} - {$now}\n";
                     }
                 } catch (\Throwable $th) {
                     return [

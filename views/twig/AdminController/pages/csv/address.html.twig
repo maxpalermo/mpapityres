@@ -1,0 +1,47 @@
+<form id="form-address-order" method="post" action="{{ adminControllerUrl }}">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <p>
+                <span class="material-icons mr-2">person</span>
+                <span>Informazioni di spedizione</span>
+            </p>
+            <small>Se non si desidera spedire direttamente al cliente inserire qui l'indirizzo di consegna</small>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="name">Intestazione</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ deliveryAddress.name }}">
+            </div>
+            <div class="form-group">
+                <label for="address">Indirizzo</label>
+                <input type="text" id="address" name="address" class="form-control" value="{{ deliveryAddress.address }}">
+            </div>
+            <div class="form-group">
+                <label for="postcode">CAP</label>
+                <input type="text" id="postcode" name="postcode" class="form-control" value="{{ deliveryAddress.postcode }}">
+            </div>
+            <div class="form-group">
+                <label for="city">Città</label>
+                <input type="text" id="city" name="city" class="form-control" value="{{ deliveryAddress.city }}">
+            </div>
+            <div class="form-group">
+                <label for="state">Provincia</label>
+                <input type="text" id="state" name="state" class="form-control" value="{{ deliveryAddress.state }}">
+            </div>
+            <div class="form-group">
+                <label for="country">Nazione</label>
+                <input type="text" id="country" name="country" class="form-control" value="{{ deliveryAddress.country }}">
+            </div>
+            <div class="form-group">
+                <label for="phone">Recapito telefonico</label>
+                <input type="text" id="phone" name="phone" class="form-control" value="{{ deliveryAddress.phone }}">
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <button type="button" class="btn btn-primary" onclick="saveAddress()">
+                <i class="material-icons">save</i>
+                <span>Salva</span>
+            </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,15 @@
+<div class="panel panel-info">
+    <form id="categoryForm">
+        <div class="panel-heading">
+            <span>Associa i prodotti alla categoria</span>
+        </div>
+        <div class="panel-body">
+            <div class="category-wrapper">
+                {{ categoryTree|raw }}
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button type="button" class="btn btn-success mt-2 pull-right" onclick="associateProductsToCategory()">Associa Prodotti</button>
+        </div>
+    </form>
+</div>

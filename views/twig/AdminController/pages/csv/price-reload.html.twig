@@ -1,0 +1,69 @@
+<div class="panel panel-success grow-1">
+    <div class="panel-heading">
+        <i class="icon icon-list"></i>
+        <span>Legenda ricarichi</span>
+    </div>
+    <div class="panel-body">
+        <form method="post" id="formPriceLoad" class="d-flex justify-content-start align-items-start gap-2">
+            <input type="hidden" name="price_load_id" id="price_load_id" value="">
+            <div class="form-group">
+                <label for="price_min">Prezzo min.</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" name="price_min" id="price_min">
+                    <span class="input-group-addon">EUR</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price_max">Prezzo max.</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" name="price_max" id="price_max">
+                    <span class="input-group-addon">EUR</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price_reload_perc">Ricarico %</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" name="price_reload_perc" id="price_reload_perc">
+                    <span class="input-group-addon">%</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price_reload_amount">Ricarico EUR</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" name="price_reload_amount" id="price_reload_amount">
+                    <span class="input-group-addon">EUR</span>
+                </div>
+            </div>
+        </form>
+        <button class="btn btn-primary pull-right" type="button" id="btnSavePriceReload">
+            <i class="material-icons">save</i>
+            <span>Salva</span>
+        </button>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover table-bordered" id="table-price-reload">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Prezzo min</th>
+                    <th>Prezzo max</th>
+                    <th>Ricarico EUR</th>
+                    <th>Ricarico %</th>
+                    <th>Prodotti associati</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer">
+        <div class="text-right">
+            <ul class="list-group">
+                <li class="list-group-item">Totale Ricarichi: <strong>{{ pfuList|length }}</strong></li>
+                <li class="list-group-item">Totale Prodotti: <strong>{{ totalProducts }}</strong></li>
+                <li class="list-group-item">Prodotti associati: <strong>{{ totalPfuAssociated }}</strong></li>
+            </ul>
+        </td>
+    </div>
+</div>

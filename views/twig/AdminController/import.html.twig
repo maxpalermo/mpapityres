@@ -1,0 +1,260 @@
+<div class="flex-container">
+    <div class="panel panel-default grow-1">
+        <div class="panel-heading">
+            <p class="d-flex align-items-center">
+                <i class="material-icons mr-2">cloud_download</i>
+                Download Catalogo ZIP
+            </p>
+        </div>
+        <div class="panel-body">
+            <div class="form-inline mb-3" style="gap: 1rem">
+                <input type="text" id="zip-endpoint" class="form-control" style="width: 60%" placeholder="Incolla qui l'endpoint ZIP da scaricare" value="{{ csvEndpointUrl }}" />
+                <button type="button" class="btn btn-primary" id="btn-download-zip">
+                    <i class="material-icons mr-2">cloud_download</i>
+                    Avvia Download ZIP
+                </button>
+            </div>
+            <div class="progress" style="height: 24px; margin-top: 1rem">
+                <div id="zip-progress-bar" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+            </div>
+            <div class="mt-2">
+                <span id="zip-progress-text">
+                    <div class="alert alert-info">
+                        <p>In attesa…</p>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default grow-1">
+        <div class="panel-heading">
+            <p class="d-flex align-items-center">
+                <i class="material-icons mr-2">article</i>
+                Parsing CSV
+            </p>
+        </div>
+        <div class="panel-body">
+            <div class="form-inline mb-3" style="gap: 1rem">
+                <input type="text" id="csv-path" class="form-control" style="width: 60%" placeholder="Percorso CSV (relativo a modules/mpapityres/ o assoluto)" />
+                <button type="button" class="btn btn-secondary" id="btn-fill-latest-csv">
+                    <i class="material-icons mr-2">history</i>
+                    Usa ultimo CSV
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-parse-csv">
+                    <i class="material-icons mr-2">play_arrow</i>
+                    Avvia Parsing CSV
+                </button>
+                <button type="button" class="btn btn-warning" id="btn-pause-parse">
+                    <i class="material-icons mr-2">pause</i>
+                    Pausa
+                </button>
+                <button type="button" class="btn btn-danger" id="btn-reset-parse">
+                    <i class="material-icons mr-2">restart_alt</i>
+                    Reset parsing
+                </button>
+            </div>
+            <div class="progress" style="height: 24px">
+                <div id="csv-progress-bar" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+            </div>
+            <div class="mt-2">
+                <span id="csv-progress-text">
+                    <div class="alert alert-info">
+                        <p>In attesa…</p>
+                    </div>
+                </span>
+            </div>
+            <div class="mt-2">
+                <span id="csv-inserted-result" class="text-success" style="display: none"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex-container">
+    <div class="panel panel-default grow-1">
+        <div class="panel-heading">
+            <p class="d-flex align-items-center">
+                <i class="material-icons mr-2">download</i>
+                Download Catalogo Tyre tramite API
+            </p>
+        </div>
+        <div class="panel-body">
+            <div class="form-inline mb-3" style="gap: 1rem">
+                <button type="button" class="btn btn-primary" id="btn-api-download">
+                    <i class="material-icons mr-2">play_arrow</i>
+                    Avvia Download API
+                </button>
+                <button type="button" class="btn btn-warning" id="btn-api-stop-download">
+                    <i class="material-icons mr-2">stop</i>
+                    Stop
+                </button>
+            </div>
+            <div class="progress" style="height: 24px">
+                <div id="api-progress-bar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%"></div>
+            </div>
+            <div class="mt-2">
+                <span id="api-progress-text">
+                    <div class="alert alert-info">
+                        <p>In attesa…</p>
+                    </div>
+                </span>
+            </div>
+            <div class="mt-2">
+                <span id="api-inserted-result" class="text-success" style="display: none"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default grow-1">
+        <div class="panel-heading">
+            <p class="d-flex align-items-center">
+                <i class="material-icons mr-2">refresh</i>
+                Aggiorna Catalogo Prestashop
+            </p>
+        </div>
+        <div class="panel-body">
+            <div class="form-inline mb-3" style="gap: 1rem">
+                <button type="button" class="btn btn-primary" id="btn-api-update">
+                    <i class="material-icons mr-2">play_arrow</i>
+                    Aggiorna catalogo Prestashop
+                </button>
+                <button type="button" class="btn btn-warning" id="btn-api-stop-update">
+                    <i class="material-icons mr-2">stop</i>
+                    Stop
+                </button>
+            </div>
+            <div class="progress" style="height: 24px">
+                <div id="update-progress-bar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%"></div>
+            </div>
+            <div class="mt-2">
+                <span id="update-progress-text">
+                    <div class="alert alert-info">
+                        <p>In attesa…</p>
+                    </div>
+                </span>
+            </div>
+            <div class="mt-2">
+                <span id="update-inserted-result" class="text-success" style="display: none"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex-container">
+    <div class="panel panel-success grow-1">
+        <div class="panel-heading">
+            <i class="icon icon-cogs"></i>
+            <span>Prodotti da aggiornare</span>
+        </div>
+        <div class="panel-body">
+            <div class="alert-wrapper" id="alert-wrapper">
+                
+            </div>
+            <div class="flex-container mb-2" id="toolbarRPT">
+                <button class="btn btn-info" type="button" id="reloadPriceSelected">
+                    <i class="material-icons mr-2">refresh</i>
+                    <span>Ricarica i selezionati</span>
+                </button>
+                <button class="btn btn-info" type="button" id="reloadPriceAll">
+                    <i class="material-icons mr-2">refresh</i>
+                    <span>Ricarica tutto</span>
+                </button>
+            </div>
+            <table id="reloadPricesTable" data-toolbar="#toolbarRPT">
+                <thead>
+                    <tr>
+                        <th data-field="checked" data-checkbox="true" data-align="center" data-valign="middle" class="fixed-width-sm"></th>
+                        <th data-field="id_image" data-formatter="imageFormatter" class="text-center">IMG</th>
+                        <th data-field="id_product" data-sortable="true">id</th>
+                        <th data-field="reference">riferimento</th>
+                        <th data-field="price" data-formatter="priceFormatter" class="text-right nowrap">Prezzo attuale</th>
+                        <th data-field="load_amount" data-formatter="priceFormatter" class="text-right nowrap">Ricarico EUR</th>
+                        <th data-field="load_perc" data-formatter="percFormatter" class="text-right nowrap">Ricarico %</th>
+                        <th data-field="price_unit_loaded" data-formatter="priceFormatter" class="text-right nowrap">Prezzo da aggiornare</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="panel-footer">
+        
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const baseUrl = "{{ baseUrl | raw }}";
+    const cronControllerURL = "{{ cronControllerUrl | raw }}";
+    const adminControllerURL = "{{ adminControllerUrl | raw }}";
+    let loadPriceTableInstance = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $('.chosen').chosen(
+            {
+                placeholder: 'Seleziona',
+                allowClear: true,
+                width: '100%',
+                language: 'it',
+                theme: 'classic'
+            }
+        );
+
+        loadPriceTableInstance = new loadPriceTableClass("reloadPricesTable");
+		console.log("Load Price Table initialized:", loadPriceTableInstance);
+
+		// Bind del pulsante "Ricarica prezzi sezionati"
+		const reloadPriceSelected = document.getElementById("reloadPriceSelected");
+		if (reloadPriceSelected) {
+			reloadPriceSelected.addEventListener("click", async () => {
+				setAlert(
+					`
+					<div class='alert alert-info'>
+						<span class='icon icon-info'></span>
+						<span>Caricamento in corso...</span>
+					</div>
+					`
+				);
+
+				const selectedRows = loadPriceTableInstance.getSelection();
+				let alert = await loadPriceTableInstance.reloadPrices(selectedRows);
+				
+				if (alert) {
+					setAlert(alert);
+				} else {
+					setAlert("");
+				}
+			});
+		}
+
+		// Bind del pulsante "Ricarica tuttii prezzi"
+		const reloadPriceAll = document.getElementById("reloadPriceAll");
+		if (reloadPriceAll) {
+			reloadPriceAll.addEventListener("click", async () => {
+				setAlert(
+					`
+					<div class='alert alert-info'>
+						<span class='icon icon-info'></span>
+						<span>Caricamento in corso...</span>
+					</div>
+					`
+				);
+
+				const allData = $('#reloadPricesTable').bootstrapTable('getData');
+				let alert = await loadPriceTableInstance.reloadPrices(allData);
+
+				console.log(alert);
+				if (alert) {
+					setAlert(alert);
+				} else {
+					setAlert("");
+				}
+			});
+		}
+    });
+</script>
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/themes/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/locale/bootstrap-table-it-IT.js"></script>
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/js/doFetchPost.js"></script>
+<script src="{{ baseUrl }}modules/mpapityres/views/assets/js/remove-tree-buttons.js"></script>
+<script src="{{ baseUrl }}modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/classes/LoadPriceTable.js"></script>

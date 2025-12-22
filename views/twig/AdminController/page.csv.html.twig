@@ -1,0 +1,157 @@
+<link rel="stylesheet" href="{{ asset('components/select2/select2.bs4-theme.min.css') }}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<script src="{{ asset('js/Controllers/AdminMpApiTyres/script/AdminPage.js') }}"></script>
+<script src="{{ asset('js/Controllers/AdminMpApiTyres/page.csv.js') }}"></script>
+<script src="{{ asset('js/Controllers/AdminMpApiTyres/tables/table-price-reload.js') }}"></script>
+<script src="{{ asset('components/select2/select2.min.js') }}"></script>
+
+<script src="{{ asset('js/ToastClass.js') }}"></script>
+<script src="{{ asset('js/ConfirmClass.js') }}"></script>
+<script src="{{ asset('js/LoadingMessages.js') }}"></script>
+<script src="{{ asset('js/Fetch.js') }}"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+    $.browser = {};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-hashchange@2.0.0/jquery.ba-hashchange.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@3.32.0/dist/algoliasearchLite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@3.0.0/dist/instantsearch.production.min.js"></script>
+
+<link rel="stylesheet" href="{{ asset('components/bootstrap-table/bootstrap-table.min.css') }}">
+<link rel="stylesheet" href="{{ asset('components/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.min.css') }}">
+<script src="{{ asset('components/bootstrap-table/bootstrap-table.min.js') }}"></script>
+<script src="{{ asset('components/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.min.js') }}"></script>
+<script src="{{ asset('components/bootstrap-table/locale/bootstrap-table-it-IT.min.js') }}"></script>
+
+<style>
+    .mt-4 {
+        margin-top: 2rem;
+    }
+
+    .table-bordered {
+        table-layout: fixed;
+        border: 1px solid #dee2e6;
+    }
+
+    .table-bordered tbody td {
+        border: 1px solid #dee2e6;
+    }
+
+    .table-bordered thead th {
+        border-bottom-width: 2px;
+    }
+
+    .table-bordered tbody td {
+        border-top-width: 2px;
+    }
+
+    .table-bordered tbody td, .table-bordered thead th {
+        border-left-width: 2px;
+        border-right-width: 2px;
+    }
+
+    .btn-toolbar-action {
+        padding: 0;
+        border: 1px solid #dcdcdc;
+        border-radius: 5px;
+        padding: 2px;
+        gap: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        font-size: 12px !important;
+        background-color: #f8f9fa;
+        color: #000;
+        cursor: pointer;
+    }
+
+    .btn-toolbar-action:hover {
+        background-color: #d9dcff;
+        color: #305050;
+    }
+</style>
+
+<!-- Template progress bar download -->
+<template id="template-alert">
+    <div class="alert">
+        <span></span>
+    </div>
+</template>
+
+<!-- PAGINA -->
+<div class="page-container">
+    {% include 'AdminController/pages/csv/cron-info.html.twig' %}
+    <div class="d-flex justify-content-start align-items-start gap-2">
+        <div class="left-section grow-1" style="max-width: 500px;">
+            {% include 'AdminController/pages/csv/account.html.twig' %}
+            {% include 'AdminController/pages/csv/address.html.twig' %}
+        </div>
+        <div class="right-section grow-1">
+            {% include 'AdminController/pages/csv/categories.html.twig' %}
+            <div class="d-flex justify-content-start align-items-start gap-2">
+                {% include 'AdminController/pages/csv/filters.html.twig' %}
+                {% include 'AdminController/pages/csv/price-reload.html.twig' %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FINE PAGINA -->
+
+<!-- LEGENDA -->
+<div class="page-container">
+    {% include 'AdminController/pages/csv/legend.html.twig' %}
+</div>
+<!-- FINE LEGENDA -->
+
+<script type="text/javascript">
+    const AdminControllerUrl = "{{ adminControllerUrl | raw }}";
+    const tablePriceReload = new TablePriceReload(AdminControllerUrl);
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const btnSaveCsvAccount = document.getElementById("btnSaveCsvAccount");
+        const toast = new ToastClass("toast-mpapityres");
+        window.toast = toast;
+        
+        btnSaveCsvAccount.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const icon = this.querySelector("i.material-icons").textContent;
+            icon.textContent = "spinner";
+            //Aspetto mezzo secondo per il refresh
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const form = document.getElementById("formCsv");
+            const formData = new FormData(form);
+            formData.append("ajax", 1);
+            formData.append("action", "saveCsvAccount");
+
+            try {
+                const response = await fetch(AdminControllerUrl, {
+                    method: "POST",
+                    body: formData,
+                });
+    
+                const json = await response.json();
+
+                const alert = createAlert(json.message, json.success ? 'success' : 'danger');
+                document.getElementById("alertContainer").innerHTML = "";
+                document.getElementById("alertContainer").appendChild(alert);
+                icon.textContent = icon;
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+
+        new PageCsv(AdminControllerUrl);
+        tablePriceReload.createTable();
+    });
+</script>

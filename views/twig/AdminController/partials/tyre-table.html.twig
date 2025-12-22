@@ -1,0 +1,388 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<style>
+    .header-section {
+        background: linear-gradient(135deg, #2c3e50, #4a6491);
+        color: white;
+        padding: 30px 0;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .table-responsive {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    }
+    .table thead {
+        background-color: #2c3e50;
+        color: white;
+    }
+    .table th {
+        border-bottom: none;
+        font-weight: 600;
+    }
+    .category-badge {
+        font-size: 0.75em;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+    .badge-category {
+        background-color: #3498db;
+    }
+    .badge-tech {
+        background-color: #2ecc71;
+    }
+    .badge-condition {
+        background-color: #e74c3c;
+    }
+    .badge-identification {
+        background-color: #f39c12;
+    }
+    .badge-date {
+        background-color: #9b59b6;
+    }
+    .importance-high {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+    .importance-medium {
+        color: #f39c12;
+        font-weight: bold;
+    }
+    .importance-low {
+        color: #2ecc71;
+        font-weight: bold;
+    }
+    .dot-code {
+        font-family: 'Courier New', monospace;
+        background-color: #f8f9fa;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        display: inline-block;
+        margin: 2px 0;
+    }
+    .example-box {
+        background-color: #f8f9fa;
+        border-left: 4px solid #3498db;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-size: 0.9em;
+    }
+    .legend {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .footer-note {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 30px;
+        font-size: 0.9em;
+    }
+    .term-icon {
+        font-size: 1.2em;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+    .hover-row:hover {
+        background-color: rgba(52, 152, 219, 0.05);
+        transition: background-color 0.2s;
+    }
+</style>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header-section text-center">
+        <h1><i class="bi bi-truck-front"></i> Glossario Termini Pneumatici</h1>
+        <p class="lead mb-0">Guida completa ai codici e alle specifiche tecniche</p>
+    </div>
+
+    <!-- Tabella principale -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col" width="12%"><i class="bi bi-tag"></i> Termine</th>
+                    <th scope="col" width="15%"><i class="bi bi-grid-3x3-gap"></i> Categoria</th>
+                    <th scope="col"><i class="bi bi-info-circle"></i> Significato</th>
+                    <th scope="col"><i class="bi bi-lightbulb"></i> Caratteristiche</th>
+                    <th scope="col" width="12%"><i class="bi bi-exclamation-triangle"></i> Importanza</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 3PMSF -->
+                <tr class="hover-row">
+                    <td>
+                        <strong>3PMSF</strong>
+                        <br>
+                        <small class="text-muted">Three Peak Mountain Snowflake</small>
+                    </td>
+                    <td>
+                        <span class="category-badge badge-category">Categoria/Certificazione</span>
+                    </td>
+                    <td>Simbolo alpino con fiocco di neve - Pneumatico invernale certificato</td>
+                    <td>
+                        <div class="example-box">
+                            <strong>⚠️ DIFFERENZA CRUCIALE vs M+S:</strong><br><br>
+                            • <strong>3PMSF</strong>: Testato e certificato per performance invernali<br>
+                            • <strong>M+S</strong>: Solo dichiarazione del produttore<br><br>
+                            <strong>Requisiti certificazione:</strong><br>
+                            1. Test di frenata su neve<br>
+                            2. Test di trazione su neve<br>
+                            3. Test di accelerazione su ghiaccio<br>
+                            4. Performance mantenute per tutta la vita utile
+                        </div>
+                        <ul class="mb-0 ps-3">
+                            <li><strong>Obbligo legale</strong> in molti paesi europei (Austria, Germania in certe condizioni)</li>
+                            <li>Performance garantite su neve e ghiaccio</li>
+                            <li>Riconosciuto a livello internazionale</li>
+                        </ul>
+                    </td>
+                    <td class="importance-high">MASSIMA</td>
+                </tr>
+                
+                <!-- MS / M+S -->
+                <tr class="hover-row">
+                    <td>
+                        <strong>MS / M+S</strong>
+                        <br>
+                        <small class="text-muted">Mud + Snow</small>
+                    </td>
+                    <td>
+                        <span class="category-badge badge-category">Categoria</span>
+                    </td>
+                    <td>Fango + Neve - Pneumatici invernali o all-season</td>
+                    <td>
+                        <ul class="mb-0 ps-3">
+                            <li>Battistrada aggressivo con lamelle</li>
+                            <li>Mescola morbida a basse temperature</li>
+                            <li><strong>Attenzione:</strong> Diverso da 3PMSF</li>
+                        </ul>
+                    </td>
+                    <td class="importance-high">ALTA</td>
+                </tr>
+
+                <!-- Runflat -->
+                <tr class="hover-row">
+                    <td>
+                        <strong>Runflat</strong>
+                        <br>
+                        <small class="text-muted">Run On Flat</small>
+                    </td>
+                    <td>
+                        <span class="category-badge badge-tech">Tecnologia</span>
+                    </td>
+                    <td>Pneumatici a perdita controllata</td>
+                    <td>
+                        <ul class="mb-0 ps-3">
+                            <li>Spalle rinforzate</li>
+                            <li>50-100 km dopo foratura (max 80 km/h)</li>
+                            <li>Elimina ruota di scorta</li>
+                            <li>Esempi: RunOnFlat (BMW), SSR (Audi)</li>
+                        </ul>
+                    </td>
+                    <td class="importance-high">ALTA</td>
+                </tr>
+
+                <!-- da_decke -->
+                <tr class="hover-row">
+                    <td>
+                        <strong>da_decke</strong>
+                        <br>
+                        <small class="text-muted">Tedesco</small>
+                    </td>
+                    <td>
+                        <span class="category-badge badge-condition">Condizione</span>
+                    </td>
+                    <td>Pneumatico nuovo (non rigenerato)</td>
+                    <td>
+                        <div class="example-box">
+                            <strong>Distinzione:</strong><br>
+                            • <strong>da_decke</strong> = pneumatico nuovo<br>
+                            • <strong>Regummerad</strong> = pneumatico rigenerato
+                        </div>
+                    </td>
+                    <td class="importance-medium">MEDIA</td>
+                </tr>
+
+                <!-- Demo -->
+                <tr class="hover-row">
+                    <td>
+                        <strong>Demo</strong>
+                        <br>
+                        <small class="text-muted">Demonstration</small>
+                    </td>
+                    <td>
+                        <span class="category-badge badge-condition">Condizione</span>
+                    </td>
+                    <td>Pneumatici da esposizione/dimostrazione</td>
+                    <td>
+                        <ul class="mb-0 ps-3">
+                            <li>Usati per auto espositrici</li>
+                            <li>Max 100-500 km</li>
+                            <li>Piccoli segni da esposizione</li>
+                            <li>Prezzo inferiore del 20-30%</li>
+                        </ul>
+                    </td>
+                    <td class="importance-medium">MEDIA</td>
+                </tr>
+
+                <!-- DOT -->
+                <tr class="hover-row">
+                    <td>
+                        <strong>DOT</strong>
+                        <br>
+                        <small class="text-muted">Department of Transportation</small>
+                    </td>
+                    <td>
+                        <span class="category-badge badge-identification">Identificazione</span>
+                    </td>
+                    <td>Codice di omologazione USA</td>
+                    <td>
+                        <div class="example-box">
+                            <strong>Formato:</strong> <span class="dot-code">DOT XXXX XXXX XXXX</span><br><br>
+                            <strong>Struttura:</strong><br>
+                            1. <strong>Fabbrica</strong>: Codice produttore/impianto<br>
+                            2. <strong>Dimensione</strong>: Misura pneumatico<br>
+                            3. <strong>Costruzione</strong>: Tipo di costruzione<br>
+                            4. <strong>Data</strong>: Settimana e anno produzione
+                        </div>
+                    </td>
+                    <td class="importance-high">ALTA</td>
+                </tr>
+
+                <!-- DOT Year -->
+                <tr class="hover-row">
+                    <td>
+                        <strong>DOT Year</strong>
+                        <br>
+                        <small class="text-muted">Data di produzione</small>
+                    </td>
+                    <td>
+                        <span class="category-badge badge-date">Data</span>
+                    </td>
+                    <td>Settimana e anno di fabbricazione</td>
+                    <td>
+                        <div class="example-box">
+                            <strong>Formato 4 cifre:</strong> <span class="dot-code">3523</span><br><br>
+                            • <strong>35</strong> = 35ª settimana dell'anno<br>
+                            • <strong>23</strong> = anno 2023<br><br>
+                            <strong>Importanza:</strong><br>
+                            • Pneumatici > 10 anni = sostituzione<br>
+                            • Pneumatici > 6 anni = controllo obbligatorio
+                        </div>
+                    </td>
+                    <td class="importance-high">ALTA</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Legenda colori -->
+    <div class="legend">
+        <h5><i class="bi bi-palette"></i> Legenda Categorie</h5>
+        <div class="row mt-3">
+            <div class="col-md-6 col-lg-4 mb-2">
+                <span class="category-badge badge-category me-2">Categoria</span>
+                Tipo di pneumatico (invernale, estivo, all-season)
+            </div>
+            <div class="col-md-6 col-lg-4 mb-2">
+                <span class="category-badge badge-tech me-2">Tecnologia</span>
+                Caratteristiche tecniche specifiche
+            </div>
+            <div class="col-md-6 col-lg-4 mb-2">
+                <span class="category-badge badge-condition me-2">Condizione</span>
+                Stato del pneumatico (nuovo, demo, usato)
+            </div>
+            <div class="col-md-6 col-lg-4 mb-2">
+                <span class="category-badge badge-identification me-2">Identificazione</span>
+                Codici e numeri identificativi
+            </div>
+            <div class="col-md-6 col-lg-4 mb-2">
+                <span class="category-badge badge-date me-2">Data</span>
+                Informazioni temporali e di produzione
+            </div>
+        </div>
+    </div>
+
+    <!-- Note importanti -->
+    <div class="footer-note">
+        <h5><i class="bi bi-exclamation-circle"></i> Note Importanti</h5>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <p><strong><i class="bi bi-check-circle"></i> Controlli obbligatori:</strong></p>
+                <ul>
+                    <li>Data di produzione (DOT) prima dell'acquisto</li>
+                    <li>Compatibilità Runflat con il veicolo</li>
+                    <li>Omologazioni per il paese di utilizzo</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <p><strong><i class="bi bi-clock-history"></i> Scadenze consigliate:</strong></p>
+                <ul>
+                    <li>6 anni: Controllo approfondito</li>
+                    <li>10 anni: Sostituzione consigliata</li>
+                    <li>Anno di produzione: Mai > 3 anni per acquisto</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informazioni tecniche aggiuntive -->
+    <div class="alert alert-info mt-4">
+        <h6><i class="bi bi-gear"></i> Informazioni Tecniche Aggiuntive</h6>
+        <div class="row mt-2">
+            <div class="col-md-4">
+                <strong>Regolamenti:</strong>
+                <ul class="mb-0">
+                    <li>Italia: M+S o catene in zone indicate</li>
+                    <li>Germania: M+S obbligatorio su neve</li>
+                    <li>Austria: 3PMSF obbligatorio inverno</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <strong>3PMSF vs M+S:</strong>
+                <ul class="mb-0">
+                    <li>3PMSF: Testato e certificato</li>
+                    <li>M+S: Dichiarazione produttore</li>
+                    <li>3PMSF > M+S per prestazioni</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <strong>Consigli acquisto:</strong>
+                <ul class="mb-0">
+                    <li>Verificare sempre codice DOT</li>
+                    <li>Richiedere certificati omologazione</li>
+                    <li>Controllare usura e danni</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Aggiunge effetto hover alle righe
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.hover-row');
+        
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.transition = 'transform 0.2s, box-shadow 0.2s';
+                this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    });
+</script>

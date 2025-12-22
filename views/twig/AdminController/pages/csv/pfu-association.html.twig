@@ -1,0 +1,22 @@
+<template id="template-pfu-association">
+    <dialog id="pfu-association-dialog" class="bootstrap">
+        <div class="modal-body">
+            <form method="POST">
+                <input type="hidden" name="id_product_csv" id="id_product_csv">
+                <p>Seleziona il PFU</p>
+                <select name="id_pfu_csv" id="id_pfu_csv" class="form-control chosen" style="width: 100%;">
+                    <option value="">Seleziona</option>
+                    {% for key, pfu in pfuListOptions %}
+                        <option value="{{ key }}">{{ pfu }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <button type="button" class="btn btn-primary" id="pfu-association-apply">Applica</button>
+                <button type="button" class="btn btn-secondary" id="pfu-association-close" onclick="closeDialog('pfu-association-dialog')">Chiudi</button>
+            </div>
+        </div>
+    </dialog>
+</template>

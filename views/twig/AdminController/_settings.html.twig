@@ -1,0 +1,127 @@
+<link rel="stylesheet" href="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/bootstrap-table.min.css">
+<link rel="stylesheet" href="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/themes/bootstrap-table/bootstrap-table.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+	.label {
+		display: block !important;
+		margin-bottom: 0.5rem !important;
+		text-align: left !important;
+		color: #505050 !important;
+	}
+
+	.gap-2 {
+		gap: 1rem;
+	}
+
+	.flex-1 {
+		flex: 1;
+	}
+
+	#reloadPricesTable tbody tr td:nth-child(1) {
+		max-width: 48px !important;
+	}
+
+	#reloadPricesTable tbody tr td.nowrap {
+		white-space: nowrap !important;
+	}
+</style>
+
+<p class="card-title d-flex align-items-center">
+	<i class="material-icons mr-2">settings</i>
+	<span>Impostazioni</span>
+</p>
+
+<form action="" method="post" class="bootstrap">
+	<input type="hidden" name="form-action" value="saveSettings">
+	
+
+	
+					
+
+	
+
+	<div class="d-flex justify-content-start align-items-top gap-2">
+		
+
+		
+	</div>
+</form>
+
+<script>
+	const baseUrl = "{{ baseUrl | raw }}";
+	const cronControllerURL = "{{ cronControllerUrl | raw }}";
+	const adminControllerURL = "{{ adminControllerUrl | raw }}";
+	// Istanza globale della tabella
+	let loadPriceTableInstance = null;
+
+	function setAlert(alert)
+	{
+		const alertWrapper = document.getElementById("alert-wrapper");
+		alertWrapper.innerHTML = alert;
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+        
+
+		loadPriceTableInstance = new loadPriceTableClass("reloadPricesTable");
+		console.log("Load Price Table initialized:", loadPriceTableInstance);
+
+		// Bind del pulsante "Ricarica prezzi sezionati"
+		const reloadPriceSelected = document.getElementById("reloadPriceSelected");
+		if (reloadPriceSelected) {
+			reloadPriceSelected.addEventListener("click", async () => {
+				setAlert(
+					`
+					<div class='alert alert-info'>
+						<span class='icon icon-info'></span>
+						<span>Caricamento in corso...</span>
+					</div>
+					`
+				);
+
+				const selectedRows = loadPriceTableInstance.getSelection();
+				let alert = await loadPriceTableInstance.reloadPrices(selectedRows);
+				
+				if (alert) {
+					setAlert(alert);
+				} else {
+					setAlert("");
+				}
+			});
+		}
+
+		// Bind del pulsante "Ricarica tuttii prezzi"
+		const reloadPriceAll = document.getElementById("reloadPriceAll");
+		if (reloadPriceAll) {
+			reloadPriceAll.addEventListener("click", async () => {
+				setAlert(
+					`
+					<div class='alert alert-info'>
+						<span class='icon icon-info'></span>
+						<span>Caricamento in corso...</span>
+					</div>
+					`
+				);
+
+				const allData = $('#reloadPricesTable').bootstrapTable('getData');
+				let alert = await loadPriceTableInstance.reloadPrices(allData);
+
+				console.log(alert);
+				if (alert) {
+					setAlert(alert);
+				} else {
+					setAlert("");
+				}
+			});
+		}
+    });
+</script>
+
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/themes/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/components/bootstrap-table/locale/bootstrap-table-it-IT.js"></script>
+<script src="{{ baseUrl}}modules/mpapityres/views/assets/js/doFetchPost.js"></script>
+<script src="{{ baseUrl }}modules/mpapityres/views/assets/js/remove-tree-buttons.js"></script>
+<script src="{{ baseUrl }}modules/mpapityres/views/assets/js/Controllers/AdminMpApiTyres/classes/LoadPriceTable.js"></script>
+

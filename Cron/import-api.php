@@ -30,9 +30,12 @@ try {
     echo PHP_EOL . "PROCEDO ALL'IMPORTAZIONE" . PHP_EOL;
     $module->cronParseAPI();
 
+    echo PHP_EOL . 'DISABILITAZIONE PRODOTTI CON PREZZO 0' . PHP_EOL;
+    $module->disablePriceZero();
+
     $end = microtime(true);
     $time = $end - $start;
-    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$time} secondi\n";
+    echo PHP_EOL . '[' . date('Y-m-d H:i:s') . "] Completato in {$module->humanReadableSeconds($time)} secondi\n";
     echo PHP_EOL . '-----------------------------' . PHP_EOL;
 
     exit(0);
