@@ -13,9 +13,10 @@
 <div class="alert alert-info">
     <p>Per importare i dati dal file CSV usa il seguente CRON:</p>
     <code>{{ cronDownloadCsv }}</code>
-    <p> Puoi usare due flag per personalizzare l'importazione:</p>
+    <p> Puoi usare questi flag per personalizzare l'importazione:</p>
     <ul>
-        <li><code> --skip-download-csv</code> salta il download del CSV</li>
-        <li><code> --only-update-catalog</code> aggiorna il catalogo con i dati già presenti nella tabella CSV</li>
+        <li><code> --no-download-csv</code> salta il download del CSV</li>
+        <li><code> --no-update-csv</code> salta l'aggiornamento del CSV</li>
+        <li><code> --no-update-catalog</code> salta l'inserimento dei dati CSV nel catalogo</li>
     </ul>
 </div>

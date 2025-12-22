@@ -161,7 +161,17 @@ class ModelProductPriceReload extends \ObjectModel
         $list = $db->executeS($sql);
         if ($list) {
             foreach ($list as &$row) {
-                $row['total_products'] = rand(1000, 9999);
+                $pmin = (float) $row['price_min'];
+                $pmax = (float) $row['price_max'];
+
+                $totalProducts = new DbQuery();
+                $totalProducts
+                    ->select('count(id_product)')
+                    ->from('product', 'a')
+                    ->where("price >= {$pmin}")
+                    ->where("price < {$pmax}");
+
+                $row['total_products'] = $db->getValue($totalProducts);
             }
         }
 

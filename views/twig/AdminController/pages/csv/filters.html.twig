@@ -53,14 +53,17 @@
                         <td>GIORNI CONSEGNA</td>
                         <td class="text-center"><input type="number" name="delivery_delay_days" id="delivery_delay_days" class="form-control fixed-width-sm text-right" min="0" step="1" {% if (delivery_delay_days is defined and delivery_delay_days > 0) %}value="{{ delivery_delay_days }}"{% else %}value="0"{% endif %}></td>
                     </tr>
+                    <!--
                     <tr>
                         <td>RICARICO EURO</td>
                         <td class="text-center"><input type="number" name="load_amount" id="load_amount" class="form-control fixed-width-sm text-right" min="0" step="0.01" {% if (load_amount is defined and load_amount > 0) %}value="{{ load_amount }}"{% else %}value="0"{% endif %}></td>
                     </tr>
+
                     <tr>
                         <td>RICARICO PERC</td>
                         <td class="text-center"><input type="number" name="load_percentage" id="load_percentage" class="form-control fixed-width-sm text-right" min="0" step="0.01" {% if (load_percentage is defined and load_percentage > 0) %}value="{{ load_percentage }}"{% else %}value="0"{% endif %}></td>
                     </tr>
+                    -->
                     <tr>
                         <td>Aliquota IVA</td>
                         <td class="text-center" colspan="2">

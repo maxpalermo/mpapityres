@@ -45,6 +45,7 @@ class TablePriceReload {
             sortOrder: "asc",
             sidePagination: "server",
             pagination: true,
+            showFooter: true,
             showRefresh: true,
             showColumns: false,
             striped: true,
@@ -101,7 +102,7 @@ class TablePriceReload {
                 },
                 {
                     field: "price_min",
-                    title: "Prezzo min.",
+                    title: "Prezzo min<br>(incluso)",
                     align: "right",
                     sortable: true,
                     filterControl: "input",
@@ -116,7 +117,7 @@ class TablePriceReload {
                 },
                 {
                     field: "price_max",
-                    title: "Prezzo max.",
+                    title: "Prz max<br>(escluso)",
                     align: "right",
                     sortable: true,
                     filterControl: "input",
@@ -131,7 +132,7 @@ class TablePriceReload {
                 },
                 {
                     field: "reload_perc",
-                    title: "Ricarico %",
+                    title: "Ricarico<br>%",
                     align: "center",
                     sortable: true,
                     filterControl: "input",
@@ -141,7 +142,7 @@ class TablePriceReload {
                 },
                 {
                     field: "reload_amount",
-                    title: "Ricarico EUR",
+                    title: "Ricarico<br>EUR",
                     align: "right",
                     sortable: true,
                     filterControl: "input",
@@ -156,14 +157,26 @@ class TablePriceReload {
                 },
                 {
                     field: "total_products",
-                    title: "Prodotti",
+                    title: "Totale<br>Prodotti",
                     align: "center",
                     sortable: true,
                     filterControl: "input",
+                    footerFormatter: function (data) {
+                        if (!Array.isArray(data) || data.length === 0) {
+                            return 0;
+                        }
+
+                        const total = data.reduce((sum, row) => {
+                            const n = parseInt(row.total_products, 10);
+                            return sum + (Number.isFinite(n) ? n : 0);
+                        }, 0);
+
+                        return total;
+                    },
                     formatter: function (value, row, index) {
                         if (value == 0) {
                             return `
-                                <div class="alert alert-warning">Nessun PFU associato</div>
+                                <div class="alert alert-warning">0</div>
                             `;
                         }
 
@@ -178,7 +191,7 @@ class TablePriceReload {
                     formatter: function (value, row, index) {
                         return `
                             <div class="d-flex justify-content-center align-items-center">
-                                <button type="button" class="btn btn-toolbar" name="btn-edit-price-reload" title="Modifica" data-id-price-reload="${row.id_product_price_reload}">
+                                <button type="button" class="btn btn-toolbar-action" name="btn-edit-price-reload" title="Modifica" data-id-price-reload="${row.id_product_price_reload}">
                                     <span class="material-icons">edit</span>
                                 </button>
                                 <button type="button" class="btn btn-toolbar-action" name="btn-delete-price-reload" title="Elimina" data-id-price-reload="${row.id_product_price_reload}">
